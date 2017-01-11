@@ -1,7 +1,7 @@
 Version 0.2.1 [??-01-2017, screw you, i'm european]
 - k!proj with no parameters will now list all current projects;
 - i will automatically reboot every 6 hours to reload my databases;
-- added a few cheesy admin-only commands (k!reboot, k!shutdown and k!uptime).
+- added a few cheesy admin-only commands (k!reboot, k!shutdown, k!uptime and k!console).
 
 =============================================================
 

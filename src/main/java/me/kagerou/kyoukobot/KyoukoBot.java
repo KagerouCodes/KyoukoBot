@@ -69,14 +69,15 @@ class SearchResult
 }
 
 class ConsoleOutputTracker {
-    //private ByteArrayOutputStream baos;
 	private boolean newStuff;
-    //private PrintStream previous;
+	final static int MaxBufferSize = 50000;
+	private char[] LastOutput = new char[MaxBufferSize];
+	int first_index, buffer_size;
 
     public ConsoleOutputTracker()
     {
     	newStuff = false;
-    	//previous = System.out;
+    	first_index = buffer_size = 0;
     	System.setOut(new PrintStream(new OutputStreamTracker(this)));
     }
     
@@ -90,6 +91,29 @@ class ConsoleOutputTracker {
     	boolean result = newStuff;
     	newStuff = false;
     	return result;
+    }
+    
+    synchronized void push(char ch)
+    {
+    	LastOutput[(first_index + buffer_size) % MaxBufferSize] = ch;
+    	if (buffer_size != MaxBufferSize)
+    		buffer_size++;
+    	else
+    		first_index = (first_index + 1) % MaxBufferSize;
+    }
+    
+    synchronized void pushCodePoint(int cp)
+    {
+    	for (char ch: Character.toChars(cp))
+    		push(ch);
+    }
+    
+    synchronized public String getLastOutput()
+    {
+    	StringBuilder sb = new StringBuilder();
+    	for (int i = 0; i < buffer_size; i++)
+    		sb.append(LastOutput[(first_index + i) % MaxBufferSize]);
+    	return sb.toString();
     }
     /*public void start() {
         if (capturing) {
@@ -140,6 +164,7 @@ class ConsoleOutputTracker {
         public void write(int b) throws IOException {
             old.write(b);
             tracker.setFlag(true);
+            tracker.pushCodePoint(b);
         }
 
         public void flush() throws IOException {
@@ -147,7 +172,8 @@ class ConsoleOutputTracker {
         }
 
         public void close() throws IOException {
-            old.close();
+            super.close();
+            System.setOut(old);
         }
     }
 }
@@ -168,6 +194,16 @@ public class KyoukoBot {
 	final static String betaToken = "MjU1MzY3MTE2NjA4MjQxNjg1.Cyck1g.Fdf27IMvJBnmO2Hla43qh5hE8LM";
 	final static String token = (release) ? releaseToken : betaToken;
 	final static String adminID = "222681293232668672";
+	
+    static DiscordAPI api;
+    final static long ReconnectTimeoutMillis = 90000/*120000*//*1800000*/;
+    final static long ReloadTimeoutMillis = 6 * 60 * 60 * 1000; //6 hours
+    static boolean manual_reconnecting = true;
+	static boolean connected_once = false;
+	static long connect_time = 0;
+	static long init_time = 0;
+	
+	static ConsoleOutputTracker coc;
 	
     final static String EMTs = "zf0yQ";
     final static String OneEMT = "http://danbooru.donmai.us/data/__emilia_re_zero_kara_hajimeru_isekai_seikatsu_drawn_by_tsukimori_usako__bd95cc37a9ec5a35aded8f25e6de5c59.png";
@@ -200,14 +236,6 @@ public class KyoukoBot {
     static ArrayList<Emote> Emotes;
     
     static HashMap<String, SearchResult> SearchResults = new HashMap<String, SearchResult>();
-    
-    static DiscordAPI api;
-    final static long ReconnectTimeoutMillis = 90000/*120000*//*1800000*/;
-    final static long ReloadTimeoutMillis = 6 * 60 * 60 * 1000; //6 hours
-    static boolean manual_reconnecting = true;
-	static boolean connected_once = false;
-	static long connect_time = 0;
-	static long init_time = 0;
 	
 	static ImgurClient imgurClient;
     
@@ -463,7 +491,7 @@ public class KyoukoBot {
 	}
     
     public static void main(String args[]) {
-    	ConsoleOutputTracker coc = null;
+    	coc = null;
     	if (manual_reconnecting)
     		coc = new ConsoleOutputTracker();
     	System.setProperty("http.agent", "KyoukoBot");
@@ -509,6 +537,7 @@ public class KyoukoBot {
         			handler.registerCommand(new IntroDefaultCommand());
         			handler.registerCommand(new SetGameCommand());
         			handler.registerCommand(new RehashCommand());
+        			handler.registerCommand(new ConsoleCommand());
         			handler.registerCommand(new ShutdownCommand());
         			handler.registerCommand(new RebootCommand());
 
