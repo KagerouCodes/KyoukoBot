@@ -188,7 +188,7 @@ public class KyoukoBot {
 	static DataBase Database;
 	
 	final static String version = "0.2.1";
-	final static boolean release = false;
+	final static boolean release = true;
 
 	final static String releaseToken = "MjU0MTk0MTM3MTE1NTI1MTIw.CyLgRg.ZX1BeaPzWNBpgLmTeWP4bbYYWzI";
 	final static String betaToken = "MjU1MzY3MTE2NjA4MjQxNjg1.Cyck1g.Fdf27IMvJBnmO2Hla43qh5hE8LM";
@@ -377,7 +377,6 @@ public class KyoukoBot {
 	
 	static boolean postOnlyFile(Message message, String url, String FileName, String type)
 	{
-		//final int MaxTries = 3;
 		try { //TODO learn to follow redirects??
     		URL leURL = new URL(url);
     		URLConnection leConnection = leURL.openConnection();
@@ -389,19 +388,9 @@ public class KyoukoBot {
     		String ext = DefaultMimeTypes.forName(contentType).getExtension();
     		if (ext != "")
     		{
-    			//for (int tries = 0; tries < MaxTries; tries++)
-    				//try 
-    				//{
-    					System.out.println("Trying to post file: " + URLEncoder.encode(FileName, "UTF-8") + ext);
-    					message.replyFile(leConnection.getInputStream(), URLEncoder.encode(FileName, "UTF-8") + ext)/*.get()*/;
-    					//System.out.println("Message: " + reply);
-    					return true;
-    				/*}
-    				catch (ExecutionException exec)
-    				{
-    					System.out.println("Failed to send the file, trying again...");
-    					Thread.sleep(1000);
-    				}*/
+    			System.out.println("Trying to post file: " + URLEncoder.encode(FileName, "UTF-8") + ext);
+    			message.replyFile(leConnection.getInputStream(), URLEncoder.encode(FileName, "UTF-8") + ext)/*.get()*/;
+    			return true;
     		}
     	}
     	catch (Exception e)
@@ -540,7 +529,8 @@ public class KyoukoBot {
         			handler.registerCommand(new ConsoleCommand());
         			handler.registerCommand(new ShutdownCommand());
         			handler.registerCommand(new RebootCommand());
-
+        			handler.registerCommand(new UpdateCommand());
+        			
         			api.registerListener(new WrongCommandListener(handler));
         			api.registerListener(new TwitchListener());
         			api.registerListener(new AnimemesListener());
@@ -593,8 +583,6 @@ public class KyoukoBot {
     	   }
     }
 
-//TODO a command to give me latest console output??
-//TODO a command to update stuff without bothering panda??
 //TODO delete memes (mod-only??)
 //TODO k!recordings person
 //TODO Google search using Startpage??

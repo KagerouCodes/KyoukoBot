@@ -15,7 +15,15 @@ public class ConsoleCommand implements CommandExecutor {
     public void onCommand(DiscordAPI api, Message message, String args[])
 	{
 		if (!message.getAuthor().getId().equals(KyoukoBot.adminID))
+		{
 			message.reply("Y-you're touching me inappropriately!");
+			return;
+		}
+		if (!KyoukoBot.manual_reconnecting)
+		{
+			message.reply("`Not tracking console output currently.`");
+			return;
+		}
 		try {
 			File leFile = new File("console.txt");
 			FileUtils.writeStringToFile(leFile, KyoukoBot.coc.getLastOutput(), Charset.forName("UTF-8"));
