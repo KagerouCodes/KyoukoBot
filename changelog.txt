@@ -1,0 +1,95 @@
+Version 0.2.1 [??-01-2017, screw you, i'm european]
+- k!proj with no parameters will now list all current projects;
+- i will automatically reboot every 6 hours to reload my databases;
+- added a few cheesy admin-only commands (k!reboot, k!shutdown and k!uptime).
+
+=============================================================
+
+Version 0.2b [07-01-2017, screw you, i'm european]
+- fixed Google search and k!lyrics with a crutch (hopefully).
+
+=============================================================
+
+Version 0.2a [06-01-2017, 4:20 AM]
+- launched the bot on a 24/7 server and fixed the memes.
+
+=============================================================
+
+Version 0.2 [04-01-2017, screw you, i'm european]
+- more stable reconnecting, this should make me ready for a launch on a 24/7 server;
+- added a k!cat (also known as k!neko, k!meow or k!nya) command because why not;
+- k!intro now removes line breaks and wraps links in <angle brackets> to prevent preview spam;
+- k!who all should no longer fail if all the introductions can't fit into one Discord message;
+- taught k!nice command to react to avatar changes (hopefully);
+- completed the Chitose screencap collection.
+
+=============================================================
+
+Version 0.1.9 [25-12-2016, screw you, i'm european]
+- added a k!nice (aka k!pretty) command which fills Mirai's collection of nice and pretty things, taking your suggestions for similar commands;
+- added KappaRoss and Kippa Twitch emotes.
+
+=============================================================
+
+Version 0.1.8 [21-12-2016, screw you, i'm european]
+- moved the meme collection to my hard drive which means no delay for updating it;
+- Kyouko will also check for duplicate memes using MD5 hash;
+- fixed the OpieOP emote in an awkward way, hopefully it doesn't break anything else.
+
+=============================================================
+
+Version 0.1.7 [19-12-2016, screw you, i'm european]
+- added k!upload (also known as k!donate) command which lets you upload "meme" images to my hard drive;
+- Kyouko will grab any images posted in #animemes as well;
+- "k!who all" now does the same thing as "k!who everyone";
+- increased character limit for k!intro to 200;
+- fixed yet another issue with image search posting incorrect pictures.
+
+=============================================================
+
+Version 0.1.6 [16-12-2016, screw you, i'm european]
+- added a k!shiyu command for those moments when you need a bigger :Shiyu: emote;
+- added a k!meme command which posts a random "meme" from pandaxtc's collection, the plan is to make it user-updated/auto-updated in the future;
+- added a calculator command (k!calc) because i'm out of ideas;
+- fixed the image search trying to post invalid or NSFW pics found by Google (most of the time);
+- got rid of k!hug random (at least for now) and k!record (nobody ever used that);
+- made k!who command search for members of the server first (unless you enter the exact nickname of somebody in her database).
+
+=============================================================
+
+Version 0.1.5 [12-12-2016, screw you, i'm european]
+- implemented anime lyrics search via k!lyrics command: it would just link the lyrics in public chat and post them in private chat.
+- fixed a couple bugs with the image search, namely not replacing "\u003d" with "=" in URLs and not naming images properly;
+- fixed double AngelThump spam;
+- made the bot load a lot faster by caching some data (not like you'd care).
+ 
+=============================================================
+
+Version 0.1.4 [10-12-2016, screw you, i'm european]
+- implemented Google and YouTube search via k!ggl, k!google, k!yt and k!youtube commands:
+short commands show the first result with a preview and long ones show three results without it, it's debatable which one you'd prefer and whether we need this feature at all.
+
+=============================================================
+
+Version 0.1.3 [09-12-2016, screw you, i'm european]
+- implemented Google image search via k!image command (thanks to moxian for helping me with this), don't spam it every second or i'll get banned by Google [Tora's request];
+- added a 1% chance to post the fabled Golden Kappa instead of regular one;
+- a few more Chitose pictures, don't you love those.
+
+=============================================================
+
+Version 0.1.2 [08-12-2016, screw you, i'm european]
+- Kyouko will now post Twitch emotes mentioned in chat messages (up to 3 per message, supporting only popular ones) [Ceeroo's request];
+- k!who command now tells "unknown" users about the k!intro command;
+- fixed the k!record command which nobody's gonna use anyway.
+
+=============================================================
+
+Version 0.1.1 [07-12-2016, screw you, i'm european]
+
+- replaced autoreposting of clyp.it links with the k!record command which doesn't check for links [Tora's request];
+- upgraded the k!proj command to pull up lyrics of the song or at least the announcement thread (unstable) [Ceeroo's request];
+- added k!wiki and k!proj current commands;
+- added k!changelog command;
+- added a few new Chitose gifs [MrPot4to's request];
+- fixed the Database.
