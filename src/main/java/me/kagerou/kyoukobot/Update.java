@@ -1,6 +1,9 @@
 package me.kagerou.kyoukobot;
 
 import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
 
 public class Update {
 
@@ -30,8 +33,16 @@ public class Update {
 			System.out.println("Failed to rename " + args[0] + " to " + args[1] + ".");
 		try {
 			Runtime.getRuntime().exec("java -jar " + args[1]);
+			//Runtime.getRuntime().exec("xterm -e java -jar " + args[1]);
 		}
 		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		try {
+			FileUtils.writeStringToFile(new File("kek.txt"), "top kek", "UTF-8");
+		}
+		catch (IOException e)
 		{
 			e.printStackTrace();
 		}

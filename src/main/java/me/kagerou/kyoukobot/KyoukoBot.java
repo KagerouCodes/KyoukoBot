@@ -78,7 +78,9 @@ class ConsoleOutputTracker {
     {
     	newStuff = false;
     	first_index = buffer_size = 0;
-    	System.setOut(new PrintStream(new OutputStreamTracker(this)));
+    	PrintStream ps = new PrintStream(new OutputStreamTracker(this));
+    	System.setOut(ps);
+    	System.setErr(ps);
     }
     
     public void setFlag(boolean flag)
@@ -119,10 +121,12 @@ class ConsoleOutputTracker {
     class OutputStreamTracker extends OutputStream {
     	ConsoleOutputTracker tracker;
     	PrintStream old;
+    	PrintStream old_err;
 
         public OutputStreamTracker(ConsoleOutputTracker cot) {
             tracker = cot;
             old = System.out;
+            old_err = System.err;
         }
 
         public void write(int b) throws IOException {
@@ -138,6 +142,7 @@ class ConsoleOutputTracker {
         public void close() throws IOException {
             super.close();
             System.setOut(old);
+            System.setErr(old_err);
         }
     }
 }

@@ -99,6 +99,7 @@ public class UpdateCommand implements CommandExecutor {
 				message.reply("`Successfully downloaded the file " + FileName + "! Updating the bot...`");
 				Thread.sleep(1000);
 				Runtime.getRuntime().exec("java -jar update.jar KyoukoBot.tmp KyoukoBot.jar");
+				//Runtime.getRuntime().exec("xterm -e java -jar update.jar KyoukoBot.tmp KyoukoBot.jar");
 				System.exit(0);
 			}
 		}
