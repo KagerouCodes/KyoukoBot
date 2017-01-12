@@ -29,7 +29,7 @@ public class WhoIsCommand implements CommandExecutor {
         	name = message.getContent().substring(message.getContent().indexOf(' ') + 1).trim();
         if (name.equalsIgnoreCase("Rem"))
         	message.reply("Who is Rem? :thinking:");
-        if (!name.equalsIgnoreCase("everyone") && !name.equalsIgnoreCase("all")) //TODO break up into several messages
+        if (!name.equalsIgnoreCase("everyone") && !name.equalsIgnoreCase("all"))
         {
         	Map.Entry<String, String> result = KyoukoBot.Database.getEntry(name);
         	if ((result == null) && (target == null) && (!message.isPrivateMessage()))
@@ -44,7 +44,7 @@ public class WhoIsCommand implements CommandExecutor {
         	message.reply("**" + result.getKey() + ":** " + result.getValue());
         }
         else
-        { //TODO break into 2000 character long posts
+        { //TODO make it introduce only more active/recent users??
         	ArrayList<String> list = new ArrayList<String>();
         	Collection<User> users;
         	if (!message.isPrivateMessage())
@@ -60,7 +60,7 @@ public class WhoIsCommand implements CommandExecutor {
         		{
         			Map.Entry<String, String> result = KyoukoBot.Database.getEntry(user.getName());
         			if (result != null)
-        				list.add("**" + result.getKey() + ":** " + result.getValue());
+        				list.add("**" + result.getKey() + ":** " + KyoukoBot.wrapLinks(result.getValue()));
         		}
         	}
         	Collections.sort(list, (x, y) -> x.toLowerCase().compareTo(y.toLowerCase()));

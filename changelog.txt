@@ -1,3 +1,9 @@
+Version 0.2.2 [??-01-2017, screw you, i'm european]
+- k!proj wraps those Google forms links in <angle brackets> now;
+- k!who all wraps links too but k!who for a single user doesn't.
+
+=============================================================
+
 Version 0.2.1 [11-01-2017, screw you, i'm european]
 - k!proj with no parameters will now list all current projects;
 - i will automatically reboot every 6 hours to reload my databases;

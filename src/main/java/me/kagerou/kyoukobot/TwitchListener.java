@@ -40,7 +40,7 @@ class TwitchListener implements MessageCreateListener //TODO prevent the bot fro
 	}
 	
 	@Override
-	public void onMessageCreate(DiscordAPI api, Message message) {//synchronized?? TODO fix OpieOP
+	public void onMessageCreate(DiscordAPI api, Message message) {
 		String msg = message.getContent().toLowerCase();
 		if (message.getAuthor().isBot() || msg.startsWith("k!"))
 			return;
@@ -65,7 +65,7 @@ class TwitchListener implements MessageCreateListener //TODO prevent the bot fro
 		for (int i = 0; i < to_post; i++)
 		{
 			IndexPair pair = Indexes.poll();
-			if (KyoukoBot.Emotes.get(pair.emote_index).name.equals("kappa") && (rnd.nextInt(100) == 0)) //TODO does it even exist??
+			if (KyoukoBot.Emotes.get(pair.emote_index).name.equals("kappa") && (rnd.nextInt(100) == 0))
 				KyoukoBot.postFile(message, "http://i.imgur.com/JwmYhu7.png", "kappa");
 			else
 				KyoukoBot.postFile(message, KyoukoBot.Emotes.get(pair.emote_index).url, KyoukoBot.Emotes.get(pair.emote_index).name);

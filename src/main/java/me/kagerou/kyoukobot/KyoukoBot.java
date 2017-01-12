@@ -115,42 +115,6 @@ class ConsoleOutputTracker {
     		sb.append(LastOutput[(first_index + i) % MaxBufferSize]);
     	return sb.toString();
     }
-    /*public void start() {
-        if (capturing) {
-            return;
-        }
-
-        synchronized (System.out) {
-        	capturing = true;
-        	previous = System.out;      
-        	baos = new ByteArrayOutputStream();
-
-        	OutputStream outputStreamCombiner = 
-        			new OutputStreamCombiner(Arrays.asList(previous, baos)); 
-        	PrintStream custom = new PrintStream(outputStreamCombiner);
-
-        	System.setOut(custom);
-        }
-    }
-
-    public String stop() {
-        if (!capturing) {
-            return "";
-        }
-        
-        synchronized (System.out)
-        {
-        	System.setOut(previous);
-
-        	String capturedValue = baos.toString();             
-
-        	baos = null;
-        	previous = null;
-        	capturing = false;
-
-        	return capturedValue;
-        }
-    }*/
 
     class OutputStreamTracker extends OutputStream {
     	ConsoleOutputTracker tracker;
@@ -187,8 +151,8 @@ public class KyoukoBot {
 	static JSONObject JSONLyrics;
 	static DataBase Database;
 	
-	final static String version = "0.2.1";
-	final static boolean release = true;
+	final static String version = "0.2.2";
+	final static boolean release = false;
 
 	final static String releaseToken = "MjU0MTk0MTM3MTE1NTI1MTIw.CyLgRg.ZX1BeaPzWNBpgLmTeWP4bbYYWzI";
 	final static String betaToken = "MjU1MzY3MTE2NjA4MjQxNjg1.Cyck1g.Fdf27IMvJBnmO2Hla43qh5hE8LM";
@@ -330,6 +294,66 @@ public class KyoukoBot {
 			System.out.println("Failed to read the changelog.");
 			return "";
 		}
+	}
+	
+	public static String wrapLinks(String str)
+	{
+		StringBuilder result = new StringBuilder();
+		int index = 0;
+		while (index < str.length())
+		{
+			int next_http = str.indexOf("http://", index);
+			int next_https = str.indexOf("https://", index);
+			int next_url_start;
+			String protocol;
+			if ((next_https == -1) || (next_http < next_https) && (next_http != -1))
+			{
+				next_url_start = next_http;
+				protocol = "http://";
+			}
+			else
+			{
+				next_url_start = next_https;
+				protocol = "https://";
+			}	
+			if (next_url_start == -1)
+			{
+				result.append(str.substring(index));
+				index = str.length(); 
+			}
+			else
+			{
+				boolean less_than = ((next_url_start > 0) && (str.charAt(next_url_start - 1) == '<')), greater_than = false;
+				//result.append(str.substring(index, next_url_start));
+				int next_space = str.indexOf(' ', next_url_start); //doesn't handle newlines but those don't get into intros anyway
+				if (next_space == -1)
+					next_space = str.length();
+				while ("!:,.;".indexOf(str.charAt(next_space - 1)) != -1)
+					next_space--;
+				if (less_than)
+				{
+					int greater_index = str.indexOf('>', next_url_start + protocol.length() + 1); //at least one symbol between the protocol and >
+					if ((greater_index >= next_url_start) && (greater_index <= next_space))
+					{
+						next_space = greater_index + 1;
+						greater_than = true;
+					}
+				}
+				//int dot = intro.indexOf('.', next_url_start);
+				if (greater_than)
+					result.append(str.substring(index, next_space));
+				else
+				{
+					result.append(str.substring(index, next_url_start));
+					if (next_url_start + protocol.length() + 2 <= next_space) //at least two valid symbols after the protocol //((dot != -1) && (dot < next_space))
+						result.append('<').append(str.substring(next_url_start, next_space)).append('>');
+					else
+						result.append(str.substring(next_url_start, next_space));
+				}
+				index = next_space;
+			}
+		}
+		return result.toString();
 	}
 	
 	static HashMap<String, SearchResult> InitSearchResults(String FileName)

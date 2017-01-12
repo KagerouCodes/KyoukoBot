@@ -101,6 +101,6 @@ class SongProject
 			else
 				return "`Project:` " + name + "\n`Due date:` " + date + "\n`Progress:` " + progress + (!lyrics_link.isEmpty() ? "\n`Lyrics:` <" : "\n`Announcement:` <")  + thread_link + ">\n`Organiser(s)`: " + organisers/* + thread_link*/;
 		else
-			return "`Project:` " + name + "\n`Thread:` <" + thread_link + (!lyrics_link.isEmpty() ? (">\n`Lyrics:` <" + lyrics_link) : "") + ">\n" + "`Due date:` " + date + "\n`Organiser(s)`: " + organisers + " (" + address + ")"; 
+			return "`Project:` " + name + "\n`Thread:` <" + thread_link + (!lyrics_link.isEmpty() ? (">\n`Lyrics:` <" + lyrics_link) : "") + ">\n" + "`Due date:` " + date + "\n`Organiser(s)`: " + organisers + " (" + KyoukoBot.wrapLinks(address) + ")"; 
 	}
 }
