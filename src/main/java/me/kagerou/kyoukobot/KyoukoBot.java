@@ -72,13 +72,14 @@ class ConsoleOutputTracker {
 	private boolean newStuff;
 	final static int MaxBufferSize = 50000;
 	private char[] LastOutput = new char[MaxBufferSize];
+	private PrintStream ps;
 	int first_index, buffer_size;
 
     public ConsoleOutputTracker()
     {
     	newStuff = false;
     	first_index = buffer_size = 0;
-    	PrintStream ps = new PrintStream(new OutputStreamTracker(this));
+    	ps = new PrintStream(new OutputStreamTracker(this));
     	System.setOut(ps);
     	System.setErr(ps);
     }
@@ -116,6 +117,12 @@ class ConsoleOutputTracker {
     	for (int i = 0; i < buffer_size; i++)
     		sb.append(LastOutput[(first_index + i) % MaxBufferSize]);
     	return sb.toString();
+    }
+    
+    synchronized public void stop()
+    {
+    	ps.close();
+    	ps = null;
     }
 
     class OutputStreamTracker extends OutputStream {
@@ -614,6 +621,7 @@ public class KyoukoBot {
 
 //TODO delete memes (mod-only??)
 //TODO k!recordings person
+//TODO wake me up inside
 //TODO Google search using Startpage??
 //TODO assume "Kyouko" role??
 //TODO global message queue to fix stability issues??

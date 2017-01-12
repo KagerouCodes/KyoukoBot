@@ -1,6 +1,7 @@
 package me.kagerou.kyoukobot;
 
 import java.io.File;
+import java.lang.ProcessBuilder.Redirect;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -98,8 +99,9 @@ public class UpdateCommand implements CommandExecutor {
 				FileUtils.copyURLToFile(link, new File("KyoukoBot.tmp"));
 				message.reply("`Successfully downloaded the file " + FileName + "! Updating the bot...`");
 				Thread.sleep(1000);
-				Runtime.getRuntime().exec("java -jar update.jar KyoukoBot.tmp KyoukoBot.jar");
-				//Runtime.getRuntime().exec("xterm -e java -jar update.jar KyoukoBot.tmp KyoukoBot.jar");
+				//Runtime.getRuntime().exec("java -jar update.jar KyoukoBot.tmp KyoukoBot.jar");
+				KyoukoBot.coc.stop();
+				new ProcessBuilder("java", "-jar", "update.jar", "KyoukoBot.tmp", "KyoukoBot.jar").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
 				System.exit(0);
 			}
 		}

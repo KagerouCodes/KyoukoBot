@@ -1,9 +1,7 @@
 package me.kagerou.kyoukobot;
 
 import java.io.File;
-import java.io.IOException;
-
-import org.apache.commons.io.FileUtils;
+import java.lang.ProcessBuilder.Redirect;
 
 public class Update {
 
@@ -32,17 +30,10 @@ public class Update {
 		else
 			System.out.println("Failed to rename " + args[0] + " to " + args[1] + ".");
 		try {
-			Runtime.getRuntime().exec("java -jar " + args[1]);
-			//Runtime.getRuntime().exec("xterm -e java -jar " + args[1]);
+			//Runtime.getRuntime().exec("java -jar " + args[1]);
+			new ProcessBuilder("java", "-jar", args[1]).redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
 		}
 		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		try {
-			FileUtils.writeStringToFile(new File("kek.txt"), "top kek", "UTF-8");
-		}
-		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
