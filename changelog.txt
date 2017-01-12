@@ -1,6 +1,7 @@
 Version 0.2.2 [??-01-2017, screw you, i'm european]
 - k!proj wraps those Google forms links in <angle brackets> now;
-- k!who all wraps links too but k!who for a single user doesn't.
+- k!who all wraps links too but k!who for a single user doesn't;
+- "k!changelog full" sends the full changelog file now.
 
 =============================================================
 
