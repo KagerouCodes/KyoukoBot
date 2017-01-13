@@ -102,7 +102,7 @@ public class UpdateCommand implements CommandExecutor {
 				//Runtime.getRuntime().exec("java -jar update.jar KyoukoBot.tmp KyoukoBot.jar");
 				KyoukoBot.coc.stop();
 				new ProcessBuilder("java", "-jar", "update.jar", "KyoukoBot.tmp", "KyoukoBot.jar").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
-				System.exit(0);
+				System.exit(0); //TODO make Kyouko tell me she's back after updating
 			}
 		}
 		catch (Exception e)

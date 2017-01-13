@@ -7,7 +7,7 @@ import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.javacord.entities.message.MessageAttachment;
 import de.btobastian.javacord.listener.message.MessageCreateListener;
 import de.btobastian.sdcf4j.Command;
-import me.kagerou.kyoukobot.MemeBase.DownloadResult;
+import me.kagerou.kyoukobot.MemeBase.MemeResult;
 
 public class AnimemesListener implements MessageCreateListener {
 	String[] uploadPrefixes = {};
@@ -39,18 +39,18 @@ public class AnimemesListener implements MessageCreateListener {
 		int uploaded = 0, dupes = 0;
 		for (String arg: args)
 		{
-			DownloadResult result = KyoukoBot.memeBase.DownloadImage(arg);
-			if (result == DownloadResult.DR_OK)
+			MemeResult result = KyoukoBot.memeBase.DownloadImage(arg);
+			if (result == MemeResult.DR_OK)
 				uploaded++;
-			if (result == DownloadResult.DR_DUPE)
+			if (result == MemeResult.DR_DUPE)
 				dupes++;
 		}
 		for (MessageAttachment attachment: message.getAttachments())
 		{
-			DownloadResult result = KyoukoBot.memeBase.DownloadImage(attachment.getUrl());
-			if (result == DownloadResult.DR_OK)
+			MemeResult result = KyoukoBot.memeBase.DownloadImage(attachment.getUrl());
+			if (result == MemeResult.DR_OK)
 				uploaded++;
-			if (result == DownloadResult.DR_DUPE)
+			if (result == MemeResult.DR_DUPE)
 				dupes++;
 		}
 		if (uploaded > 0)

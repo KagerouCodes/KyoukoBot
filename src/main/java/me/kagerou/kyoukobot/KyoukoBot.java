@@ -534,8 +534,11 @@ public class KyoukoBot {
         			handler.registerCommand(new RemCommand()); //this one is hidden
         			handler.registerCommand(new ChitoseCommand());
         			handler.registerCommand(new CatCommand());
+        			
         			handler.registerCommand(new LeMemeCommand());
         			handler.registerCommand(new UploadCommand());
+        			handler.registerCommand(new DeleteCommand());
+        			
         			handler.registerCommand(new HugCommand());
         			handler.registerCommand(new ProjectCommand());
         			handler.registerCommand(new WhoIsCommand());
@@ -620,8 +623,10 @@ public class KyoukoBot {
     }
 
 //TODO delete memes (mod-only??)
+//TODO nickname support (from the new Javacord)
 //TODO k!recordings person
 //TODO wake me up inside
+//TODO auto-selfupdate from git??
 //TODO Google search using Startpage??
 //TODO assume "Kyouko" role??
 //TODO global message queue to fix stability issues??

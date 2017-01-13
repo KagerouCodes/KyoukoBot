@@ -23,7 +23,7 @@ public class MemeBase {
 		dirName = memeDir;
 	}
 	
-	enum DownloadResult
+	enum MemeResult
 	{
 		DR_OK, DR_FAIL, DR_DUPE; 
 	}
@@ -32,7 +32,7 @@ public class MemeBase {
 		return System.getProperty("user.dir") + "/" + dirName + "/";
 	}
 	
-	synchronized DownloadResult DownloadImage(URL imgURL)
+	synchronized MemeResult DownloadImage(URL imgURL)
 	{
 		URLConnection leConnection;
 		String type;
@@ -44,13 +44,13 @@ public class MemeBase {
 			if (!type.startsWith("image"))
 			{
 				System.out.println(imgURL + " does not link to an image!");
-				return DownloadResult.DR_FAIL;
+				return MemeResult.DR_FAIL;
 			}
 		}
 		catch (Exception e)
 		{
 			System.out.println("Failed to connect to " + imgURL);
-			return DownloadResult.DR_FAIL;
+			return MemeResult.DR_FAIL;
 		}
 		String fullDirName = FullDirName();
 		File MemesDir = new File(fullDirName);
@@ -63,16 +63,16 @@ public class MemeBase {
 			String ext = KyoukoBot.DefaultMimeTypes.forName(type).getExtension();
 			File imgFile = new File(fullDirName + hash + ext);
 			if (imgFile.exists())
-				return DownloadResult.DR_DUPE;
+				return MemeResult.DR_DUPE;
 			FileUtils.copyURLToFile(imgURL, imgFile);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return DownloadResult.DR_FAIL;
+			return MemeResult.DR_FAIL;
 		}
-		return DownloadResult.DR_OK;
+		return MemeResult.DR_OK;
 	}
 
-	synchronized DownloadResult DownloadImage(String imgLink)
+	synchronized MemeResult DownloadImage(String imgLink)
 	{
 		try {
 			return DownloadImage(new URL(imgLink));
@@ -87,7 +87,68 @@ public class MemeBase {
 			catch (MalformedURLException e)
 			{
 			}
-		return DownloadResult.DR_FAIL;
+		return MemeResult.DR_FAIL;
+	}
+	
+	synchronized MemeResult DeleteImage(URL imgURL) //the function's way too similar to DownloadImage...
+	{
+		URLConnection leConnection;
+		String type;
+		try {
+			leConnection = imgURL.openConnection();
+			type = leConnection.getContentType();
+			if (type == null)
+				type = KyoukoBot.leTika.detect(imgURL);
+			if (!type.startsWith("image"))
+			{
+				System.out.println(imgURL + " does not link to an image!");
+				return MemeResult.DR_FAIL;
+			}
+		}
+		catch (Exception e)
+		{
+			System.out.println("Failed to connect to " + imgURL);
+			return MemeResult.DR_FAIL;
+		}
+		String fullDirName = FullDirName();
+		File MemesDir = new File(fullDirName);
+		if (!MemesDir.isDirectory())
+		{
+			MemesDir.mkdirs();
+			return MemeResult.DR_DUPE;
+		}
+		ArrayList<String> filenames = new ArrayList<String> (Arrays.asList(MemesDir.list()));
+		Collections.sort(filenames);
+		try {
+			String hash = DigestUtils.md5Hex(leConnection.getInputStream());
+			String ext = KyoukoBot.DefaultMimeTypes.forName(type).getExtension();
+			File imgFile = new File(fullDirName + hash + ext);
+			if (!imgFile.exists())
+				return MemeResult.DR_DUPE;
+			imgFile.delete();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return MemeResult.DR_FAIL;
+		}
+		return MemeResult.DR_OK;
+	}
+	
+	synchronized MemeResult DeleteImage(String imgLink)
+	{
+		try {
+			return DeleteImage(new URL(imgLink));
+		}
+		catch (MalformedURLException e)
+		{
+		}
+		if (imgLink.contains("."))
+			try {
+				return DeleteImage(new URL("https://" + imgLink));
+			}
+			catch (MalformedURLException e)
+			{
+			}
+		return MemeResult.DR_FAIL;
 	}
 	
 	synchronized File GetMeme()
