@@ -163,7 +163,7 @@ public class KyoukoBot {
 	static JSONObject JSONLyrics;
 	static DataBase Database;
 	
-	final static String version = "0.2.2";
+	final static String version = "0.2.3";
 	final static boolean release = false;
 
 	final static String releaseToken = "MjU0MTk0MTM3MTE1NTI1MTIw.CyLgRg.ZX1BeaPzWNBpgLmTeWP4bbYYWzI";
@@ -553,6 +553,7 @@ public class KyoukoBot {
         			handler.registerCommand(new AnimeLyricsCommand());
         			
         			handler.registerCommand(new PrettyCommand(PrettyLink));
+        			//handler.registerCommand(new BreakingNewsCommand());
         			
         			handler.registerCommand(new InfoCommand());
         			handler.registerCommand(new HelpCommand(handler));
@@ -570,8 +571,9 @@ public class KyoukoBot {
         			handler.registerCommand(new RebootCommand());
         			handler.registerCommand(new UpdateCommand());
         			
-        			api.registerListener(new WrongCommandListener(handler));
-        			api.registerListener(new TwitchListener());
+        			/*api.registerListener(new WrongCommandListener(handler));
+        			api.registerListener(new TwitchListener());*/
+        			api.registerListener(new ExtraListener(handler)); //Twitch emotes + wrong commands + easter eggs
         			api.registerListener(new AnimemesListener());
 
         			api.setGame(Database.game);
@@ -622,10 +624,10 @@ public class KyoukoBot {
     	   }
     }
 
-//TODO delete memes (mod-only??)
 //TODO nickname support (from the new Javacord)
 //TODO k!recordings person
-//TODO wake me up inside
+//TODO Breaking Your Own News??
+//TODO whatanime.ga??
 //TODO auto-selfupdate from git??
 //TODO Google search using Startpage??
 //TODO assume "Kyouko" role??

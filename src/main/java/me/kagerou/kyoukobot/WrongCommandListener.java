@@ -16,7 +16,7 @@ class WrongCommandListener implements MessageCreateListener
 	}
 	
 	@Override
-	public void onMessageCreate(DiscordAPI api, Message message) { //synchronized??
+	public void onMessageCreate(DiscordAPI api, Message message) {
 		String msg = message.getContent().toLowerCase();
         if (!message.getAuthor().isYourself() && (msg.startsWith("k!") || message.isPrivateMessage()))
         {

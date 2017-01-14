@@ -39,11 +39,11 @@ class TwitchListener implements MessageCreateListener //TODO prevent the bot fro
 		}
 	}
 	
-	@Override
-	public void onMessageCreate(DiscordAPI api, Message message) {
+	public boolean react(DiscordAPI api, Message message)
+	{
 		String msg = message.getContent().toLowerCase();
 		if (message.getAuthor().isBot() || msg.startsWith("k!"))
-			return;
+			return false;
 		PriorityQueue<IndexPair> Indexes = new PriorityQueue<IndexPair>();
 		for (int emote_index = 0; emote_index < KyoukoBot.Emotes.size(); emote_index++)
 		{
@@ -62,6 +62,8 @@ class TwitchListener implements MessageCreateListener //TODO prevent the bot fro
 			} while (index != -1);
 		}
 		int to_post = (Indexes.size() < EmoteLimit) ? Indexes.size() : EmoteLimit;
+		if (to_post == 0)
+			return false;
 		for (int i = 0; i < to_post; i++)
 		{
 			IndexPair pair = Indexes.poll();
@@ -69,14 +71,12 @@ class TwitchListener implements MessageCreateListener //TODO prevent the bot fro
 				KyoukoBot.postFile(message, "http://i.imgur.com/JwmYhu7.png", "kappa");
 			else
 				KyoukoBot.postFile(message, KyoukoBot.Emotes.get(pair.emote_index).url, KyoukoBot.Emotes.get(pair.emote_index).name);
-			/*if (i < to_post - 1)
-				try {
-					Thread.sleep(250); //gotta guarantee the correct order, is this working??
-				}
-				catch (InterruptedException e)
-				{
-					e.printStackTrace();
-				}*/
 		}
+		return true;
+	}
+	
+	@Override
+	public void onMessageCreate(DiscordAPI api, Message message) {
+		react(api, message);
 	}
 }

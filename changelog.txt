@@ -1,4 +1,7 @@
-Version 0.2.2 [??-01-2017, screw you, i'm european]
+Version 0.2.3 [??-01-2017, screw you, i'm european]
+- wake me up inside!
+
+Version 0.2.2 [13-01-2017, screw you, i'm european]
 - added a k!delete command which removes a "meme" from the collection (moderator/bot owner only);
 - k!proj wraps those Google forms links in <angle brackets> now;
 - k!who all wraps links too but k!who for a single user doesn't;
