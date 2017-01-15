@@ -163,13 +163,10 @@ public class KyoukoBot {
 	static JSONObject JSONLyrics;
 	static DataBase Database;
 	
-	final static String version = "0.2.3";
+	final static String version = "0.2.3a";
 	final static boolean release = false;
-
-	final static String releaseToken = "MjU0MTk0MTM3MTE1NTI1MTIw.CyLgRg.ZX1BeaPzWNBpgLmTeWP4bbYYWzI";
-	final static String betaToken = "MjU1MzY3MTE2NjA4MjQxNjg1.Cyck1g.Fdf27IMvJBnmO2Hla43qh5hE8LM";
-	final static String token = (release) ? releaseToken : betaToken;
-	final static String adminID = "222681293232668672";
+	
+	static String releaseToken = "", betaToken = "", token = "", adminID = "";
 	
     static DiscordAPI api;
     final static long ReconnectTimeoutMillis = 90000/*120000*//*1800000*/;
@@ -187,6 +184,7 @@ public class KyoukoBot {
     final static String OneChitose = "https://remyfool.files.wordpress.com/2016/10/vlcsnap-2016-10-09-13h30m37s147.png";
     final static String OneCat = "http://i.imgur.com/JhkPph1.jpg";
     final static String PrettyLink = "http://i.imgur.com/3zrwfZB.png";
+    final static String BreakingNewsLink = "http://i.imgur.com/28fDbUq.png";
     final static String memeDir = "memes";
     //final static String LeMemes = "hE33X";//"5Lt5e";
     //final static String OneLeMeme = "http://i0.kym-cdn.com/photos/images/facebook/001/115/949/d0d.jpg"; //"how to not shitpost"
@@ -516,12 +514,40 @@ public class KyoukoBot {
 	}
     
     public static void main(String args[]) {
+    	File credentials = new File("credentials.txt");
+    	String imgurClientID = "", imgurClientSecret = "";
+    	boolean loaded = false;
+    	if (credentials.exists())
+    	{
+    		try {
+    			String[] creds = FileUtils.readLines(credentials, Charset.forName("UTF-8")).toArray(new String[0]);
+    			releaseToken = creds[0];
+    			betaToken = creds[1];
+    			adminID = creds[2];
+    			imgurClientID = creds[3];
+    			imgurClientSecret = creds[4];
+    			loaded = true;
+    		}
+    		catch (Exception e)
+    		{
+    			loaded = false;
+    			e.printStackTrace();
+    			return;
+    		}
+    	}
+    	if (!loaded)
+    	{
+    		System.out.println("Failed to read the credentials.");
+    		return;
+    	}
+    	token = (release) ? releaseToken : betaToken;
+    	
     	coc = null;
     	if (manual_reconnecting)
     		coc = new ConsoleOutputTracker();
     	System.setProperty("http.agent", "KyoukoBot");
         api = Javacord.getApi(token, true);
-        imgurClient = new ImgurClient("2e201595b0e2dc9", "08fff5052be91a3ae9e6685858f66a81399c11fa");
+        imgurClient = new ImgurClient(imgurClientID, imgurClientSecret);
         InitPhase();
         FutureCallback<DiscordAPI> callback = new FutureCallback<DiscordAPI>() {
         		@Override
@@ -553,7 +579,7 @@ public class KyoukoBot {
         			handler.registerCommand(new AnimeLyricsCommand());
         			
         			handler.registerCommand(new PrettyCommand(PrettyLink));
-        			//handler.registerCommand(new BreakingNewsCommand());
+        			handler.registerCommand(new BreakingNewsCommand(BreakingNewsLink));
         			
         			handler.registerCommand(new InfoCommand());
         			handler.registerCommand(new HelpCommand(handler));
@@ -626,7 +652,6 @@ public class KyoukoBot {
 
 //TODO nickname support (from the new Javacord)
 //TODO k!recordings person
-//TODO Breaking Your Own News??
 //TODO whatanime.ga??
 //TODO auto-selfupdate from git??
 //TODO Google search using Startpage??

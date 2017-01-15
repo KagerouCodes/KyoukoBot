@@ -1,4 +1,15 @@
-Version 0.2.3 [??-01-2017, screw you, i'm european]
+Version 0.2.3a [15-01-2017, screw you, i'm european]
+- no longer showing my bot token on GitHub (still can't believe someone cared enough to steal it).
+
+=============================================================
+
+Version 0.2.3 [15-01-2017, screw you, i'm european]
+- i can break your news with the k!news (aka k!break) command, the syntax is:
+
+k!news <image>        k!news headline
+headline         OR   ticker
+ticker                (with an image file attached)
+
 - wake me up inside!
 
 Version 0.2.2 [13-01-2017, screw you, i'm european]

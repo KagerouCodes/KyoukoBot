@@ -21,6 +21,11 @@ public class Update {
 		}
 		File tmpFile = new File(args[0]);
 		File jarFile = new File(args[1]);
+		if (!tmpFile.exists())
+		{
+			System.out.println("File " + args[0] + " not found.");
+			return;
+		}
 		if (jarFile.delete())
 			System.out.println("Deleted " + args[1] + " successfully!");
 		else

@@ -8,7 +8,7 @@ import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.javacord.listener.message.MessageCreateListener;
 
-class TwitchListener implements MessageCreateListener //TODO prevent the bot from posting both "incorrect command" and an emote in private chat
+class TwitchListener implements MessageCreateListener
 {
 	Random rnd;
 	TwitchListener()
