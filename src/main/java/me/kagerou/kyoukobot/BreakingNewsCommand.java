@@ -9,12 +9,17 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.imageio.ImageIO;
+
+import com.google.common.collect.Iterables;
 
 import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.message.Message;
@@ -24,6 +29,23 @@ import de.btobastian.sdcf4j.CommandExecutor;
 public class BreakingNewsCommand implements CommandExecutor {
 	BufferedImage template;
 	int width, height;
+	
+	static boolean installFont(String name, List<Font> FontList, GraphicsEnvironment ge, String FileName)
+	{
+		if (Iterables.any(FontList, x -> (x.getName().equalsIgnoreCase(name))))
+			return false;
+		try {
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(System.getProperty("user.dir") + "/fonts/" + FileName)));
+		}
+		catch (Exception e)
+		{
+			System.out.println("Failed to register the font " + FileName);
+			e.printStackTrace();
+			return false;
+		}
+		System.out.println("Registered the font " + FileName + " successfully.");
+		return true;
+	}
 	
 	BreakingNewsCommand (String template_link)
 	{
@@ -38,16 +60,20 @@ public class BreakingNewsCommand implements CommandExecutor {
 			System.out.println("Failed to load the pretty template >_<");
 		}
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		//for (Font f: ge.getAllFonts())
-			//System.out.println(f);
+		List<Font> FontList = Arrays.asList(ge.getAllFonts());
+		installFont("Signika-Bold", FontList, ge, "Signika-Bold.ttf");
+		installFont("Calibri Bold", FontList, ge, "CalibriB.ttf");
+		installFont("Arial Unicode MS", FontList, ge, "Arial_Unicode_MS.ttf");
+		//for (Font f: FontList)
+		//	System.out.println(f);
 	}
 	
 	String appropriateFontName(String text)
 	{
-		if (new Font("Signika", Font.PLAIN, 72).canDisplayUpTo(text) == -1)
-			return "Signika";
-		if (new Font("Calibri", Font.PLAIN, 72).canDisplayUpTo(text) == -1)
-			return "Calibri";
+		if (new Font("Signika-Bold", Font.BOLD, 72).canDisplayUpTo(text) == -1)
+			return "Signika-Bold";
+		if (new Font("Calibri Bold", Font.BOLD, 72).canDisplayUpTo(text) == -1)
+			return "Calibri Bold";
 		return "Arial Unicode MS";
 	}
 	
@@ -128,9 +154,11 @@ public class BreakingNewsCommand implements CommandExecutor {
 		Font smallFont = new Font(fontName, Font.BOLD, 28);
 		Font bigFont = new Font(fontName, Font.BOLD, 72);*/	
 		Font smallFont = new Font(appropriateFontName(ticker), Font.BOLD, 28);
+		System.out.println(smallFont);
 		Font bigFont = new Font(appropriateFontName(headline), Font.BOLD, 72);
+		System.out.println(bigFont);
 		
-		graphics.setFont(new Font("Signika", Font.BOLD, 28));
+		graphics.setFont(new Font("Signika-Bold", Font.BOLD, 28));
 		graphics.setColor(Color.decode("#FFFFFF"));
 		graphics.drawString(new SimpleDateFormat("HH:mm").format(Calendar.getInstance().getTime()), 96, 660);
 		

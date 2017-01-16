@@ -1,3 +1,8 @@
+Version 0.2.3b [16-01-2017, screw you, i'm european]
+- uploaded the needed fonts for the k!news command.
+
+=============================================================
+
 Version 0.2.3a [15-01-2017, screw you, i'm european]
 - no longer showing my bot token on GitHub (still can't believe someone cared enough to steal it).
 

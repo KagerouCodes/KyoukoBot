@@ -39,7 +39,7 @@ public class UpdateCommand implements CommandExecutor {
 		}
 		else
 			try {
-				link = new URL(args[0]);
+				link = new URL(args[0]); //TODO deal with spacebars in filenames
 				if (args.length > 1)
 				{
 					int first_space = message.getContent().indexOf(' ');
@@ -82,7 +82,7 @@ public class UpdateCommand implements CommandExecutor {
 				//FileUtils.copyInputStreamToFile(leStream, new File(FileName));
 				if (!FileName.equalsIgnoreCase("changelog.txt"))
 				{
-					FileUtils.copyURLToFile(link, new File(FileName));
+					FileUtils.copyURLToFile(link, new File(System.getProperty("user.dir") + '/' + FileName));
 					message.reply("`Successfully downloaded the file " + FileName + " of the type " + type + "!`");
 				}
 				else

@@ -107,8 +107,14 @@ class ConsoleOutputTracker {
     
     synchronized void pushCodePoint(int cp)
     {
-    	for (char ch: Character.toChars(cp))
-    		push(ch);
+    	try {
+    		for (char ch: Character.toChars(cp))
+    			push(ch);
+    	}
+    	catch (IllegalArgumentException e)
+    	{
+    		//e.printStackTrace();
+    	}
     }
     
     synchronized public String getLastOutput()
@@ -163,7 +169,7 @@ public class KyoukoBot {
 	static JSONObject JSONLyrics;
 	static DataBase Database;
 	
-	final static String version = "0.2.3a";
+	final static String version = "0.2.3b";
 	final static boolean release = false;
 	
 	static String releaseToken = "", betaToken = "", token = "", adminID = "";
@@ -552,7 +558,6 @@ public class KyoukoBot {
         FutureCallback<DiscordAPI> callback = new FutureCallback<DiscordAPI>() {
         		@Override
         		public void onSuccess(DiscordAPI api) {
-        			KyoukoBot.connected_once = true;
         			CommandHandler handler = new JavacordHandler(api);
         			handler.registerCommand(new PingCommand());
         			handler.registerCommand(new ShiyuCommand());
@@ -604,6 +609,7 @@ public class KyoukoBot {
 
         			api.setGame(Database.game);
         			api.setAutoReconnect(true);
+        			KyoukoBot.connected_once = true;
         			connect_time = System.currentTimeMillis();
         			
         		}
@@ -625,13 +631,13 @@ public class KyoukoBot {
     				   reboot(true);
     			   }
     			   else
-    				   if (!coc.newOutput())
-    					   if (connected_once)
-    					   {
-    						   System.out.println("RECONNECTING MANUALLY!");
-    						   reboot(false);
-    					   }
-    					   else
+    				   if (!coc.newOutput() && connected_once)
+    				   {
+    					   System.out.println("RECONNECTING MANUALLY!");
+    					   reboot(false);
+    				   }
+    				   else
+    					   if (!connected_once)
     					   {
     						   System.out.println("CONNECTING MANUALLY!");
     						   api.disconnect();
@@ -650,6 +656,9 @@ public class KyoukoBot {
     	   }
     }
 
+//TODO make sure all commands are initialised?? 
+//TODO k!suggestions (k!spreadsheet) https://docs.google.com/spreadsheets/d/1-otNwoj793L11ZZ26ely9AMgXC0d3U4BqRcJnq_DWNc/edit?usp=drive_web
+//TODO "kill script"??
 //TODO nickname support (from the new Javacord)
 //TODO k!recordings person
 //TODO whatanime.ga??
