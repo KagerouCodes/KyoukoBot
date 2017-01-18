@@ -28,7 +28,10 @@ public class WhoIsCommand implements CommandExecutor {
         else
         	name = message.getContent().substring(message.getContent().indexOf(' ') + 1).trim();
         if (name.equalsIgnoreCase("Rem"))
+        {
         	message.reply("Who is Rem? :thinking:");
+        	return;
+        }
         if (!name.equalsIgnoreCase("everyone") && !name.equalsIgnoreCase("all"))
         {
         	Map.Entry<String, String> result = KyoukoBot.Database.getEntry(name);
@@ -38,9 +41,15 @@ public class WhoIsCommand implements CommandExecutor {
         		result = KyoukoBot.Database.getPartialEntry(name);
         	if (result == null)
         		if (!name.equalsIgnoreCase(message.getAuthor().getName()))
+        		{
         			message.reply("I-I don't know **" + name + "** yet.");
+        			return;
+        		}
         		else
+        		{
         			message.reply("I-I don't know you, **" + message.getAuthor().getName() + "**, yet. Use k!intro command to introduce yourself.");
+        			return;
+        		}
         	message.reply("**" + result.getKey() + ":** " + result.getValue());
         }
         else

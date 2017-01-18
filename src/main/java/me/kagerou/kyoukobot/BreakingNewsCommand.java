@@ -28,7 +28,7 @@ import de.btobastian.sdcf4j.CommandExecutor;
 
 public class BreakingNewsCommand implements CommandExecutor {
 	BufferedImage template;
-	int width, height;
+	int width, height; //TODO k!news with a newline afterwards is an "incorrect command"??
 	
 	static boolean installFont(String name, List<Font> FontList, GraphicsEnvironment ge, String FileName)
 	{
@@ -173,7 +173,7 @@ public class BreakingNewsCommand implements CommandExecutor {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		 try {
 			 ImageIO.write(result, "PNG", os);
-			 message.replyFile(new ByteArrayInputStream(os.toByteArray()), "news.png");
+			 message.replyFile(new ByteArrayInputStream(os.toByteArray()), "news.png"); //TODO remove the image in the original message after posting the news??
 		 }
 		 catch (Exception e)
 		 {

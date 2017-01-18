@@ -4,7 +4,7 @@ import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 
-public class ProjectCommand implements CommandExecutor {
+public class ProjectCommand implements CommandExecutor { //TODO doesn't show Imagination video!
 	@Command(aliases = {"k!proj", "k!project", "k!song"}, usage = "k!proj [name|current]", description = "Searches for an /r/anime sings project or all current ones.")
     public String onCommand(Message message, String args[]) {
 		if (KyoukoBot.Songs.isEmpty())

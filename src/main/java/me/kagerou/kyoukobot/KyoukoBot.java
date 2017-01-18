@@ -656,6 +656,7 @@ public class KyoukoBot {
     	   }
     }
 
+//TODO respon to :dab: with :dab2:??
 //TODO make sure all commands are initialised?? 
 //TODO k!suggestions (k!spreadsheet) https://docs.google.com/spreadsheets/d/1-otNwoj793L11ZZ26ely9AMgXC0d3U4BqRcJnq_DWNc/edit?usp=drive_web
 //TODO "kill script"??

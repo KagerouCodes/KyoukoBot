@@ -1,3 +1,8 @@
+Version 0.2.4 [??-01-2017, screw you, i'm european]
+- fixed double response to k!whois rem. Who is Rem anyway? :thinking:
+
+=============================================================
+
 Version 0.2.3b [16-01-2017, screw you, i'm european]
 - uploaded the needed fonts for the k!news command.
 
