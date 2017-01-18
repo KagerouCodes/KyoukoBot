@@ -16,10 +16,10 @@ public class HelpCommand implements CommandExecutor {
 		this.handler = handler;
 	}
 	
-	 @Command(aliases = {"k!help", "k!commands"}, description = "Shows this page.")
-	    public String onHelpCommand(Message message) {
+	 @Command(aliases = {"k!help", "k!commands"}, description = "Shows this page.") //TODO shorten this one
+	    public void onHelpCommand(Message message) {
 	        StringBuilder builder = new StringBuilder();
-	        builder.append("```xml");
+	        //builder.append("```xml");
 	        TreeMap<String, String> commands = new TreeMap<String, String>((x, y) -> x.toLowerCase().compareTo(y.toLowerCase()));
 	        int max_usage_length = 0;
 	        for (CommandHandler.SimpleCommand simpleCommand: handler.getCommands()) {
@@ -40,17 +40,34 @@ public class HelpCommand implements CommandExecutor {
 	        }
 	        for (Map.Entry<String, String> command: commands.entrySet())
 	        {
-	        	builder.append('\n').append(command.getKey());
+	        	StringBuilder newline = new StringBuilder();
+	        	newline.append('\n').append(command.getKey());
 	        	for (int i = command.getKey().length(); i <= max_usage_length; i++)
-	        		builder.append(' ');
-	        	builder.append("| ").append(command.getValue());
+	        		newline.append(' ');
+	        	newline.append("| ").append(command.getValue());
+	        	if (builder.length() + newline.length() > KyoukoBot.CharLimit)
+	        	{
+	        		builder.insert(0, "```xml");
+	        		builder.append("```");
+	        		message.reply(builder.toString());
+	        		builder.setLength(0);
+					try {
+						Thread.sleep(500); //gotta guarantee the correct order
+					}
+					catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+	        	}
+	        	builder.append(newline);
 	        }
-	        builder.append("```\n");
+	        if (builder.length() > 0)
+	        {
+	        	builder.insert(0, "```xml");
+        		builder.append("```\n");
+	        }
+	        //builder.append("```\n");
 	        builder.append("`Also, I can recognise most popular Twitch emotes and post them for you~`");
-	        /*if (!message.isPrivateMessage())
-	        	for (Channel channel: message.getChannelReceiver().getServer().getChannels())
-	        		if (channel.getName().equalsIgnoreCase("recordings"))
-	        			builder.append("`Also, I repost all the clyp.it links into` " + channel.getMentionTag() + " `channel.`");*/
-	        return builder.toString();
+	        message.reply(builder.toString());
 	    }
 }

@@ -1,4 +1,5 @@
 Version 0.2.4 [??-01-2017, screw you, i'm european]
+- added the k!spreadsheet command (aka k!suggestions) which links the song suggestion spreadsheet, could you come up with a shorter name for it? 
 - learned to dab just like maiyi!
 - fixed double response to k!whois rem. Who is Rem anyway? :thinking:
 

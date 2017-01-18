@@ -204,7 +204,7 @@ public class KyoukoBot {
     static MimeTypes DefaultMimeTypes = MimeTypes.getDefaultMimeTypes();
     static Tika leTika = new Tika();
     
-    final static String TwitchEmotes[] = {"Kappa", "MrDestructoid", "DansGame", "SwiftRage", "PJSalt", //TODO add KappaRossPride??
+    final static String TwitchEmotes[] = {"Kappa", "MrDestructoid", "DansGame", "SwiftRage", "PJSalt",
     		"Kreygasm", "FrankerZ", "SMOrc", "BibleThump", "PogChamp",
     		"4Head", "ResidentSleeper", "Kippa", "Keepo", "EleGiggle",
     		"BrokeBack", "BabyRage", "WutFace", "deIlluminati", "HeyGuys",
@@ -575,6 +575,7 @@ public class KyoukoBot {
         			handler.registerCommand(new WhoIsCommand());
         			handler.registerCommand(new IntroCommand());
         			handler.registerCommand(new WikiCommand());
+        			handler.registerCommand(new SpeadsheetCommand());
         			
         			handler.registerCommand(new ImageCommand());
         			handler.registerCommand(new GoogleShortCommand(1, true));
@@ -602,8 +603,6 @@ public class KyoukoBot {
         			handler.registerCommand(new RebootCommand());
         			handler.registerCommand(new UpdateCommand());
         			
-        			/*api.registerListener(new WrongCommandListener(handler));
-        			api.registerListener(new TwitchListener());*/
         			api.registerListener(new ExtraListener(handler)); //Twitch emotes + wrong commands + easter eggs
         			api.registerListener(new AnimemesListener());
 
@@ -656,8 +655,6 @@ public class KyoukoBot {
     	   }
     }
 
-//TODO respon to :dab: with :dab2:??
-//TODO make sure all commands are initialised?? 
 //TODO k!suggestions (k!spreadsheet) https://docs.google.com/spreadsheets/d/1-otNwoj793L11ZZ26ely9AMgXC0d3U4BqRcJnq_DWNc/edit?usp=drive_web
 //TODO "kill script"??
 //TODO nickname support (from the new Javacord)
@@ -674,6 +671,7 @@ public class KyoukoBot {
 //TODO remindme??
 //TODO kumirei pictures??
 //TODO fancy embeds??
+//TODO customisable commands??
     
 //TODO random rolls??
 //TODO limits??
