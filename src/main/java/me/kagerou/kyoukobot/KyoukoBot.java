@@ -169,8 +169,8 @@ public class KyoukoBot {
 	static JSONObject JSONLyrics;
 	static DataBase Database;
 	
-	final static String version = "0.2.3b";
-	final static boolean release = false;
+	final static String version = "0.2.4";
+	final static boolean release = false; //TODO move this one to console commands 
 	
 	static String releaseToken = "", betaToken = "", token = "", adminID = "";
 	
