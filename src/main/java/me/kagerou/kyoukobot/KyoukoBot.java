@@ -170,7 +170,7 @@ public class KyoukoBot {
 	static DataBase Database;
 	
 	final static String version = "0.2.4";
-	final static boolean release = false; //TODO move this one to console commands 
+	static boolean release = true; 
 	
 	static String releaseToken = "", betaToken = "", token = "", adminID = "";
 	
@@ -532,6 +532,8 @@ public class KyoukoBot {
     			adminID = creds[2];
     			imgurClientID = creds[3];
     			imgurClientSecret = creds[4];
+    			YouTubeSearcher.GoogleAPIKey = GoogleSearcher.GoogleKey = creds[5];
+    			GoogleSearcher.GoogleCX = creds[6];
     			loaded = true;
     		}
     		catch (Exception e)
@@ -546,6 +548,8 @@ public class KyoukoBot {
     		System.out.println("Failed to read the credentials.");
     		return;
     	}
+    	if (Arrays.asList(args).contains("beta"))
+    		release = false;
     	token = (release) ? releaseToken : betaToken;
     	
     	coc = null;

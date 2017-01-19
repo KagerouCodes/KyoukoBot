@@ -19,9 +19,9 @@ import org.jsoup.select.Elements;
 import de.btobastian.javacord.entities.message.Message;
 
 public class GoogleSearcher {
-	
-	static final String GoogleKey = "AIzaSyCICMglvqw7GuKPdzNP1bkdQM1iGvnoqXA"; //TODO move these to credentials.txt
-	static final String GoogleCX = "007613658332680872345:6mfmvokqqvc";
+
+	static String GoogleKey;
+	static String GoogleCX;
 	static String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.100 Safari/537.36";
 	
 	class SearchResult

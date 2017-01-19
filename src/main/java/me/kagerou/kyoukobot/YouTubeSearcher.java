@@ -13,7 +13,7 @@ import de.btobastian.javacord.entities.message.Message;
 public class YouTubeSearcher {
 	final int LinksLimit;
 	final boolean Preview;
-	static final String GoogleAPIKey = "AIzaSyCICMglvqw7GuKPdzNP1bkdQM1iGvnoqXA";
+	static String GoogleAPIKey;
 	
 	YouTubeSearcher(int LinksLimit, boolean Preview)
 	{
