@@ -2,7 +2,7 @@
  	<modelVersion>4.0.0</modelVersion>
  	<groupId>kagerou.bots.kyoukobot</groupId>
  	<artifactId>kyoukobot</artifactId>
- 	<version>0.2.3a</version>
+ 	<version>0.2.4</version>
  	<name>KyoukoBot</name>
  	<description>A cute youkai of echoes.</description>
   

@@ -175,7 +175,7 @@ public class PrettyCommand implements CommandExecutor {
 		DrawOnTop(graphics, image, new Point2D.Double(730, 517), new Point2D.Double(843, 508), new Point2D.Double(772, 675));
 		DrawOnTop(graphics, image, new Point2D.Double(693, 707), new Point2D.Double(878, 681), new Point2D.Double(725, 859));
 		DrawOnTop(graphics, image, new Point2D.Double(643, 897), new Point2D.Double(815, 864), new Point2D.Double(667, 1012));//new Point2D.Double(662, 992));
-		graphics.drawImage(template, 0, 0, null); //TODO more coordinates, maybe integration with Google Image Search too??
+		graphics.drawImage(template, 0, 0, null); //TODO maybe integration with Google Image Search??
 		
 		 /*AffineTransform transform = new AffineTransform();
 		 

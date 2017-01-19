@@ -65,7 +65,15 @@ class TwitchListener implements MessageCreateListener
 		if (to_post == 0)
 			return false;
 		for (int i = 0; i < to_post; i++)
-		{
+		{//TODO cache all the kappas??
+			if (i > 0)
+				try {
+					Thread.sleep(200);
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
 			IndexPair pair = Indexes.poll();
 			if (KyoukoBot.Emotes.get(pair.emote_index).name.equals("kappa") && (rnd.nextInt(100) == 0))
 				KyoukoBot.postFile(message, "http://i.imgur.com/JwmYhu7.png", "kappa");

@@ -175,7 +175,7 @@ public class KyoukoBot {
 	static String releaseToken = "", betaToken = "", token = "", adminID = "";
 	
     static DiscordAPI api;
-    final static long ReconnectTimeoutMillis = 90000/*120000*//*1800000*/;
+    final static long ReconnectTimeoutMillis = 90000; //1,5 minutes
     final static long ReloadTimeoutMillis = 6 * 60 * 60 * 1000; //6 hours
     static boolean manual_reconnecting = true;
 	static boolean connected_once = false;
@@ -655,7 +655,6 @@ public class KyoukoBot {
     	   }
     }
 
-//TODO k!suggestions (k!spreadsheet) https://docs.google.com/spreadsheets/d/1-otNwoj793L11ZZ26ely9AMgXC0d3U4BqRcJnq_DWNc/edit?usp=drive_web
 //TODO "kill script"??
 //TODO nickname support (from the new Javacord)
 //TODO k!recordings person
