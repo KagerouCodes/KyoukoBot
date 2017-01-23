@@ -16,13 +16,17 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.imageio.ImageIO;
 
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.FutureCallback;
 
 import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.message.Message;
+import de.btobastian.javacord.entities.permissions.PermissionState;
+import de.btobastian.javacord.entities.permissions.PermissionType;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 
@@ -173,7 +177,39 @@ public class BreakingNewsCommand implements CommandExecutor {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		 try {
 			 ImageIO.write(result, "PNG", os);
-			 message.replyFile(new ByteArrayInputStream(os.toByteArray()), "news.png"); //TODO remove the image in the original message after posting the news??
+			 boolean can_manage = false;
+			 if (!message.isPrivateMessage())
+				 can_manage = Iterables.any(api.getYourself().getRoles(message.getChannelReceiver().getServer()), (role) -> role.getPermissions().getState(PermissionType.MANAGE_MESSAGES) == PermissionState.ALLOWED);
+			 if (can_manage)
+				 System.out.println("I am allowed to delete messages here.");
+			 else
+				 System.out.println("I'm NOT allowed to delete messages here!");
+			 final boolean final_can_manage = can_manage;
+			 message.replyFile(new ByteArrayInputStream(os.toByteArray()), "news.png", "News from " + message.getAuthor().getMentionTag() + ":", 
+					new FutureCallback<Message>() {
+	        			@Override
+	        			public void onSuccess(Message msg) {
+	        				try {
+	        					message.delete().get();
+	        				}
+	        				catch (ExecutionException | InterruptedException e)
+	        				{	
+	        					if (final_can_manage)
+	        					{
+	        						System.out.println("Failed to delete the message " + message.getId() + ".");
+	        						e.printStackTrace();
+	        					}
+	        				}
+	        			}
+	            		@Override
+	            		public void onFailure(Throwable t) {
+	            			System.out.println("Failed to break the news >_<");
+	            			t.printStackTrace();
+	            			
+	            		}
+	        		});
+			 //message.reply("News from " + message.getAuthor().getMentionTag() + ":");
+			 //message.replyFile(new ByteArrayInputStream(os.toByteArray()), "news.png");
 		 }
 		 catch (Exception e)
 		 {

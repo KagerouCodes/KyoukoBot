@@ -79,8 +79,7 @@ class Emote
 					e.printStackTrace();
 					return null;
 				}
-		return result;
-	//TODO	
+		return result;	
 	}
 }
 

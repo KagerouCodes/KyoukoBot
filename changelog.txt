@@ -1,8 +1,9 @@
-Version 0.2.4 [??-01-2017, screw you, i'm european]
+Version 0.2.4 [23-01-2017, screw you, i'm european]
 - added the k!spreadsheet command (aka k!suggestions) which links the song suggestion spreadsheet, could you come up with a shorter name for it? 
 - learned to dab just like maiyi!
 - fixed not showing videos for Imagination and Zen Zen Zense projects (those had youtu.be instead of youtube.com in their links);
 - fixed k!proj for the medley showing HTML tags in the project name;
+- k!news deletes the invoking message if i'm given the permission;
 - fixed double response to k!whois rem. Who is Rem anyway? :thinking:
 - Twitch/BTTV emotes get cached now, just in case of future connection problems.
 
