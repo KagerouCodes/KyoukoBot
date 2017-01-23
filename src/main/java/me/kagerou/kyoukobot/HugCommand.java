@@ -62,8 +62,8 @@ public class HugCommand implements CommandExecutor {
        		}
         if (target == null)
         {
-        	message.reply("Couldn't find them, have your hug back >_<");
-    		who += message.getAuthor().getMentionTag() + "*";
+        	//message.reply("Couldn't find them, have your hug back >_<");
+    		who = "Couldn't find them, have your hug back >_<\n" + who + message.getAuthor().getMentionTag() + "*";
     	}
         else
         	if (target.isYourself())

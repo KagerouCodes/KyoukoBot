@@ -49,11 +49,36 @@ class ClypListener implements MessageCreateListener
 
 class Emote
 {
+	static String emoteDir = "emotes";
 	String name, url;
 	Emote(String name, String url)
 	{
 		this.name = name;
 		this.url = url;
+	}
+	String getFileName()
+	{
+		return System.getProperty("user.dir") + "/" + emoteDir + "/" + name + ".png";
+	}
+	File toFile(boolean load)
+	{
+		File result = new File(getFileName());
+		if (!result.exists())
+			if (!load)
+				return null;
+			else
+				try {
+					FileUtils.copyURLToFile(new URL(url), result);
+					System.out.println("Downloaded the " + name + " emote.");
+				}
+				catch (Exception e)
+				{
+					System.out.println("Failed to download the " + name + " emote.");
+					e.printStackTrace();
+					return null;
+				}
+		return result;
+	//TODO	
 	}
 }
 
@@ -485,6 +510,7 @@ public class KyoukoBot {
     	{
     		System.out.println("Failed to load BTTV emotes.");
     	}
+    	result.add(new Emote("goldenkappa", "http://i.imgur.com/JwmYhu7.png"));
     	return result;
     }
     

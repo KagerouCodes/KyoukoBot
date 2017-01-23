@@ -4,6 +4,8 @@ import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.function.Predicate;
 
+import com.google.common.collect.Iterables;
+
 import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.javacord.listener.message.MessageCreateListener;
@@ -48,6 +50,8 @@ class TwitchListener implements MessageCreateListener
 		for (int emote_index = 0; emote_index < KyoukoBot.Emotes.size(); emote_index++)
 		{
 			Emote emote = KyoukoBot.Emotes.get(emote_index);
+			if (emote.name.equals("goldenkappa"))
+				continue;
 			int index = -1;
 			do {
 				index = msg.indexOf(emote.name, index + 1);
@@ -75,10 +79,23 @@ class TwitchListener implements MessageCreateListener
 					e.printStackTrace();
 				}
 			IndexPair pair = Indexes.poll();
-			if (KyoukoBot.Emotes.get(pair.emote_index).name.equals("kappa") && (rnd.nextInt(100) == 0))
-				KyoukoBot.postFile(message, "http://i.imgur.com/JwmYhu7.png", "kappa");
-			else
-				KyoukoBot.postFile(message, KyoukoBot.Emotes.get(pair.emote_index).url, KyoukoBot.Emotes.get(pair.emote_index).name);
+			Emote emote = KyoukoBot.Emotes.get(pair.emote_index);
+			if (emote.name.equals("kappa") && (rnd.nextInt(100) == 0)) //TODO change to 100
+			//if (KyoukoBot.Emotes.get(pair.emote_index).name.equals("kappa") && (rnd.nextInt(100) == 0))
+				//KyoukoBot.postFile(message, "http://i.imgur.com/JwmYhu7.png", "kappa");
+				emote = Iterables.find(KyoukoBot.Emotes, (x) -> x.name.equals("goldenkappa"), emote);
+			//else
+				//KyoukoBot.postFile(message, KyoukoBot.Emotes.get(pair.emote_index).url, KyoukoBot.Emotes.get(pair.emote_index).name);
+				//message.replyFile(KyoukoBot.Emotes.get(pair.emote_index).toFile(true));
+			try {
+				message.replyFile(emote.toFile(true));
+			}
+			catch (Exception e)
+			{
+				System.out.println("Failed to post the " + emote.name + "emote.");
+				e.printStackTrace();
+				message.reply(emote.url);
+			}
 		}
 		return true;
 	}

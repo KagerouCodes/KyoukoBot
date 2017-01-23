@@ -4,6 +4,7 @@ Version 0.2.4 [??-01-2017, screw you, i'm european]
 - fixed not showing videos for Imagination and Zen Zen Zense projects (those had youtu.be instead of youtube.com in their links);
 - fixed k!proj for the medley showing HTML tags in the project name;
 - fixed double response to k!whois rem. Who is Rem anyway? :thinking:
+- Twitch/BTTV emotes get cached now, just in case of future connection problems.
 
 =============================================================
 
