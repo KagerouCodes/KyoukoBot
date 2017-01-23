@@ -663,6 +663,7 @@ public class KyoukoBot {
 //TODO nickname support (from the new Javacord)
 //TODO k!recordings person
 //TODO whatanime.ga??
+//TODO reminder about Tatsumaki's stuff?? 
 //TODO auto-selfupdate from git??
 //TODO Google search using Startpage??
 //TODO assume "Kyouko" role??

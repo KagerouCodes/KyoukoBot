@@ -18,14 +18,23 @@ class SongProject
 	{
 		Elements tds = el.getElementsByTag("td");
 		this.old = old;
-		name_text = tds.get(1).text();
-		name = tds.get(1).html();
+		String name_html = tds.get(1).html();
+		/*name = tds.get(1).html();
 		name = name.replaceAll("<strong>", "**");
 		name = name.replaceAll("</strong>", "**");
 		name = name.replaceAll("<b>", "**");
 		name = name.replaceAll("</b>", "**");
 		name = name.replaceAll("<i>", "*");
-		name = name.replaceAll("</i>", "*");
+		name = name.replaceAll("</i>", "*");*/
+		name_text = tds.get(1).text();
+		name_html = tds.get(1).html();
+		name_html = name_html.replaceAll("<strong>", "**");
+		name_html = name_html.replaceAll("</strong>", "**");
+		name_html = name_html.replaceAll("<b>", "**");
+		name_html = name_html.replaceAll("</b>", "**");
+		name_html = name_html.replaceAll("<i>", "*");
+		name_html = name_html.replaceAll("</i>", "*");
+		name = tds.get(1).html(name_html).text();
 		date = tds.get(2).text();
 		thread_link = tds.get(2).getElementsByTag("a").get(0).attr("href");
 		if (old)
@@ -38,6 +47,13 @@ class SongProject
 					video_link = links.attr("abs:href");
 					break;
 				}
+			if (video_link.isEmpty())
+				for (Element links: tds.get(4).getElementsByTag("a"))
+					if (links.attr("abs:href").contains("youtu.be"))
+					{
+						video_link = links.attr("abs:href");
+						break;
+					}
 			if (video_link.isEmpty())
 				for (Element links: tds.get(4).getElementsByTag("a"))
 					if (links.attr("abs:href").contains("vimeo.com"))
