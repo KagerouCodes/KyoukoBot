@@ -6,9 +6,9 @@ import java.lang.ProcessBuilder.Redirect;
 public class Update {
 
 	public static void main(String[] args) {
-		if (args.length != 2)
+		if ((args.length != 2) && (args.length != 3))
 		{
-			System.out.println("Usage: java -jar update.jar tmpfile jarfile");
+			System.out.println("Usage: java -jar update.jar tmpfile jarfile [beta]");
 			return;
 		}
 		try {
@@ -35,8 +35,11 @@ public class Update {
 		else
 			System.out.println("Failed to rename " + args[0] + " to " + args[1] + ".");
 		try {
-			//Runtime.getRuntime().exec("java -jar " + args[1]);
-			new ProcessBuilder("java", "-jar", args[1]).redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
+			boolean beta = (args.length > 2) && (args[2].equals("beta"));
+			if (!beta)
+				new ProcessBuilder("java", "-jar", args[1], "updated").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
+			else
+				new ProcessBuilder("java", "-jar", args[1], "updated", "beta").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
 		}
 		catch (Exception e)
 		{

@@ -69,7 +69,7 @@ class TwitchListener implements MessageCreateListener
 		if (to_post == 0)
 			return false;
 		for (int i = 0; i < to_post; i++)
-		{//TODO cache all the kappas??
+		{
 			if (i > 0)
 				try {
 					Thread.sleep(200);
@@ -80,7 +80,7 @@ class TwitchListener implements MessageCreateListener
 				}
 			IndexPair pair = Indexes.poll();
 			Emote emote = KyoukoBot.Emotes.get(pair.emote_index);
-			if (emote.name.equals("kappa") && (rnd.nextInt(100) == 0)) //TODO change to 100
+			if (emote.name.equals("kappa") && (rnd.nextInt(100) == 0))
 			//if (KyoukoBot.Emotes.get(pair.emote_index).name.equals("kappa") && (rnd.nextInt(100) == 0))
 				//KyoukoBot.postFile(message, "http://i.imgur.com/JwmYhu7.png", "kappa");
 				emote = Iterables.find(KyoukoBot.Emotes, (x) -> x.name.equals("goldenkappa"), emote);

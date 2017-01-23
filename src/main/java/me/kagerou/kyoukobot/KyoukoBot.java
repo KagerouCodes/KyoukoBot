@@ -18,6 +18,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.FutureCallback;
 import com.sangupta.imgur.api.ImgurClient;
 import com.sangupta.imgur.api.model.Image;
@@ -25,6 +26,7 @@ import com.sangupta.imgur.api.model.Image;
 import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.Javacord;
 import de.btobastian.javacord.entities.Channel;
+import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.javacord.listener.message.MessageCreateListener;
 import de.btobastian.sdcf4j.CommandHandler;
@@ -641,6 +643,14 @@ public class KyoukoBot {
         			KyoukoBot.connected_once = true;
         			connect_time = System.currentTimeMillis();
         			
+        			if (Arrays.asList(args).contains("updated"))
+        			{
+        				User admin = Iterables.find(api.getUsers(), (x) -> x.getId().equals(adminID), null);
+        				if (admin != null)
+        					admin.sendMessage("`Self-update completed!`");
+        				else
+        					System.out.println("Couldn't find the owner.");
+        			}
         		}
         		@Override
         		public void onFailure(Throwable t) {

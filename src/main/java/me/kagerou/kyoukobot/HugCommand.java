@@ -12,7 +12,7 @@ import de.btobastian.sdcf4j.CommandExecutor;
 public class HugCommand implements CommandExecutor {
 	@Command(aliases = {"k!hug"}, description = "Hugs a user over TCP/IP!", usage = "k!hug [username]"/*"k!hug [username|random]"*/)
     public void onCommand(DiscordAPI api, Message message, String args[])
-	{
+	{	
         String who = "*hugs ";
         User target = null;
         if (args.length == 0)
