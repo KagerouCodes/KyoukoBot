@@ -608,11 +608,12 @@ public class KyoukoBot {
 	
 	static void reboot(boolean reload)
 	{
-		api.disconnect();
+		/*api.disconnect();
 		if (reload)
 			InitPhase();
 		api.connectBlocking();
-		connect_time = System.currentTimeMillis();
+		connect_time = System.currentTimeMillis();*/
+		//TODO investigate this
 	}
     
     public static void main(String args[]) {
@@ -763,9 +764,12 @@ public class KyoukoBot {
     	   }
     }
 
+//TODO reconnecting not working well, adds multiple copies of the same command!
+    
 //TODO "kill script"??
 //TODO nickname support (from the new Javacord) - done for hugs
 //TODO k!recordings person
+//TODO Megumin template ("fetish")??
 //TODO whatanime.ga??
 //TODO reminder about Tatsumaki's stuff?? 
 //TODO auto-selfupdate from git??

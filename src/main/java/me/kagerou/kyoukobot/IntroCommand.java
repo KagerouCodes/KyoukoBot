@@ -19,7 +19,6 @@ public class IntroCommand implements CommandExecutor {
 		if (intro.length() > MaxIntroLength)
 			intro = intro.substring(0, MaxIntroLength);
 		KyoukoBot.Database.set(message.getAuthor().getName(), intro);
-		//KyoukoBot.Database.set(message.getAuthor().getName(), no_preview_intro.toString());
 		return "Nice to meet you~";
 	}
 }
