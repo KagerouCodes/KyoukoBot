@@ -26,6 +26,7 @@ import com.sangupta.imgur.api.model.Image;
 import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.Javacord;
 import de.btobastian.javacord.entities.Channel;
+import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.javacord.listener.message.MessageCreateListener;
@@ -455,7 +456,8 @@ public class KyoukoBot {
     		if (ext != "")
     		{
     			System.out.println("Trying to post file: " + URLEncoder.encode(FileName, "UTF-8") + ext);
-    			message.replyFile(leConnection.getInputStream(), URLEncoder.encode(FileName, "UTF-8") + ext)/*.get()*/;
+    			//message.replyFile(leConnection.getInputStream(), URLEncoder.encode(FileName, "UTF-8") + ext)/*.get()*/; //RIP
+    			message.getReceiver().sendFile(leConnection.getInputStream(), URLEncoder.encode(FileName, "UTF-8") + ext);
     			return true;
     		}
     	}
@@ -514,6 +516,73 @@ public class KyoukoBot {
     	result.add(new Emote("goldenkappa", "http://i.imgur.com/JwmYhu7.png"));
     	return result;
     }
+    
+	public static User findUserOnServer(String arg, Server server, User author)
+	{
+		arg = arg.toLowerCase(); //just in case i forget
+		User result = null;
+		Collection<User> users;
+		if (server != null)
+			users = server.getMembers();
+		else
+		{
+			users = new ArrayList<User>();
+			if (author != null)
+				users.add(author);
+			users.add(api.getYourself());
+		}
+		if (server != null)
+			for (User user: users)
+				if (user.getName().equalsIgnoreCase(arg) && ((user.getNickname(server) == null) || user.getNickname(server).equalsIgnoreCase(arg)))
+				{
+					result = user;
+   					break;
+				}
+		if (result == null)
+			if (server != null)
+				for (User user: users)
+					if ((user.getNickname(server) != null) && (user.getNickname(server).equalsIgnoreCase(arg)))
+					{
+						result = user;
+						break;
+					}
+		if (result == null)
+			for (User user: users)
+				if (user.getName().equalsIgnoreCase(arg))
+				{
+					result = user;
+					break;
+				}
+		if ((result == null) && (server != null))
+			for (User user: users)
+				if ((user.getNickname(server) != null) && (user.getNickname(server).toLowerCase().startsWith(arg)))
+				{
+					result = user;
+					break;
+				}
+		if (result == null)
+			for (User user: users)
+				if (user.getName().toLowerCase().startsWith(arg))
+				{
+					result = user;
+					break;
+				}
+		if ((result == null) && (server != null))
+			for (User user: users)
+				if ((user.getNickname(server) != null) && (user.getNickname(server).toLowerCase().contains(arg)))
+				{
+					result = user;
+					break;
+				}
+		if (result == null)
+			for (User user: users)
+				if (user.getName().toLowerCase().contains(arg))
+				{
+					result = user;
+					break;
+				}
+		return result;
+	}
     
 	static void InitPhase() {
 		AllEMTs = InitImageCollection(imgurClient, EMTs, OneEMT);
@@ -695,7 +764,7 @@ public class KyoukoBot {
     }
 
 //TODO "kill script"??
-//TODO nickname support (from the new Javacord)
+//TODO nickname support (from the new Javacord) - done for hugs
 //TODO k!recordings person
 //TODO whatanime.ga??
 //TODO reminder about Tatsumaki's stuff?? 

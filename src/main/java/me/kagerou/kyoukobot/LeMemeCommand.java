@@ -14,6 +14,7 @@ public class LeMemeCommand implements CommandExecutor {
 		if (result == null)
 			message.reply("`I-I'm out of memes >_< But you can always k!donate them to me!`");
 		else
-			message.replyFile(result);
+			//message.replyFile(result);
+			message.getReceiver().sendFile(result);
     }
 }

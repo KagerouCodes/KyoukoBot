@@ -1,3 +1,8 @@
+Version 0.2.5 [??-01-2017, screw you, i'm european]
+- added nickname support for k!hug and k!pretty, those commands would also recognise substrings of usernames/nicknames.
+
+=============================================================
+
 Version 0.2.4 [23-01-2017, screw you, i'm european]
 - added the k!spreadsheet command (aka k!suggestions) which links the song suggestion spreadsheet, could you come up with a shorter name for it? 
 - learned to dab just like maiyi!

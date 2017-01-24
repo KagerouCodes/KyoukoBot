@@ -97,7 +97,7 @@ public class UpdateCommand implements CommandExecutor {
 			{
 				FileName = "KyoukoBot.jar";
 				FileUtils.copyURLToFile(link, new File("KyoukoBot.tmp"));
-				message.reply("`Successfully downloaded the file " + FileName + "! Updating the bot...`");
+				message.reply("`Successfully downloaded the file " + FileName + "! Updating myself...`");
 				Thread.sleep(1000);
 				//Runtime.getRuntime().exec("java -jar update.jar KyoukoBot.tmp KyoukoBot.jar");
 				if (KyoukoBot.coc != null)

@@ -13,7 +13,8 @@ public class ChangeLogCommand implements CommandExecutor {
         	message.reply("`Failed to load the changelog.`");
         else
         	if ((args.length > 0) && (args[0].equalsIgnoreCase("full")))
-        		message.replyFile(new File("changelog.txt"));
+        		//message.replyFile(new File("changelog.txt"));
+        		message.getReceiver().sendFile(new File("changelog.txt"));
         	else
         		message.reply("```xml\n" + KyoukoBot.ChangeLog + "```");
     }

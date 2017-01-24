@@ -88,7 +88,8 @@ class TwitchListener implements MessageCreateListener
 				//KyoukoBot.postFile(message, KyoukoBot.Emotes.get(pair.emote_index).url, KyoukoBot.Emotes.get(pair.emote_index).name);
 				//message.replyFile(KyoukoBot.Emotes.get(pair.emote_index).toFile(true));
 			try {
-				message.replyFile(emote.toFile(true));
+				//message.replyFile(emote.toFile(true));
+				message.getReceiver().sendFile(emote.toFile(true));
 			}
 			catch (Exception e)
 			{

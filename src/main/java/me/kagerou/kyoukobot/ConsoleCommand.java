@@ -27,7 +27,8 @@ public class ConsoleCommand implements CommandExecutor {
 		try {
 			File leFile = new File("console.txt");
 			FileUtils.writeStringToFile(leFile, KyoukoBot.coc.getLastOutput(), Charset.forName("UTF-8"));
-			message.replyFile(leFile).get();
+			//message.replyFile(leFile).get();
+			message.getReceiver().sendFile(leFile).get();
 			leFile.delete();
 		}
 		catch (Exception e)

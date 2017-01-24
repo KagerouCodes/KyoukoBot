@@ -185,7 +185,7 @@ public class BreakingNewsCommand implements CommandExecutor {
 			 else
 				 System.out.println("I'm NOT allowed to delete messages here!");
 			 final boolean final_can_manage = can_manage;
-			 message.replyFile(new ByteArrayInputStream(os.toByteArray()), "news.png", "News from " + message.getAuthor().getMentionTag() + ":", 
+			 message.getReceiver().sendFile(new ByteArrayInputStream(os.toByteArray()), "news.png", "News from " + message.getAuthor().getMentionTag() + ":", 
 					new FutureCallback<Message>() {
 	        			@Override
 	        			public void onSuccess(Message msg) {

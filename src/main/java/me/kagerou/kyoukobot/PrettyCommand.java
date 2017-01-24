@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import javax.imageio.ImageIO;
 
@@ -20,6 +18,7 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
 import de.btobastian.javacord.DiscordAPI;
+import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.impl.ImplUser;
 import de.btobastian.javacord.entities.message.Message;
@@ -80,28 +79,32 @@ public class PrettyCommand implements CommandExecutor {
 	}
 	
 	@Command(aliases = {"k!pretty", "k!nice"}, description = "Fills Mirai's collection of nice and pretty things.", usage = "k!nice username|image")
-    public void onCommand(DiscordAPI api, Message message, String[] args) { //TODO do something with https://2static2.fjcdn.com/thumbnails/comments/Yes+_12bb1d42b9794b90b53cae6196c9baed.png ??
+    public void onCommand(DiscordAPI api, Message message, Server server, String[] args) { //TODO do something with https://2static2.fjcdn.com/thumbnails/comments/Yes+_12bb1d42b9794b90b53cae6196c9baed.png ??
 		if (template == null)
 		{
 			message.reply("`Failed to load the template >_<`");
 			return;
 		}
 		URL imgURL = null;
-		String original_arg = message.getContent().substring(message.getContent().indexOf(' ') + 1).trim();
+		//String original_arg = message.getContent().substring(message.getContent().indexOf(' ') + 1).trim();
+		String original_arg = "";
+		if (args.length > 0)
+			original_arg = message.getContent().split(" ", 2)[1].trim();
 		String arg = original_arg.toLowerCase();
 		if (!message.getAttachments().isEmpty())
 			imgURL = message.getAttachments().iterator().next().getUrl();
 		if (imgURL == null)
 		{
 			User target = null;
-			if (args.length == 0)
+			if (arg.isEmpty())
 				target = message.getAuthor();
 			if (target == null)
 				if (!message.getMentions().isEmpty())
 					target = message.getMentions().get(0);
 			if (target == null)
 			{
-        		Collection<User> users;
+				target = KyoukoBot.findUserOnServer(arg, server, message.getAuthor());
+        		/*Collection<User> users;
         		if (!message.isPrivateMessage())
         			users = message.getChannelReceiver().getServer().getMembers();
        			else
@@ -124,7 +127,7 @@ public class PrettyCommand implements CommandExecutor {
        					{
        						target = user;
        						break;
-       					}
+       					}*/
 			}
 			if (target != null)
 				imgURL = getAvatarUrl(target);
@@ -167,7 +170,7 @@ public class PrettyCommand implements CommandExecutor {
 		Graphics2D graphics = result.createGraphics();
 		graphics.setColor(new Color(255, 255, 255));
 		graphics.fillRect(0, 0, width, height);
-		DrawOnTop(graphics, image, new Point2D.Double(121, 622), new Point2D.Double(278, 605), new Point2D.Double(169, 842));// 326, 825
+		DrawOnTop(graphics, image, new Point2D.Double(121, 622), new Point2D.Double(278, 605), new Point2D.Double(169, 842));
 		DrawOnTop(graphics, image, new Point2D.Double(284, 557), new Point2D.Double(444, 567), new Point2D.Double(331, 769));
 		DrawOnTop(graphics, image, new Point2D.Double(224, 858), new Point2D.Double(494, 858), new Point2D.Double(253, 1011));
 		
@@ -185,7 +188,8 @@ public class PrettyCommand implements CommandExecutor {
 		 ByteArrayOutputStream os = new ByteArrayOutputStream();
 		 try {
 			 ImageIO.write(result, "PNG", os);
-			 message.replyFile(new ByteArrayInputStream(os.toByteArray()), "pretty" + KyoukoBot.DefaultMimeTypes.forName(format).getExtension());
+			 //message.replyFile(new ByteArrayInputStream(os.toByteArray()), "pretty" + KyoukoBot.DefaultMimeTypes.forName(format).getExtension());
+			 message.getReceiver().sendFile(new ByteArrayInputStream(os.toByteArray()), "pretty" + KyoukoBot.DefaultMimeTypes.forName(format).getExtension());
 		 }
 		 catch (Exception e)
 		 {

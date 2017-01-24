@@ -1,9 +1,7 @@
 package me.kagerou.kyoukobot;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import de.btobastian.javacord.DiscordAPI;
+import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
@@ -11,7 +9,7 @@ import de.btobastian.sdcf4j.CommandExecutor;
 
 public class HugCommand implements CommandExecutor {
 	@Command(aliases = {"k!hug"}, description = "Hugs a user over TCP/IP!", usage = "k!hug [username]"/*"k!hug [username|random]"*/)
-    public void onCommand(DiscordAPI api, Message message, String args[])
+    public void onCommand(DiscordAPI api, Message message, Server server, String args[])
 	{	
         String who = "*hugs ";
         User target = null;
@@ -22,9 +20,11 @@ public class HugCommand implements CommandExecutor {
         		target = message.getMentions().get(0);
         	else
         	{
-        		String arg = message.getContent().substring(message.getContent().indexOf(' ') + 1).toLowerCase().trim();
-        		Collection<User> users;
-        		if (!message.isPrivateMessage())
+        		String arg = message.getContent().split(" ", 2)[1].toLowerCase().trim();
+        		target = KyoukoBot.findUserOnServer(arg, server, message.getAuthor());
+        	}
+        		/*Collection<User> users;
+        		if (server != null)
         			users = message.getChannelReceiver().getServer().getMembers();
        			else
        			{
@@ -32,6 +32,13 @@ public class HugCommand implements CommandExecutor {
        				users.add(message.getAuthor());
        				users.add(api.getYourself());
        			}
+        		if (server != null)
+           			for (User user: users)
+            			if ((user.getNickname(server) != null) && (user.getNickname(server).equalsIgnoreCase(arg)))
+            			{
+            				target = user;
+           					break;
+           				}
         		/*if (arg.equals("random"))
         		{
         			ArrayList<User> online_users = new ArrayList<User>();
@@ -42,16 +49,20 @@ public class HugCommand implements CommandExecutor {
         				online_users.add(message.getAuthor());
         			target = online_users.get(new Random().nextInt(online_users.size()));
         		}*/
-       			for (User user: users)
-       			{
-       				//System.out.println((user.getName()));
-        			if (user.getName().equalsIgnoreCase(args[0]))
-        			{
-        				target = user;
-        				//who += user.getMentionTag() + "*";
-       					break;
-       				}
-       			}
+        		/*if (target == null)
+        			for (User user: users)
+        				if (user.getName().equalsIgnoreCase(arg))
+        				{
+        					target = user;
+        					break;
+        				}
+       			if ((target == null) && (server != null))
+       				for (User user: users)
+       					if ((user.getNickname(server) != null) && (user.getNickname(server).toLowerCase().startsWith(arg)))
+       					{
+       						target = user;
+       						break;
+       					}
        			if (target == null)
        				for (User user: users)
        					if (user.getName().toLowerCase().startsWith(arg))
@@ -59,12 +70,9 @@ public class HugCommand implements CommandExecutor {
        						target = user;
        						break;
        					}
-       		}
+       		}*/
         if (target == null)
-        {
-        	//message.reply("Couldn't find them, have your hug back >_<");
     		who = "Couldn't find them, have your hug back >_<\n" + who + message.getAuthor().getMentionTag() + "*";
-    	}
         else
         	if (target.isYourself())
         		who += "herself >_<*";
