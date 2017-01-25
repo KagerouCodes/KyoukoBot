@@ -1,6 +1,7 @@
 package me.kagerou.kyoukobot;
 
 import java.io.*;
+import java.lang.ProcessBuilder.Redirect;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -196,14 +197,15 @@ public class KyoukoBot {
 	static JSONObject JSONLyrics;
 	static DataBase Database;
 	
-	final static String version = "0.2.4";
+	final static String version = "0.2.5";
 	static boolean release = true; 
 	
 	static String releaseToken = "", betaToken = "", token = "", adminID = "";
 	
     static DiscordAPI api;
     final static long ReconnectTimeoutMillis = 90000; //1,5 minutes
-    final static long ReloadTimeoutMillis = 6 * 60 * 60 * 1000; //6 hours
+    final static long ReloadTimeoutMillis = 6 * 60 * 60 * 1000; //6 hours TODO bring this back
+    //final static long ReloadTimeoutMillis = 5 * 60 * 1000; //5 minutes for testing purposes
     static boolean manual_reconnecting = true;
 	static boolean connected_once = false;
 	static long connect_time = 0;
@@ -611,9 +613,21 @@ public class KyoukoBot {
 		/*api.disconnect();
 		if (reload)
 			InitPhase();
-		api.connectBlocking();
-		connect_time = System.currentTimeMillis();*/
+		api.connectBlocking();*/
+		//connect_time = System.currentTimeMillis();
 		//TODO investigate this
+		try {
+			if (release)
+				new ProcessBuilder("java", "-jar", "update.jar", "reboot", "KyoukoBot.jar").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
+			else
+				new ProcessBuilder("java", "-jar", "update.jar", "reboot", "KyoukoBot.jar", "beta").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
+			System.exit(0);
+		}
+		catch (IOException e)
+		{
+			System.out.println("Failed to reboot.");
+			e.printStackTrace();
+		}
 	}
     
     public static void main(String args[]) {
@@ -649,8 +663,8 @@ public class KyoukoBot {
     		release = false;
     	token = (release) ? releaseToken : betaToken;
     	
-    	coc = null;
-    	if (manual_reconnecting)
+    	//coc = null;
+    	//if (manual_reconnecting)
     		coc = new ConsoleOutputTracker();
     	System.setProperty("http.agent", "KyoukoBot");
         api = Javacord.getApi(token, true);
@@ -742,7 +756,9 @@ public class KyoukoBot {
     				   if (!coc.newOutput() && connected_once)
     				   {
     					   System.out.println("RECONNECTING MANUALLY!");
-    					   reboot(false);
+    					   //reboot(false);
+    					   api.disconnect();
+    					   api.connectBlocking(); //TODO reboot(false)
     				   }
     				   else
     					   if (!connected_once)

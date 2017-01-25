@@ -19,11 +19,11 @@ public class ConsoleCommand implements CommandExecutor {
 			message.reply("Y-you're touching me inappropriately!");
 			return;
 		}
-		if (!KyoukoBot.manual_reconnecting)
+		/*if (!KyoukoBot.manual_reconnecting)
 		{
 			message.reply("`Not tracking console output currently.`");
 			return;
-		}
+		}*/
 		try {
 			File leFile = new File("console.txt");
 			FileUtils.writeStringToFile(leFile, KyoukoBot.coc.getLastOutput(), Charset.forName("UTF-8"));
