@@ -608,7 +608,7 @@ public class KyoukoBot {
         init_time = System.currentTimeMillis(); 
 	}
 	
-	static void reboot(boolean reload)
+	static void reboot(boolean manual)//(boolean reload)
 	{
 		/*api.disconnect();
 		if (reload)
@@ -617,11 +617,20 @@ public class KyoukoBot {
 		//connect_time = System.currentTimeMillis();
 		//TODO investigate this
 		try {
-			if (release)
-				new ProcessBuilder("java", "-jar", "update.jar", "reboot", "KyoukoBot.jar").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
+			List<String> commands = new ArrayList<String>();
+			commands.add("java");
+			commands.add("-jar");
+			commands.add("update.jar");
+			if (manual)
+				commands.add("manreboot");
 			else
-				new ProcessBuilder("java", "-jar", "update.jar", "reboot", "KyoukoBot.jar", "beta").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
-			System.exit(0);
+				commands.add("reboot");
+			commands.add("KyoukoBot.jar");
+			if (!release)
+				commands.add("beta");
+			new ProcessBuilder(commands).redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
+			//new ProcessBuilder("java", "-jar", "update.jar", "reboot", "KyoukoBot.jar", "beta").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
+			System.exit(0); //TODO message me after a requested reboot
 		}
 		catch (IOException e)
 		{
@@ -725,10 +734,19 @@ public class KyoukoBot {
         			api.setAutoReconnect(true);
         			KyoukoBot.connected_once = true;
         			connect_time = System.currentTimeMillis();
-        			
+        			User admin = Iterables.find(api.getUsers(), (x) -> x.getId().equals(adminID), null);
+        			if (Arrays.asList(args).contains("rebooted"))
+        				System.out.println("Reboot completed!");
+        			if (Arrays.asList(args).contains("hello"))
+        				if (admin != null)
+        					if (Arrays.asList(args).contains("rebooted"))
+        						admin.sendMessage("`Manual reboot completed!`");
+        					else
+        						admin.sendMessage("`I'm online!`");
+        				else
+        					System.out.println("Couldn't find the owner.");
         			if (Arrays.asList(args).contains("updated"))
         			{
-        				User admin = Iterables.find(api.getUsers(), (x) -> x.getId().equals(adminID), null);
         				if (admin != null)
         					admin.sendMessage("`Self-update completed!`");
         				else
@@ -750,7 +768,8 @@ public class KyoukoBot {
     			   if (System.currentTimeMillis() - init_time > ReloadTimeoutMillis)
     			   {
     				   System.out.println("Obligatory rebooting...");
-    				   reboot(true);
+    				   //reboot(true);
+    				   reboot(false);
     			   }
     			   else
     				   if (!coc.newOutput() && connected_once)

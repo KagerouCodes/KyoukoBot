@@ -10,7 +10,7 @@ public class Update {
 	public static void main(String[] args) {
 		if ((args.length != 2) && (args.length != 3))
 		{
-			System.out.println("Usage: java -jar update.jar (tmpfile/reboot) jarfile [beta]");
+			System.out.println("Usage: java -jar update.jar (tmpfile/reboot/manreboot) jarfile [beta]");
 			return;
 		}
 		try {
@@ -29,8 +29,13 @@ public class Update {
 		commands.add(args[1]);
 		if (beta)
 			commands.add("beta");
-		if (args[0].equalsIgnoreCase("reboot"))
+		if (args[0].equalsIgnoreCase("reboot") || args[0].equalsIgnoreCase("manreboot"))
+		{
 			System.out.println("Restarting " + args[1] + "...");
+			commands.add("rebooted");
+			if (args[0].equalsIgnoreCase("manreboot"))
+				commands.add("hello");
+		}
 		else
 		{
 			File tmpFile = new File(args[0]);
