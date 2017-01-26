@@ -727,6 +727,7 @@ public class KyoukoBot {
         			handler.registerCommand(new ShutdownCommand());
         			handler.registerCommand(new RebootCommand());
         			handler.registerCommand(new UpdateCommand());
+        			handler.registerCommand(new RequestCommand());
         			
         			api.registerListener(new ExtraListener(handler)); //Twitch emotes + wrong commands + easter eggs
         			api.registerListener(new AnimemesListener());
