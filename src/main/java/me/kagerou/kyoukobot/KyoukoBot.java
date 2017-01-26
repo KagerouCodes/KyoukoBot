@@ -204,7 +204,7 @@ public class KyoukoBot {
 	
     static DiscordAPI api;
     final static long ReconnectTimeoutMillis = 90000; //1,5 minutes
-    final static long ReloadTimeoutMillis = 6 * 60 * 60 * 1000; //6 hours TODO bring this back
+    final static long ReloadTimeoutMillis = 6 * 60 * 60 * 1000; //6 hours
     //final static long ReloadTimeoutMillis = 5 * 60 * 1000; //5 minutes for testing purposes
     static boolean manual_reconnecting = true;
 	static boolean connected_once = false;
@@ -630,7 +630,7 @@ public class KyoukoBot {
 				commands.add("beta");
 			new ProcessBuilder(commands).redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
 			//new ProcessBuilder("java", "-jar", "update.jar", "reboot", "KyoukoBot.jar", "beta").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
-			System.exit(0); //TODO message me after a requested reboot
+			System.exit(0);
 		}
 		catch (IOException e)
 		{
@@ -715,6 +715,7 @@ public class KyoukoBot {
         			handler.registerCommand(new HelpCommand(handler));
         			handler.registerCommand(new ChangeLogCommand());
         			handler.registerCommand(new UptimeCommand());
+        			handler.registerCommand(new TokenCommand()); //a bit of an easter egg
         			
         			handler.registerCommand(new CalcCommand());
         			

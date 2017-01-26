@@ -17,8 +17,8 @@ import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.User;
 
 class DataBase //TODO: cloud backup??
-{
-	long time;
+{//TODO make stuff synchronized
+	long time; //TODO reformat it to index by Discord IDs
 	final static String defaultGame = "!k help | k!proj Database"; 
 	String game;
 	TreeMap<String, String> intros;
