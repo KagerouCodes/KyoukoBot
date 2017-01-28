@@ -869,7 +869,8 @@ public class KyoukoBot {
 //TODO k!recordings person
 //TODO Megumin template ("fetish")??
 //TODO whatanime.ga??
-//TODO reminder about Tatsumaki's stuff?? 
+//TODO reminder about Tatsumaki's stuff??
+//TODO typerace??
 //TODO auto-selfupdate from git??
 //TODO Google search using Startpage??
 //TODO assume "Kyouko" role??

@@ -33,12 +33,12 @@ public class UploadCommand implements CommandExecutor {
 		}
 		if (uploaded == 0)
 			if (dupes == 0)
-				message.reply("`No images provided or failed to uploade any >_<`");
-			else
-				if (dupes == 1)
-					message.reply("`Thank you, i already have this image.`");
+					message.reply("`No images provided or failed to upload any >_<`");
 				else
-					message.reply("`Thanks, i already have these images.`");
+					if (dupes == 1)
+						message.reply("`Thank you, i already have this image.`");
+					else
+						message.reply("`Thanks, i already have these images.`");
 		else
 			if (dupes == 0)
 				message.reply("`Uploaded " + uploaded + " image(s) successfully!`");

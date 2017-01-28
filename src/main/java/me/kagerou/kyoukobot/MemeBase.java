@@ -10,13 +10,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Random;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 
 public class MemeBase {
+	static long FileSizeLimit = 8000000; //not sure if it's 
 	private String dirName;
 	MemeBase (String memeDir)
 	{
@@ -25,14 +25,14 @@ public class MemeBase {
 	
 	enum MemeResult
 	{
-		DR_OK, DR_FAIL, DR_DUPE; 
+		DR_OK, DR_FAIL, DR_DUPE, DR_LIMIT; 
 	}
 	
 	private String FullDirName() {
 		return System.getProperty("user.dir") + "/" + dirName + "/";
 	}
 	
-	synchronized MemeResult DownloadImage(URL imgURL)
+	synchronized MemeResult DownloadImage(URL imgURL) //TODO check for size!
 	{
 		URLConnection leConnection;
 		String type;
@@ -46,6 +46,11 @@ public class MemeBase {
 				System.out.println(imgURL + " does not link to an image!");
 				return MemeResult.DR_FAIL;
 			}
+			if (leConnection.getContentLength() > FileSizeLimit)
+			{
+				System.out.println("File " + imgURL + " is too big!");
+				return MemeResult.DR_FAIL;
+			}
 		}
 		catch (Exception e)
 		{
@@ -56,8 +61,8 @@ public class MemeBase {
 		File MemesDir = new File(fullDirName);
 		if (!MemesDir.isDirectory())
 			MemesDir.mkdirs();
-		ArrayList<String> filenames = new ArrayList<String> (Arrays.asList(MemesDir.list()));
-		Collections.sort(filenames);
+		/*ArrayList<String> filenames = new ArrayList<String> (Arrays.asList(MemesDir.list()));
+		Collections.sort(filenames);*/
 		try {
 			String hash = DigestUtils.md5Hex(leConnection.getInputStream());
 			String ext = KyoukoBot.DefaultMimeTypes.forName(type).getExtension();
@@ -104,6 +109,11 @@ public class MemeBase {
 				System.out.println(imgURL + " does not link to an image!");
 				return MemeResult.DR_FAIL;
 			}
+			if (leConnection.getContentLength() > FileSizeLimit)
+			{
+				System.out.println("File " + imgURL + " is too big!");
+				return MemeResult.DR_FAIL;
+			}
 		}
 		catch (Exception e)
 		{
@@ -117,8 +127,8 @@ public class MemeBase {
 			MemesDir.mkdirs();
 			return MemeResult.DR_DUPE;
 		}
-		ArrayList<String> filenames = new ArrayList<String> (Arrays.asList(MemesDir.list()));
-		Collections.sort(filenames);
+		/*ArrayList<String> filenames = new ArrayList<String> (Arrays.asList(MemesDir.list()));
+		Collections.sort(filenames);*/
 		try {
 			String hash = DigestUtils.md5Hex(leConnection.getInputStream());
 			String ext = KyoukoBot.DefaultMimeTypes.forName(type).getExtension();
