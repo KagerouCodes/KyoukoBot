@@ -13,12 +13,15 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.google.common.collect.Iterables;
+
+import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.User;
 
-class DataBase //TODO: cloud backup??
-{//TODO make stuff synchronized
-	long time; //TODO reformat it to index by Discord IDs
+class DataBase
+{
+	long time;
 	final static String defaultGame = "!k help | k!proj Database"; 
 	String game;
 	TreeMap<String, String> intros;
@@ -149,5 +152,20 @@ class DataBase //TODO: cloud backup??
 	{
 		this.game = game;
 		SaveToFile(KyoukoBot.DatabaseFile);
+	}
+	String convert(DiscordAPI api) {
+		JSONObject json = new JSONObject(); 
+		json.put("time", time);
+		json.put("game", game);
+		int noID = 0;
+		JSONObject intros_json = new JSONObject();
+		for (Map.Entry<String, String> person: intros.entrySet())
+		{
+			User user = Iterables.find(api.getUsers(), (x) -> x.getName().equalsIgnoreCase(person.getKey()), null);
+			String id = (user == null) ? ("-" + ++noID) : user.getId();
+			intros_json.put(id, new JSONObject().put("name", person.getKey()).put("intro", person.getValue()));
+		}
+		json.put("intros", intros_json);
+		return json.toString(2);
 	}
 }

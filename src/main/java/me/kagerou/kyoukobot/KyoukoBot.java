@@ -30,6 +30,7 @@ import de.btobastian.javacord.entities.Channel;
 import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.message.Message;
+import de.btobastian.javacord.entities.message.MessageReceiver;
 import de.btobastian.javacord.listener.message.MessageCreateListener;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
@@ -195,7 +196,7 @@ public class KyoukoBot {
 	static MemeBase memeBase;
 	static ArrayList<SongProject> Songs, CurrentSongs;
 	static JSONObject JSONLyrics;
-	static DataBase Database;
+	static NewDataBase Database;
 	
 	final static String version = "0.2.5";
 	static boolean release = true; 
@@ -311,7 +312,7 @@ public class KyoukoBot {
     	}
     }
 
-    public static boolean InitDatabase(DataBase Database, String DatabaseFile)
+    public static boolean InitDatabase(NewDataBase Database, String DatabaseFile)
     {
     	if (Database.readFromFile(DatabaseFile))
     	{
@@ -519,6 +520,54 @@ public class KyoukoBot {
     	return result;
     }
     
+    public static ArrayList<User> findUsersOnServer(String arg, Server server, User author)
+    {
+    	arg = arg.toLowerCase(); //just in case i forget
+		ArrayList<User> result = new ArrayList<User>();
+		Collection<User> users;
+		if (server != null)
+			users = server.getMembers();
+		else
+		{
+			users = new ArrayList<User>();
+			if (author != null)
+				users.add(author);
+			users.add(api.getYourself());
+		}
+		if (server != null)
+			for (User user: users)
+				if (user.getName().equalsIgnoreCase(arg) && ((user.getNickname(server) == null) || user.getNickname(server).equalsIgnoreCase(arg)))
+					result.add(user);
+		if (server != null)
+			for (User user: users)
+				if ((user.getNickname(server) != null) && (user.getNickname(server).equalsIgnoreCase(arg)))
+					if (!result.contains(user))
+						result.add(user);
+		for (User user: users)
+			if (user.getName().equalsIgnoreCase(arg))
+				if (!result.contains(user))
+					result.add(user);
+		if (server != null)
+			for (User user: users)
+				if ((user.getNickname(server) != null) && (user.getNickname(server).toLowerCase().startsWith(arg)))
+					if (!result.contains(user))
+						result.add(user);
+		for (User user: users)
+			if (user.getName().toLowerCase().startsWith(arg))
+				if (!result.contains(user))
+					result.add(user);
+		if (server != null)
+			for (User user: users)
+				if ((user.getNickname(server) != null) && (user.getNickname(server).toLowerCase().contains(arg)))
+					if (!result.contains(user))
+						result.add(user);
+		for (User user: users)
+			if (user.getName().toLowerCase().contains(arg))
+				if (!result.contains(user))
+					result.add(user);
+		return result;
+    }
+    
 	public static User findUserOnServer(String arg, Server server, User author)
 	{
 		arg = arg.toLowerCase(); //just in case i forget
@@ -585,6 +634,17 @@ public class KyoukoBot {
 				}
 		return result;
 	}
+	
+	static String getNickname(User user, MessageReceiver receiver)
+	{
+		if (receiver instanceof Channel)
+		{
+			String nickname = user.getNickname(((Channel) receiver).getServer());
+			if (nickname != null)
+				return nickname;
+		}		
+		return user.getName();
+	}
     
 	static void InitPhase() {
 		AllEMTs = InitImageCollection(imgurClient, EMTs, OneEMT);
@@ -596,7 +656,7 @@ public class KyoukoBot {
         CurrentSongs = new ArrayList<SongProject>();
         InitSongCollection(Songs, CurrentSongs, SongWiki);
         
-        Database = new DataBase();
+        Database = new NewDataBase();
         InitDatabase(Database, DatabaseFile);
         
         ChangeLog = InitChangeLog("changelog.txt");
@@ -682,6 +742,7 @@ public class KyoukoBot {
         FutureCallback<DiscordAPI> callback = new FutureCallback<DiscordAPI>() {
         		@Override
         		public void onSuccess(DiscordAPI api) {
+        			Database.adjustNames(api.getUsers()); //fix the database on startup
         			CommandHandler handler = new JavacordHandler(api);
         			handler.registerCommand(new PingCommand());
         			handler.registerCommand(new ShiyuCommand());
@@ -728,9 +789,11 @@ public class KyoukoBot {
         			handler.registerCommand(new RebootCommand());
         			handler.registerCommand(new UpdateCommand());
         			handler.registerCommand(new RequestCommand());
+        			handler.registerCommand(new ConvertCommand());
         			
         			api.registerListener(new ExtraListener(handler)); //Twitch emotes + wrong commands + easter eggs
         			api.registerListener(new AnimemesListener());
+        			api.registerListener(new NameChangeListener());
 
         			api.setGame(Database.game);
         			api.setAutoReconnect(true);
@@ -800,11 +863,9 @@ public class KyoukoBot {
     		   }
     	   }
     }
-
-//TODO reconnecting not working well, adds multiple copies of the same command!
     
 //TODO "kill script"??
-//TODO nickname support (from the new Javacord) - done for hugs
+//TODO nickname support (from the new Javacord) - done for hugs and k!who/k!intro??
 //TODO k!recordings person
 //TODO Megumin template ("fetish")??
 //TODO whatanime.ga??
@@ -824,7 +885,6 @@ public class KyoukoBot {
     
 //TODO random rolls??
 //TODO limits??
-//TODO "another daily to farm"??
-//TODO make Tora dodge hugs, possibly with RNG, wtf??    
+//TODO "another daily to farm"??    
 //TODO JDA?!
 }
