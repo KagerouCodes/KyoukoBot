@@ -10,7 +10,7 @@ import de.btobastian.sdcf4j.Command;
 import me.kagerou.kyoukobot.MemeBase.MemeResult;
 
 public class AnimemesListener implements MessageCreateListener {
-	String[] uploadPrefixes = {};
+	String[] uploadPrefixes = {}; //is this even needed??
 	
 	AnimemesListener()
 	{
@@ -31,11 +31,13 @@ public class AnimemesListener implements MessageCreateListener {
 	public void onMessageCreate(DiscordAPI api, Message message) {
 		if (message.isPrivateMessage() || message.getAuthor().isBot() || !message.getChannelReceiver().getName().equals("animemes"))
 			return;
+		if (message.getContent().toLowerCase().startsWith("k!"))
+			return;
 		String args[] = message.getContent().split(" |\\r\\n|\\n|\\r");
-		if (args.length > 0) 
+		/*if (args.length > 0) 
 			for (String prefix: uploadPrefixes)
 				if (args[0].equalsIgnoreCase(prefix))
-					return;
+					return;*/
 		int uploaded = 0, dupes = 0;
 		for (String arg: args)
 		{

@@ -70,6 +70,12 @@ public class MemeBase {
 			if (imgFile.exists())
 				return MemeResult.DR_DUPE;
 			FileUtils.copyURLToFile(imgURL, imgFile);
+			if (imgFile.length() > FileSizeLimit)
+			{
+				imgFile.delete();
+				System.out.println("File " + imgURL + " is too big!");
+				return MemeResult.DR_FAIL;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return MemeResult.DR_FAIL;

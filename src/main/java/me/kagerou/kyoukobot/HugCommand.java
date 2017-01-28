@@ -75,7 +75,7 @@ public class HugCommand implements CommandExecutor {
     		who = "Couldn't find them, have your hug back >_<\n" + who + message.getAuthor().getMentionTag() + "*";
         else
         	if (target.isYourself())
-        		who += "herself >_<*";
+        		who += "herself >_<*"; //change this to something else??
         	else
         		who += target.getMentionTag() + "*";
         message.reply(who);

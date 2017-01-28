@@ -1,6 +1,7 @@
 Version 0.2.5 [??-01-2017, screw you, i'm european]
 - added nickname support for k!hug and k!pretty, those commands would also recognise substrings of usernames/nicknames;
 - k!who/k!intro received the same treatment and are probably bugged as heck now;
+- i will no longer download files larger than 8 MB to the meme pool and fail to post them afterwards;
 - got rid of the lewdest pictures in the Emilia pack.
 
 =============================================================
