@@ -59,31 +59,14 @@ public class WhoIsCommand implements CommandExecutor {
         	List<User> usersByName = KyoukoBot.findUsersOnServer(name, server, message.getAuthor());
         	if ((target = Iterables.find(usersByName, (x) -> (KyoukoBot.Database.get(x.getId()) != null), null)) != null)
         	{
-        		message.reply("**" + KyoukoBot.getNickname(target, message.getReceiver()) + ":** " + KyoukoBot.wrapLinks(KyoukoBot.Database.get(target.getId()).intro));
+        		message.reply("**" + KyoukoBot.getNickname(target, message.getReceiver()) + ":** " + KyoukoBot.Database.get(target.getId()).intro);
         		return;
         	}
         	Map.Entry<String, NewDataBase.Person> entry = KyoukoBot.Database.findPartialEntry(name);
         	if (entry != null)
-        		message.reply("**" + entry.getValue().name + ":** " + KyoukoBot.wrapLinks(entry.getValue().intro));
+        		message.reply("**" + entry.getValue().name + ":** " + entry.getValue().intro);
         	else
         		message.reply("I-I don't know **" + name + "** yet.");
-        	/*Map.Entry<String, String> result = KyoukoBot.Database.getEntry(name);
-        	if ((result == null) && (target == null) && (!message.isPrivateMessage()))
-        		result = KyoukoBot.Database.getPartialEntryOnServer(name, message.getChannelReceiver().getServer());
-        	if ((result == null) && (target == null))
-        		result = KyoukoBot.Database.getPartialEntry(name);
-        	if (result == null)
-        		if (!name.equalsIgnoreCase(message.getAuthor().getName()))
-        		{
-        			message.reply("I-I don't know **" + name + "** yet.");
-        			return;
-        		}
-        		else
-        		{
-        			message.reply("I-I don't know you, **" + message.getAuthor().getName() + "**, yet. Use k!intro command to introduce yourself.");
-        			return;
-        		}
-        	message.reply("**" + result.getKey() + ":** " + result.getValue());*/
         }
         else
         { //TODO make it introduce only more active/recent users??
@@ -135,45 +118,6 @@ public class WhoIsCommand implements CommandExecutor {
         	if (output.isEmpty())
             	output = "I-I don't know anyone here...";
         	message.reply(output);
-        	/*ArrayList<String> list = new ArrayList<String>();
-        	Collection<User> users;
-        	if (!message.isPrivateMessage())
-        		users = message.getChannelReceiver().getServer().getMembers();
-        	else
-        	{
-        		users = new ArrayList<User>();
-        		users.add(message.getAuthor());
-        	}
-        	for (User user: users)
-        	{
-        		if (!user.isBot() && (user.getStatus() != UserStatus.OFFLINE))
-        		{
-        			Map.Entry<String, String> result = KyoukoBot.Database.getEntry(user.getName());
-        			if (result != null)
-        				list.add("**" + result.getKey() + ":** " + KyoukoBot.wrapLinks(result.getValue()));
-        		}
-        	}
-        	Collections.sort(list, (x, y) -> x.toLowerCase().compareTo(y.toLowerCase()));
-        	String output = new String();
-        	for (String str: list)
-        	{
-        		if (output.length() + str.length() > KyoukoBot.CharLimit)
-        		{
-        			message.reply(output);
-        			output = "";
-        			try {
-    					Thread.sleep(500); //gotta guarantee the correct order
-    				}
-    				catch (InterruptedException e)
-    				{
-    					e.printStackTrace();
-    				}
-        		}
-        		output += str + '\n';
-        	}
-        	if (output.isEmpty())
-            	output = "I-I don't know anyone here...";
-        	message.reply(output);*/
         }
 	}
 }

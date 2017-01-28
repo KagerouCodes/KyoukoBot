@@ -51,19 +51,6 @@ class NewDataBase //TODO: cloud backup??
 	{
 		time = 0;
 		game = defaultGame;
-		/*intros.clear();
-		intros.put("Kyouko", "Hey, that's me! Type k!info if you want to know more.");
-		intros.put("Kagerou", "My cute master~ Fails at singing pretty hard.");
-		intros.put("Nyako", "A crazy moeblob of existence.");
-		intros.put("kaitlin*", "So moe you're gonna die! <:Heck:251011995539603458>");
-		intros.put("shiyu", "She's shiyu, no matter what her nickname is. Known for being salty. Has a cute voice.");
-		intros.put("MrPot4to", "A professional weeaboo and my main provider of Chitose pictures.");
-		intros.put("pandaxtc", "He's a panda. And he loves Chitose.");
-		intros.put("Electrorocket", "A crazy gentleman who'll never give you up. Occasionally turns into a god :cloud_lightning:");
-		intros.put("Phreid", "Literally a rap god.");
-		intros.put("kail", "Can rap in Korean like a boss.");
-		intros.put("Tora_the_Tiger", "Admin of this Discord channel. People call him a lowkey Hitler but like his voice.");
-		intros.put("ZTN", "High tension japanese goburin! :japanese_goblin: <:ZTN:251016635106721793>");*/
 		SaveToFile(FileName);
 	}
 	synchronized boolean readFromFile(String FileName)
@@ -208,31 +195,6 @@ class NewDataBase //TODO: cloud backup??
 		SaveToFile(KyoukoBot.DatabaseFile);
 		return true;
 	}
-	/*Map.Entry<String, String> getEntry(String name)
-	{
-		Map.Entry<String, String> result = intros.ceilingEntry(name);
-		if ((result != null) && (intros.comparator().compare(result.getKey(), name) == 0))
-			return result;
-		return null;
-	}
-	Map.Entry<String, String> getPartialEntry(String name)
-	{
-		Map.Entry<String, String> result = intros.ceilingEntry(name);
-		if ((result != null) && (result.getKey().toLowerCase().startsWith(name.toLowerCase())))
-			return result;
-		return null;
-	}
-	Map.Entry<String, String> getPartialEntryOnServer(String name, Server server)
-	{
-		String name_inc = name.substring(0, name.length() - 1) + (char) (name.charAt(name.length() - 1) + 1);
-		TreeSet<String> usernames = new TreeSet<String> ((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase()));
-		for (User user: server.getMembers())
-			usernames.add(user.getName());
-		for (String key: intros.navigableKeySet().subSet(name, name_inc))
-			if (usernames.contains(key))
-				return intros.ceilingEntry(key);
-		return null;
-	}*/
 	synchronized boolean setName(String id, String name)
 	{
 		if (!people.containsKey(id) || people.get(id).name.equals(name))
