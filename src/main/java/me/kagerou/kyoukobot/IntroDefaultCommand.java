@@ -5,7 +5,7 @@ import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 
-
+@Deprecated
 public class IntroDefaultCommand implements CommandExecutor {
 	@Command(aliases = {"k!introdefault"}, description = "Cheesy admin-only command.", usage = "k!introstandard", showInHelpPage = false)
     public String onCommand(DiscordAPI api, Message message, String args[])

@@ -5,6 +5,7 @@ import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 
+@Deprecated
 public class TwitchCommand implements CommandExecutor {
 	@Command(aliases = {"k!twitch", "k!emote"}, description = "Posts a Twitch emote in chat.", usage = "k!twitch emote", showInHelpPage = false)
     public void onCommand(DiscordAPI api, Message message, String[] args)

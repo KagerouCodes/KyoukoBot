@@ -5,7 +5,7 @@ import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 
 public class ProjectCommand implements CommandExecutor {
-	@Command(aliases = {"k!proj", "k!project", "k!song"}, usage = "k!proj [name|current]", description = "Searches for an /r/anime sings project or all current ones.")
+	@Command(aliases = {"k!proj", "k!project", "k!song"}, usage = "k!proj [name|current]", description = "Searches for an /r/anime sings project or all current ones (with the word \"current\" or no arguments at all).")
     public String onCommand(Message message, String args[]) {
 		if (KyoukoBot.Songs.isEmpty())
 			if (!KyoukoBot.InitSongCollection(KyoukoBot.Songs, KyoukoBot.CurrentSongs, KyoukoBot.SongWiki))

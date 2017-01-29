@@ -78,7 +78,7 @@ public class PrettyCommand implements CommandExecutor {
 		graphics.drawImage(image, transform, null);
 	}
 	
-	@Command(aliases = {"k!pretty", "k!nice"}, description = "Fills Mirai's collection of nice and pretty things.", usage = "k!nice username|image")
+	@Command(aliases = {"k!nice", "k!pretty"}, description = "Fills Mirai's collection of nice and pretty things. Accepts attachments.", usage = "k!nice username|image")
     public void onCommand(DiscordAPI api, Message message, Server server, String[] args) { //TODO do something with https://2static2.fjcdn.com/thumbnails/comments/Yes+_12bb1d42b9794b90b53cae6196c9baed.png ??
 		if (template == null)
 		{

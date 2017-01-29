@@ -9,7 +9,7 @@ import de.btobastian.sdcf4j.CommandExecutor;
 
 public class IntroCommand implements CommandExecutor {
 	final int MaxIntroLength = 200;
-	@Command(aliases = {"k!intro", "k!introduce"}, description = "Lets you introduce yourself.", usage = "k!intro[duce] text")
+	@Command(aliases = {"k!intro", "k!introduce"}, description = "Lets you introduce yourself.", usage = "k!intro text")
     public String onCommand(DiscordAPI api, Message message, String args[])
 	{
 		if (args.length == 0)

@@ -10,7 +10,7 @@ public class GoogleShortCommand extends GoogleSearcher implements CommandExecuto
 		super(LinksLimit, Preview);
 	}
 	
-	@Command(aliases = {"k!ggl"}, description = "Performs a Google search (1 result, with preview).", usage = "k!ggl query")
+	@Command(aliases = {"k!ggl"}, description = "Performs a Google search (1 result, with a preview).", usage = "k!ggl query")
     public String onCommand(Message message) {
 		return search(message);
 	}

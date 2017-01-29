@@ -9,7 +9,7 @@ public class YouTubeShortCommand extends YouTubeSearcher implements CommandExecu
 		super(LinksLimit, Preview);
 	}
 	
-	@Command(aliases = {"k!yt"}, description = "Performs a YouTube search (1 result, with preview).", usage = "k!yt query")
+	@Command(aliases = {"k!yt"}, description = "Performs a YouTube search (1 result, with a preview).", usage = "k!yt query")
     public String onCommand(Message message, String[] args) {
 		return search(message, args);
 	}

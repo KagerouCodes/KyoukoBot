@@ -81,7 +81,7 @@ public class BreakingNewsCommand implements CommandExecutor {
 		return "Arial Unicode MS";
 	}
 	
-	@Command(aliases = {"k!news", "k!break", "k!breaking", "k!breakingnews"}, description = "Breaks your own news.", usage = "k!news image \u21B5 headline \u21B5 ticker")
+	@Command(aliases = {"k!news", "k!break", "k!breaking", "k!breakingnews"}, description = "Breaks your own news.", usage = "k!news image \u21B5 headline \u21B5 ticker\nOR k!news headline \u21B5 ticker (with an image attachment)")
     public void onCommand(DiscordAPI api, Message message, String[] args) {
 		if (template == null)
 		{

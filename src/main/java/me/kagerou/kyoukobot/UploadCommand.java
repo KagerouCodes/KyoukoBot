@@ -7,7 +7,7 @@ import de.btobastian.sdcf4j.CommandExecutor;
 import me.kagerou.kyoukobot.MemeBase.MemeResult;
 
 public class UploadCommand implements CommandExecutor {	
-	@Command(aliases = {"k!upload", "k!donate"}, description = "Uploads image(s) to the \"meme\" collection, accepts attachments too. You don't need to use the command in #animemes.", usage = "k!upload image(s)")
+	@Command(aliases = {"k!upload", "k!donate"}, description = "Uploads image(s) to the \"meme\" collection, accepts attachments too.\nYou don't need to use the command in #animemes. Images over 8 MB are not accepted.", usage = "k!upload image(s)")
     public void onCommand(Message message, String args[]) {
 		if ((args.length == 0) && (message.getAttachments().isEmpty()))
 		{

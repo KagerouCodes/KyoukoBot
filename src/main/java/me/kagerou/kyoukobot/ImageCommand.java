@@ -29,7 +29,7 @@ public class ImageCommand implements CommandExecutor { //TODO make it stable??
 	    return IOUtils.toString(httpCon.getInputStream(), "UTF-8");
 	}
 	
-	@Command(aliases = {"k!image", "k!img"}, description = "Performs a Google image search.", usage = "k!img query")
+	@Command(aliases = {"k!img", "k!image"}, description = "Performs a Google image search.", usage = "k!img query")
     public void onCommand(Message message, String[] args) {
 		if (args.length == 0)
     	{

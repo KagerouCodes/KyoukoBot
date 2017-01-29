@@ -1,6 +1,7 @@
 package me.kagerou.kyoukobot;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.TreeMap;
 
 import de.btobastian.javacord.entities.message.Message;
@@ -16,9 +17,58 @@ public class HelpCommand implements CommandExecutor {
 		this.handler = handler;
 	}
 	
-	 @Command(aliases = {"k!help", "k!commands"}, description = "Shows this page.") //TODO shorten this one
-	    public void onHelpCommand(Message message) {
-	        StringBuilder builder = new StringBuilder();
+	 @Command(aliases = {"k!help", "k!commands"}, usage = "k!help [command]", description = "Shows the list of commands or info on a certain one.") //TODO shorten this one
+	    public void onHelpCommand(Message message, String[] args) {
+		 if (args.length > 0)
+		 {
+			 String arg = args[0].toLowerCase();
+			 if (arg.startsWith("k!"))
+				 arg = arg.substring(2);
+			 if (arg.length() > 0)
+			 {
+				 TreeMap<String, CommandHandler.SimpleCommand> commands = new TreeMap<String, CommandHandler.SimpleCommand>((x, y) -> x.toLowerCase().compareTo(y.toLowerCase()));
+				 for (CommandHandler.SimpleCommand simpleCommand: handler.getCommands())
+					 if (simpleCommand.getCommandAnnotation().showInHelpPage())
+						 for (String alias: simpleCommand.getCommandAnnotation().aliases())
+							 commands.put(alias.substring(2), simpleCommand); //cut the "k!"
+				 String commandName = commands.ceilingKey(arg);
+				 if ((commandName != null) && (commandName.toLowerCase().startsWith(arg)))
+				 {
+					 //TODO help for a single command
+					 Command anno = commands.get(commandName).getCommandAnnotation();
+					 StringBuilder helpText = new StringBuilder("```\nCommand: " + anno.aliases()[0]);
+					 if (anno.aliases().length > 1)
+						 if (anno.aliases().length > 2)
+						 {
+							 helpText.append("\nAliases: ").append(anno.aliases()[1]);
+							 for (int index = 2; index < anno.aliases().length; index++)
+								 helpText.append(", ").append(anno.aliases()[index]);
+						 }
+						 else
+							 helpText.append("\nAlias: ").append(anno.aliases()[1]);
+					 if (!anno.usage().isEmpty())
+						 helpText.append("\nUsage: ").append(anno.usage());
+					 if (!anno.description().equals("none"))
+						 helpText.append("\n\n").append(anno.description());
+					 helpText.append("```");
+					 message.reply(helpText.toString());
+					 return;
+				 }
+			 }
+		 }
+		 //TODO list of commands
+		 ArrayList<String> commandNames = new ArrayList<String>();
+		 for (CommandHandler.SimpleCommand simpleCommand: handler.getCommands())
+			 if (simpleCommand.getCommandAnnotation().showInHelpPage())
+				 commandNames.add(simpleCommand.getCommandAnnotation().aliases()[0]);
+		 Collections.sort(commandNames, (x, y) -> x.toLowerCase().compareTo(y.toLowerCase()));
+		 StringBuilder commandListText = new StringBuilder("```xml\nCommands list:```\n");
+		 commandListText.append('`').append(commandNames.get(0)).append('`');
+		 for (int index = 1; index < commandNames.size(); index++)
+			 commandListText.append(", `").append(commandNames.get(index)).append("`");
+		 commandListText.append("\n\n```\nUse \"k!help command\" to get more info on a certain command.```");
+		 message.reply(commandListText.toString());
+	        /*StringBuilder builder = new StringBuilder();
 	        //builder.append("```xml");
 	        TreeMap<String, String> commands = new TreeMap<String, String>((x, y) -> x.toLowerCase().compareTo(y.toLowerCase()));
 	        int max_usage_length = 0;
@@ -68,6 +118,6 @@ public class HelpCommand implements CommandExecutor {
 	        }
 	        //builder.append("```\n");
 	        builder.append("`Also, I can recognise most popular Twitch emotes and post them for you~`");
-	        message.reply(builder.toString());
+	        message.reply(builder.toString());*/
 	    }
 }

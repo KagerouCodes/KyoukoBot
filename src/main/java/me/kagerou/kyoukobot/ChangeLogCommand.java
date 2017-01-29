@@ -16,6 +16,6 @@ public class ChangeLogCommand implements CommandExecutor {
         		//message.replyFile(new File("changelog.txt"));
         		message.getReceiver().sendFile(new File("changelog.txt"));
         	else
-        		message.reply("```xml\n" + KyoukoBot.ChangeLog + "```");
+        		message.reply("```\n" + KyoukoBot.ChangeLog + "```");
     }
 }

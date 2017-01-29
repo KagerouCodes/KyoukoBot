@@ -10,7 +10,7 @@ import de.btobastian.sdcf4j.CommandExecutor;
 import me.kagerou.kyoukobot.MemeBase.MemeResult;
 
 public class DeleteCommand implements CommandExecutor {
-	@Command(aliases = {"k!delete", "k!delmeme"}, description = "Deletes image(s) from the \"meme\" collection (moderator/owner only).", usage = "k!delete image(s)")
+	@Command(aliases = {"k!delete", "k!delmeme"}, description = "Deletes image(s) from the \"meme\" collection (moderator/owner only), accepts both links and attachments.", usage = "k!delete image(s)")
     public void onCommand(Message message, String args[]) {
 		boolean allowed = false;
 		if (message.getAuthor().getId().equals(KyoukoBot.adminID))

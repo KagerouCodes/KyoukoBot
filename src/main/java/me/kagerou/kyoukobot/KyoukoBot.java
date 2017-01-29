@@ -255,11 +255,7 @@ public class KyoukoBot {
     	boolean success = true;
     	try {
     		for (Image img: client.getAlbumDetails(album).data.images)
-    		{
     			links.add(img.link);
-    			//links.add(img.getLink());
-    			//System.out.println(img.link);
-    		}
     		if (links.isEmpty())
     			throw new Exception();
     		System.out.println("Imgur album " + album + " loaded successfully!");
@@ -459,7 +455,6 @@ public class KyoukoBot {
     		if (ext != "")
     		{
     			System.out.println("Trying to post file: " + URLEncoder.encode(FileName, "UTF-8") + ext);
-    			//message.replyFile(leConnection.getInputStream(), URLEncoder.encode(FileName, "UTF-8") + ext)/*.get()*/; //RIP
     			message.getReceiver().sendFile(leConnection.getInputStream(), URLEncoder.encode(FileName, "UTF-8") + ext);
     			return true;
     		}
@@ -732,9 +727,7 @@ public class KyoukoBot {
     		release = false;
     	token = (release) ? releaseToken : betaToken;
     	
-    	//coc = null;
-    	//if (manual_reconnecting)
-    		coc = new ConsoleOutputTracker();
+    	coc = new ConsoleOutputTracker();
     	System.setProperty("http.agent", "KyoukoBot");
         api = Javacord.getApi(token, true);
         imgurClient = new ImgurClient(imgurClientID, imgurClientSecret);
@@ -781,7 +774,7 @@ public class KyoukoBot {
         			handler.registerCommand(new CalcCommand());
         			
         			handler.registerCommand(new IntroUserCommand());
-        			handler.registerCommand(new IntroDefaultCommand());
+        			//handler.registerCommand(new IntroDefaultCommand());
         			handler.registerCommand(new SetGameCommand());
         			handler.registerCommand(new RehashCommand());
         			handler.registerCommand(new ConsoleCommand());
@@ -870,6 +863,7 @@ public class KyoukoBot {
 //TODO Megumin template ("fetish")??
 //TODO whatanime.ga??
 //TODO reminder about Tatsumaki's stuff??
+//TODO chocolate giving system??
 //TODO typerace??
 //TODO auto-selfupdate from git??
 //TODO Google search using Startpage??

@@ -17,7 +17,7 @@ import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 
 public class WhoIsCommand implements CommandExecutor {
-	@Command(aliases = {"k!who", "k!whois"}, description = "Introduces a user or the entire chat room.", usage = "k!who[is] [username|everyone]")
+	@Command(aliases = {"k!who", "k!whois"}, description = "Introduces a user or the entire chat room.", usage = "k!who [name|everyone|all]")
     public void onCommand(DiscordAPI api, Message message, Server server, String args[])
 	{
         User target = null;

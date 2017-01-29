@@ -7,6 +7,7 @@ import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 
+@Deprecated
 public class RecordCommand implements CommandExecutor {
 	@Command(aliases = {"k!record", "k!rec"}, usage = "k!rec[ord] post", description = "Reposts into #recordings channel.")
     public void onCommand(Message message, String args[]) {

@@ -1,4 +1,5 @@
-Version 0.2.5 [??-01-2017, screw you, i'm european]
+Version 0.2.5 [29-01-2017, screw you, i'm european]
+- made k!help fancier, it would list all the commands by default and give info on a certain command if you specify it;
 - added nickname support for k!hug and k!pretty, those commands would also recognise substrings of usernames/nicknames;
 - k!who/k!intro received the same treatment and are probably bugged as heck now;
 - i will no longer download files larger than 8 MB to the meme pool and fail to post them afterwards;

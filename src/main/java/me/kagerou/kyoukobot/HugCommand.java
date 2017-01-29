@@ -8,7 +8,7 @@ import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 
 public class HugCommand implements CommandExecutor {
-	@Command(aliases = {"k!hug"}, description = "Hugs a user over TCP/IP!", usage = "k!hug [username]"/*"k!hug [username|random]"*/)
+	@Command(aliases = {"k!hug"}, description = "Hugs a user over TCP/IP! You can get a hug too~", usage = "k!hug [name]"/*"k!hug [username|random]"*/)
     public void onCommand(DiscordAPI api, Message message, Server server, String args[])
 	{	
         String who = "*hugs ";

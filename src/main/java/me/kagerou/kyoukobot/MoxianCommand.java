@@ -13,8 +13,8 @@ import de.btobastian.sdcf4j.CommandExecutor;
 
 @Deprecated
 public class MoxianCommand implements CommandExecutor {
-	static String GoogleKey = "AIzaSyCICMglvqw7GuKPdzNP1bkdQM1iGvnoqXA";
-	static String GoogleCX = "007613658332680872345:6mfmvokqqvc";
+	static String GoogleKey = ""; //TODO fill this one if you're planning to use the command
+	static String GoogleCX = "";
 
 	@Command(aliases = {"k!moxian"}, description = "Performs a Google image search as Moxian adviced.", usage = "k!moxian query", showInHelpPage = false)
     public void onCommand(Message message, String[] args) {
