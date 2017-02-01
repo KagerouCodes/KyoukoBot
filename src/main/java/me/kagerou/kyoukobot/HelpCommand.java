@@ -34,7 +34,6 @@ public class HelpCommand implements CommandExecutor {
 				 String commandName = commands.ceilingKey(arg);
 				 if ((commandName != null) && (commandName.toLowerCase().startsWith(arg)))
 				 {
-					 //TODO help for a single command
 					 Command anno = commands.get(commandName).getCommandAnnotation();
 					 StringBuilder helpText = new StringBuilder("```\nCommand: " + anno.aliases()[0]);
 					 if (anno.aliases().length > 1)

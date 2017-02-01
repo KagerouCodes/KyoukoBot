@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.Timer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -26,6 +27,7 @@ class NewDataBase //TODO: cloud backup??
 	{
 		String name;
 		String intro;
+		TreeMap<String, RemindTask> alarms = new TreeMap<String, RemindTask>();
 		Person(String name, String intro)
 		{
 			this.name = name;
@@ -34,6 +36,9 @@ class NewDataBase //TODO: cloud backup??
 		Person()
 		{
 			this("", "");
+		}
+		public boolean isEmpty() {
+			return intro.isEmpty() && alarms.isEmpty();
 		}
 	}
 	
@@ -44,7 +49,7 @@ class NewDataBase //TODO: cloud backup??
 	NewDataBase()
 	{
 		time = 0;
-		game = "k!help | k!info Database";
+		game = defaultGame;
 		people = new TreeMap<String, Person>();
 	}
 	synchronized void defaultFill(String FileName)
@@ -69,7 +74,13 @@ class NewDataBase //TODO: cloud backup??
 			{
 				JSONObject intros = json.getJSONObject("intros");
 				for (Object id: intros.keySet())
-					people.put((String) id, new Person(intros.getJSONObject((String) id).getString("name"), intros.getJSONObject((String) id).getString("intro")));
+				{
+					JSONObject person = intros.getJSONObject((String) id);
+					people.put((String) id, new Person(person.getString("name"), person.getString("intro")));
+					if (person.has("tasks"))
+						for (Object taskName: person.getJSONObject("tasks").keySet())
+							registerReminder((String) id, person.getString("name"), (String) taskName, person.getJSONObject("tasks").getLong((String) taskName), KyoukoBot.timer);
+				}
 				return true;
 			}
 		}
@@ -81,14 +92,24 @@ class NewDataBase //TODO: cloud backup??
 		people.clear();
 		return false;
 	}
-	synchronized JSONObject toJSONObject()
+	synchronized JSONObject toJSONObject() //TODO incorporate tasks
 	{
 		JSONObject json = new JSONObject();
 		json.put("time", time);
 		json.put("game", game);
 		JSONObject intros_json = new JSONObject();
 		for (Map.Entry<String, Person> person: people.entrySet())
-			intros_json.put(person.getKey(), new JSONObject().put("name", person.getValue().name).put("intro", person.getValue().intro));
+		{
+			JSONObject person_json = new JSONObject().put("name", person.getValue().name).put("intro", person.getValue().intro);
+			if (!person.getValue().alarms.isEmpty())
+			{
+				JSONObject tasks_json = new JSONObject();
+				for (Map.Entry<String, RemindTask> taskEntry: person.getValue().alarms.entrySet())
+					tasks_json.put(taskEntry.getKey(), taskEntry.getValue().getTime());
+				person_json.put("tasks", tasks_json);
+			}
+			intros_json.put(person.getKey(), person_json);
+		}
 		json.put("intros", intros_json);
 		return json;
 	}
@@ -176,10 +197,12 @@ class NewDataBase //TODO: cloud backup??
 		return result;
 	}
 	
-	synchronized boolean removeEntry(String id)
+	synchronized boolean removeEntry(String id) 
 	{
 		if (!people.containsKey(id))
 			return false;
+		for (RemindTask task: people.get(id).alarms.values())
+			task.cancel();
 		people.remove(id);
 		System.out.println("Removed " + id + " entry from the database.");
 		SaveToFile(KyoukoBot.DatabaseFile);
@@ -241,17 +264,63 @@ class NewDataBase //TODO: cloud backup??
 	synchronized void setNameAndIntro(String id, String name, String intro)
 	{
 		time = System.currentTimeMillis();
-		if (intro.isEmpty())
+		if (!people.containsKey(id))
+			people.put(id, new Person());
+		Person person = people.get(id);
+		person.name = name;
+		person.intro = intro;
+		if (person.isEmpty())
 		{
-			people.remove(id); //TODO change this behavior when more fields are added to the DB
+			people.remove(id);
 			System.out.println("Removed " + id + " entry from the database.");
 		}
 		else
-		{
-			people.put(id, new Person(name, intro));
 			System.out.println("Set the " + name + " name and " + intro + " intro for the ID " + id + " in the database.");
-		}
 		SaveToFile(KyoukoBot.DatabaseFile);
+	}
+	synchronized void registerReminder(User user, String msg, long alarmTime, Timer timer)
+	{
+		registerReminder(user.getId(), user.getName(), msg, alarmTime, timer);
+	}
+	synchronized void registerReminder(String id, String name, String msg, long alarmTime, Timer timer) {
+		alarmTime = Math.max(alarmTime, System.currentTimeMillis());
+		RemindTask task = new RemindTask(id, KyoukoBot.api, msg, alarmTime, this);
+		Person person;
+		if (!people.containsKey(id))
+		{
+			person = new Person(name, "");
+			people.put(id, person);
+		}
+		else
+			person = people.get(id);
+		if (person.alarms.containsKey(msg))
+			person.alarms.get(msg).cancel();
+		person.alarms.put(msg, task);
+		SaveToFile(KyoukoBot.DatabaseFile);
+		System.out.println("Registered a reminder for the user " + id + ".");
+		timer.schedule(task, Math.max(alarmTime - System.currentTimeMillis(), 0));
+	}
+	synchronized boolean refreshReminder(RemindTask task, Timer timer)
+	{
+		String id = task.getId();
+		String message = task.getMessage();
+		if (!people.containsKey(id) || !people.get(id).alarms.containsKey(message) || (people.get(id).alarms.get(message) != task)) //a bit of a sanity check
+			return false;
+		registerReminder(id, "", message, task.getTime(), timer);
+		return true;
+	}
+	synchronized boolean removeReminder(RemindTask task)
+	{
+		String id = task.getId();
+		String message = task.getMessage();
+		if (!people.containsKey(id) || !people.get(id).alarms.containsKey(message))
+			return false;
+		people.get(id).alarms.remove(message);
+		if (people.get(id).isEmpty())
+			people.remove(id);
+		SaveToFile(KyoukoBot.DatabaseFile);
+		System.out.println("Removed a reminder for user " + id + ".");
+		return true;
 	}
 	synchronized void setGame(String game)
 	{

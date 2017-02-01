@@ -51,7 +51,7 @@ public class WhoIsCommand implements CommandExecutor {
     				}
     			}
     			if (person != null)
-    				message.reply("**" + KyoukoBot.getNickname(target, message.getReceiver()) + ":** " + KyoukoBot.wrapLinks(person.intro));
+    				message.reply("**" + KyoukoBot.getNickname(target, message.getReceiver()) + ":** " + person.intro);
     			else
     				message.reply("I-I don't know **" + name + "** yet.");
     			return;

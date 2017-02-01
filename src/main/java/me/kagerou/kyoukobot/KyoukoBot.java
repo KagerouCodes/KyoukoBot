@@ -198,7 +198,7 @@ public class KyoukoBot {
 	static JSONObject JSONLyrics;
 	static NewDataBase Database;
 	
-	final static String version = "0.2.5";
+	final static String version = "0.3";
 	static boolean release = true; 
 	
 	static String releaseToken = "", betaToken = "", token = "", adminID = "";
@@ -220,6 +220,8 @@ public class KyoukoBot {
     final static String OneChitose = "https://remyfool.files.wordpress.com/2016/10/vlcsnap-2016-10-09-13h30m37s147.png";
     final static String OneCat = "http://i.imgur.com/JhkPph1.jpg";
     final static String PrettyLink = "http://i.imgur.com/3zrwfZB.png";
+    final static String YuzuruLink = "http://i.imgur.com/9FulDOt.png";
+    final static String MeguminLink = "http://i.imgur.com/X1rO0A7.png";
     final static String BreakingNewsLink = "http://i.imgur.com/28fDbUq.png";
     final static String memeDir = "memes";
     //final static String LeMemes = "hE33X";//"5Lt5e";
@@ -248,6 +250,8 @@ public class KyoukoBot {
     static HashMap<String, SearchResult> SearchResults = new HashMap<String, SearchResult>();
 	
 	static ImgurClient imgurClient;
+	
+	static Timer timer = new Timer();
     
     static ArrayList<String> InitImageCollection(ImgurClient client, String album, String single_pic)
     {
@@ -338,7 +342,7 @@ public class KyoukoBot {
 		}
 	}
 	
-	public static String wrapLinks(String str)
+	public static String wrapLinks(String str) //TODO learn regexp
 	{
 		StringBuilder result = new StringBuilder();
 		int index = 0;
@@ -735,7 +739,8 @@ public class KyoukoBot {
         FutureCallback<DiscordAPI> callback = new FutureCallback<DiscordAPI>() {
         		@Override
         		public void onSuccess(DiscordAPI api) {
-        			Database.adjustNames(api.getUsers()); //fix the database on startup
+        			Database.adjustNames(api.getUsers()); //fix the database on startup TODO seems like an exception can happen here
+        			
         			CommandHandler handler = new JavacordHandler(api);
         			handler.registerCommand(new PingCommand());
         			handler.registerCommand(new ShiyuCommand());
@@ -762,7 +767,9 @@ public class KyoukoBot {
         			handler.registerCommand(new YouTubeLongCommand(3, false));
         			handler.registerCommand(new AnimeLyricsCommand());
         			
-        			handler.registerCommand(new PrettyCommand(PrettyLink));
+        			handler.registerCommand(new PrettyCommand());
+        			handler.registerCommand(new YuzuruCommand());
+        			handler.registerCommand(new MeguminCommand());
         			handler.registerCommand(new BreakingNewsCommand(BreakingNewsLink));
         			
         			handler.registerCommand(new InfoCommand());
@@ -783,6 +790,8 @@ public class KyoukoBot {
         			handler.registerCommand(new UpdateCommand());
         			handler.registerCommand(new RequestCommand());
         			handler.registerCommand(new ConvertCommand());
+        			handler.registerCommand(new FetchRecCommand()); //RIP
+        			handler.registerCommand(new RemindMeCommand());
         			
         			api.registerListener(new ExtraListener(handler)); //Twitch emotes + wrong commands + easter eggs
         			api.registerListener(new AnimemesListener());
@@ -857,13 +866,13 @@ public class KyoukoBot {
     	   }
     }
     
-//TODO "kill script"??
-//TODO nickname support (from the new Javacord) - done for hugs and k!who/k!intro??
-//TODO k!recordings person
-//TODO Megumin template ("fetish")??
-//TODO whatanime.ga??
 //TODO reminder about Tatsumaki's stuff??
+//TODO channel.type();    
+//TODO "kill script"??
+//TODO k!recordings person (outclassed by the discord search, sigh)
+//TODO whatanime.ga??
 //TODO chocolate giving system??
+//TODO headpats??
 //TODO typerace??
 //TODO auto-selfupdate from git??
 //TODO Google search using Startpage??

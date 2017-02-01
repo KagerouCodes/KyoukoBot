@@ -32,7 +32,7 @@ public class MemeBase {
 		return System.getProperty("user.dir") + "/" + dirName + "/";
 	}
 	
-	synchronized MemeResult DownloadImage(URL imgURL) //TODO check for size!
+	synchronized MemeResult DownloadImage(URL imgURL)
 	{
 		URLConnection leConnection;
 		String type;

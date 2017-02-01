@@ -1,3 +1,9 @@
+Version 0.3 [??-01-2017, screw you, i'm european]
+- added a k!yuzuru command which works just like k!nice but with another template;
+- added a similar k!fetish command as well which tries to fit the whole image while saving proportions (works best with 16/9 pics).
+
+=============================================================
+
 Version 0.2.5 [29-01-2017, screw you, i'm european]
 - made k!help fancier, it would list all the commands by default and give info on a certain command if you specify it;
 - added nickname support for k!hug and k!pretty, those commands would also recognise substrings of usernames/nicknames;
