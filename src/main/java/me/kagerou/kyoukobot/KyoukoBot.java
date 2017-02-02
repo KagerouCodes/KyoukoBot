@@ -231,6 +231,7 @@ public class KyoukoBot {
     final static String DatabaseFile = "people.txt";
     final static String SearchResultsFile = "search_results.txt";
     final static long CacheDuration = 3 * 24 * 60 * 60 * 1000; //milliseconds in three days
+    final static String TatsumakiID = "172002275412279296"; 
     final static int CharLimit = 1900;
     static String ChangeLog;
     static MimeTypes DefaultMimeTypes = MimeTypes.getDefaultMimeTypes();
@@ -644,6 +645,33 @@ public class KyoukoBot {
 		}		
 		return user.getName();
 	}
+	
+	static String msToTimeString(long time) {
+		int[] divisors = {0, 24, 60, 60};
+		String[] time_units = {"day(s)", "hour(s)", "minute(s)", "second(s)"};
+		time /= 1000;
+		long time_divided[] = new long[4];
+		for (int i = 3; i >= 0; i--)
+			if (divisors[i] != 0)
+			{
+				time_divided[i] = time % divisors[i];
+				time /= divisors[i];
+			}
+			else
+			{
+				time_divided[i] = time;
+				time = 0;
+			}
+		String result = "";
+		for (int i = 0; i <= 3; i++)
+			if (time_divided[i] != 0)
+				result += time_divided[i] + " " + time_units[i] + " ";
+		if (result.length() == 0)
+			result += "0 " + time_units[3];
+		else
+			result = result.substring(0, result.length() - 1);
+		return result;
+	}
     
 	static void InitPhase() {
 		AllEMTs = InitImageCollection(imgurClient, EMTs, OneEMT);
@@ -772,6 +800,8 @@ public class KyoukoBot {
         			handler.registerCommand(new MeguminCommand());
         			handler.registerCommand(new BreakingNewsCommand(BreakingNewsLink));
         			
+        			handler.registerCommand(new DailyCommand());
+        			
         			handler.registerCommand(new InfoCommand());
         			handler.registerCommand(new HelpCommand(handler));
         			handler.registerCommand(new ChangeLogCommand());
@@ -792,11 +822,14 @@ public class KyoukoBot {
         			handler.registerCommand(new ConvertCommand());
         			handler.registerCommand(new FetchRecCommand()); //RIP
         			handler.registerCommand(new RemindMeCommand());
+        			handler.registerCommand(new ListAlarmsCommand());
         			
         			api.registerListener(new ExtraListener(handler)); //Twitch emotes + wrong commands + easter eggs
         			api.registerListener(new AnimemesListener());
         			api.registerListener(new NameChangeListener());
-
+        			api.registerListener(new ShiyuReactionListener());
+    				api.registerListener(new TatsumakiListener(TatsumakiID));
+        			
         			api.setGame(Database.game);
         			api.setAutoReconnect(true);
         			KyoukoBot.connected_once = true;

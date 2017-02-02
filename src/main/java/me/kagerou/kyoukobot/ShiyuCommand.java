@@ -8,7 +8,6 @@ public class ShiyuCommand implements CommandExecutor {
 	final static String ShiyuFace = "http://i.imgur.com/qAMpJam.png";
     @Command(aliases = {"k!shiyu"}, description = "Posts a picture of baby Shiyu's face.")
     public void onCommand(Message message) {
-    	KyoukoBot.postFile(message, ShiyuFace, "shiyu");
-    	//message.reply("", new EmbedBuilder().setImage(ShiyuFace));
+    	KyoukoBot.postFile(message, ShiyuFace, "shiyu"); //TODO add a Shiyu emote to it 
     }
 }

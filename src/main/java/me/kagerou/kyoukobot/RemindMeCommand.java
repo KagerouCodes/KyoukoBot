@@ -16,7 +16,7 @@ public class RemindMeCommand implements CommandExecutor { //TODO listing and can
 			return;
 		}
 		long seconds = -1;
-		String[] splitContent = message.getContent().split(" ", 3);
+		String[] splitContent = message.getContent().split("\\s+", 3);//.split(" ", 3);
 		if (splitContent.length == 1)
 		{
 			message.reply("`Enter the delay (in seconds).`");
@@ -41,7 +41,7 @@ public class RemindMeCommand implements CommandExecutor { //TODO listing and can
 			msg = splitContent[2];
 		else
 			msg = "Alarm!";
-		KyoukoBot.Database.registerReminder(message.getAuthor(), msg, alarmTime, KyoukoBot.timer);
+		KyoukoBot.Database.registerReminder(message.getAuthor(), msg, alarmTime, KyoukoBot.timer, true);
 		message.reply("Scheduled an alarm in " + seconds + " seconds!");
 	}
 }

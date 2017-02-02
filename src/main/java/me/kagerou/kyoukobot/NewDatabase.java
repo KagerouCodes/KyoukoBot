@@ -27,6 +27,7 @@ class NewDataBase //TODO: cloud backup??
 	{
 		String name;
 		String intro;
+		boolean subscribed = false;
 		TreeMap<String, RemindTask> alarms = new TreeMap<String, RemindTask>();
 		Person(String name, String intro)
 		{
@@ -38,7 +39,7 @@ class NewDataBase //TODO: cloud backup??
 			this("", "");
 		}
 		public boolean isEmpty() {
-			return intro.isEmpty() && alarms.isEmpty();
+			return intro.isEmpty() && alarms.isEmpty() && !subscribed;
 		}
 	}
 	
@@ -46,6 +47,8 @@ class NewDataBase //TODO: cloud backup??
 	final static String defaultGame = "!k help | k!proj Database"; 
 	String game;
 	TreeMap<String, Person> people;
+	final static String dailyAlarmMessage = " :alarm_clock: **Time to farm daily credits!**";
+	final static String repAlarmMessage = " :alarm_clock: **Time to give a daily reputation point!**";
 	NewDataBase()
 	{
 		time = 0;
@@ -75,11 +78,14 @@ class NewDataBase //TODO: cloud backup??
 				JSONObject intros = json.getJSONObject("intros");
 				for (Object id: intros.keySet())
 				{
-					JSONObject person = intros.getJSONObject((String) id);
-					people.put((String) id, new Person(person.getString("name"), person.getString("intro")));
-					if (person.has("tasks"))
-						for (Object taskName: person.getJSONObject("tasks").keySet())
-							registerReminder((String) id, person.getString("name"), (String) taskName, person.getJSONObject("tasks").getLong((String) taskName), KyoukoBot.timer);
+					JSONObject personJSON = intros.getJSONObject((String) id);
+					Person person = new Person(personJSON.getString("name"), personJSON.getString("intro"));
+					if (personJSON.has("sub"))
+						person.subscribed = true;
+					people.put((String) id, person);
+					if (personJSON.has("tasks"))
+						for (Object taskName: personJSON.getJSONObject("tasks").keySet())
+							registerReminder((String) id, personJSON.getString("name"), (String) taskName, personJSON.getJSONObject("tasks").getLong((String) taskName), KyoukoBot.timer, false);
 				}
 				return true;
 			}
@@ -101,6 +107,8 @@ class NewDataBase //TODO: cloud backup??
 		for (Map.Entry<String, Person> person: people.entrySet())
 		{
 			JSONObject person_json = new JSONObject().put("name", person.getValue().name).put("intro", person.getValue().intro);
+			if (person.getValue().subscribed)
+				person_json.put("sub", true); //if not, then not even putting false
 			if (!person.getValue().alarms.isEmpty())
 			{
 				JSONObject tasks_json = new JSONObject();
@@ -278,11 +286,11 @@ class NewDataBase //TODO: cloud backup??
 			System.out.println("Set the " + name + " name and " + intro + " intro for the ID " + id + " in the database.");
 		SaveToFile(KyoukoBot.DatabaseFile);
 	}
-	synchronized void registerReminder(User user, String msg, long alarmTime, Timer timer)
+	synchronized void registerReminder(User user, String msg, long alarmTime, Timer timer, boolean saveToFile)
 	{
-		registerReminder(user.getId(), user.getName(), msg, alarmTime, timer);
+		registerReminder(user.getId(), user.getName(), msg, alarmTime, timer, saveToFile);
 	}
-	synchronized void registerReminder(String id, String name, String msg, long alarmTime, Timer timer) {
+	synchronized void registerReminder(String id, String name, String msg, long alarmTime, Timer timer, boolean saveToFile) {
 		alarmTime = Math.max(alarmTime, System.currentTimeMillis());
 		RemindTask task = new RemindTask(id, KyoukoBot.api, msg, alarmTime, this);
 		Person person;
@@ -296,7 +304,8 @@ class NewDataBase //TODO: cloud backup??
 		if (person.alarms.containsKey(msg))
 			person.alarms.get(msg).cancel();
 		person.alarms.put(msg, task);
-		SaveToFile(KyoukoBot.DatabaseFile);
+		if (saveToFile)
+			SaveToFile(KyoukoBot.DatabaseFile);
 		System.out.println("Registered a reminder for the user " + id + ".");
 		timer.schedule(task, Math.max(alarmTime - System.currentTimeMillis(), 0));
 	}
@@ -306,11 +315,13 @@ class NewDataBase //TODO: cloud backup??
 		String message = task.getMessage();
 		if (!people.containsKey(id) || !people.get(id).alarms.containsKey(message) || (people.get(id).alarms.get(message) != task)) //a bit of a sanity check
 			return false;
-		registerReminder(id, "", message, task.getTime(), timer);
+		registerReminder(id, "", message, task.getTime(), timer, true);
 		return true;
 	}
 	synchronized boolean removeReminder(RemindTask task)
 	{
+		if (task == null)
+			return false;
 		String id = task.getId();
 		String message = task.getMessage();
 		if (!people.containsKey(id) || !people.get(id).alarms.containsKey(message))
@@ -320,6 +331,51 @@ class NewDataBase //TODO: cloud backup??
 			people.remove(id);
 		SaveToFile(KyoukoBot.DatabaseFile);
 		System.out.println("Removed a reminder for user " + id + ".");
+		return true;
+	}
+	synchronized long getDailyDelay(User user) {
+		return getTimeLeft(user.getId(), dailyAlarmMessage);
+	}
+	synchronized long getRepDelay(User user) {
+		return getTimeLeft(user.getId(), repAlarmMessage);
+	}
+	synchronized long getTimeLeft(String id, String alarmMessage) {
+		if (!people.containsKey(id))
+			return -1;
+		RemindTask task = people.get(id).alarms.get(alarmMessage);
+		if (task == null)
+			return -1;
+		return Math.max(task.getTime() - System.currentTimeMillis(), 0);
+	}
+	synchronized boolean isSubscribed(User user)
+	{
+		return people.containsKey(user.getId()) && people.get(user.getId()).subscribed;
+	}
+	synchronized boolean subscribe(User user)
+	{
+		String id = user.getId();	
+		if (!people.containsKey(id))
+			people.put(id, new Person());
+		Person person = people.get(id);
+		if (person.subscribed)
+			return false;
+		person.subscribed = true;
+		SaveToFile(KyoukoBot.DatabaseFile);
+		System.out.println("Subscribed user " + id + " to daily reminders.");
+		return true;
+	}
+	synchronized boolean unsubscribe(User user)
+	{
+		String id = user.getId();	
+		if (!people.containsKey(id))
+			return false;
+		Person person = people.get(id);
+		if (!person.subscribed)
+			return false;
+		person.subscribed = false;
+		if (!removeReminder(person.alarms.get(dailyAlarmMessage)) & !removeReminder(person.alarms.get(repAlarmMessage))) //yes, & and not &&
+			SaveToFile(KyoukoBot.DatabaseFile); //you only need to save if there were no relevant alarms, other RemoveReminder does it for you
+		System.out.println("Subscribed user " + id + " to daily reminders.");
 		return true;
 	}
 	synchronized void setGame(String game)
