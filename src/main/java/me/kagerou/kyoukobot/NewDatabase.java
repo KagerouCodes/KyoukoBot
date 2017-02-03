@@ -306,7 +306,7 @@ class NewDataBase //TODO: cloud backup??
 		person.alarms.put(msg, task);
 		if (saveToFile)
 			SaveToFile(KyoukoBot.DatabaseFile);
-		System.out.println("Registered a reminder for the user " + id + ".");
+		System.out.println("Registered a reminder for the user " + id + " at time " + alarmTime + ".");
 		timer.schedule(task, Math.max(alarmTime - System.currentTimeMillis(), 0));
 	}
 	synchronized boolean refreshReminder(RemindTask task, Timer timer)
@@ -338,6 +338,22 @@ class NewDataBase //TODO: cloud backup??
 	}
 	synchronized long getRepDelay(User user) {
 		return getTimeLeft(user.getId(), repAlarmMessage);
+	}
+	synchronized boolean setDailyDelay(User user, long delay, Timer timer)
+	{
+		Person person = people.get(user.getId());
+		if ((person == null) || !person.subscribed)
+			return false;
+		registerReminder(user, dailyAlarmMessage, System.currentTimeMillis() + delay, timer, true); //not the best way to use the delay...
+		return true;
+	}
+	synchronized boolean setRepDelay(User user, long delay, Timer timer)
+	{
+		Person person = people.get(user.getId());
+		if ((person == null) || !person.subscribed)
+			return false;
+		registerReminder(user, repAlarmMessage, System.currentTimeMillis() + delay, timer, true); //not the best way to use the delay...
+		return true;
 	}
 	synchronized long getTimeLeft(String id, String alarmMessage) {
 		if (!people.containsKey(id))

@@ -1,4 +1,5 @@
-Version 0.3 [??-01-2017, screw you, i'm european]
+Version 0.3 [03-02-2017, screw you, i'm european]
+- added a k!daily command which will remind you about Tatsumaki's daily features;
 - added a k!yuzuru command which works just like k!nice but with another template;
 - added a similar k!fetish command as well which tries to fit the whole image while saving proportions (works best with 16/9 pics).
 

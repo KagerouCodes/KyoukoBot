@@ -31,7 +31,7 @@ public class RemindTask extends TimerTask
 		}
 		catch (Exception e)
 		{
-			System.out.println("Failed to send the scheduled message to the user " + id + ".");
+			System.out.println("Failed to send the scheduled message to the user " + id + "."); //alarms don't trigger after i close and open my laptop >_<
 			this.time = Math.max(time + 5000, System.currentTimeMillis());
 			KyoukoBot.Database.refreshReminder(this, KyoukoBot.timer); //whoops, might be the wrong timer
 		}

@@ -39,7 +39,7 @@ public class DailyCommand implements CommandExecutor { //TODO actual listeners f
 			else
 			{
 				KyoukoBot.Database.subscribe(message.getAuthor());
-				message.reply("`You have subscribed to daily reminders!`\n`Check your t!daily and t!rep status now!`");
+				message.reply("`You have subscribed to daily reminders!`\n`Check your t!daily and t!rep status now!`\n\n`Type k!daily off to unsubscribe from daily reminders.`");
 			}
     }
 }

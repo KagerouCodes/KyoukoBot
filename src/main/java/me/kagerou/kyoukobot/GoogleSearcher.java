@@ -57,9 +57,12 @@ public class GoogleSearcher {
 		ArrayList<SearchResult> result = new ArrayList<SearchResult>();
 		if (json.has("queries"))
 		{
-			JSONArray array = json.getJSONArray("items");
-			for (int index = 0; (index < array.length()) && (index < LinksLimit); index++)
-				result.add(new SearchResult(array.getJSONObject(index).getString("title"), array.getJSONObject(index).getString("link")));
+			if (json.has("items"))
+			{
+				JSONArray array = json.getJSONArray("items");
+				for (int index = 0; (index < array.length()) && (index < LinksLimit); index++)
+					result.add(new SearchResult(array.getJSONObject(index).getString("title"), array.getJSONObject(index).getString("link")));
+			}
 			return result;
 		}
 		System.out.println(json.toString());

@@ -253,6 +253,8 @@ public class KyoukoBot {
 	static ImgurClient imgurClient;
 	
 	static Timer timer = new Timer();
+	
+	static TreeMap<TatsumakiRequest, TatsumakiWaiter> WaitingRoom = new TreeMap<TatsumakiRequest, TatsumakiWaiter>();
     
     static ArrayList<String> InitImageCollection(ImgurClient client, String album, String single_pic)
     {
@@ -823,12 +825,13 @@ public class KyoukoBot {
         			handler.registerCommand(new FetchRecCommand()); //RIP
         			handler.registerCommand(new RemindMeCommand());
         			handler.registerCommand(new ListAlarmsCommand());
+        			handler.registerCommand(new MessageCommand());
         			
         			api.registerListener(new ExtraListener(handler)); //Twitch emotes + wrong commands + easter eggs
         			api.registerListener(new AnimemesListener());
         			api.registerListener(new NameChangeListener());
         			api.registerListener(new ShiyuReactionListener());
-    				api.registerListener(new TatsumakiListener(TatsumakiID));
+    				api.registerListener(new TatsumakiListener(TatsumakiID, WaitingRoom, timer));
         			
         			api.setGame(Database.game);
         			api.setAutoReconnect(true);
@@ -899,11 +902,12 @@ public class KyoukoBot {
     	   }
     }
     
-//TODO reminder about Tatsumaki's stuff??
-//TODO channel.type();    
+//TODO channel.type();
+//TODO track old messages during a reboot?? 
 //TODO "kill script"??
 //TODO k!recordings person (outclassed by the discord search, sigh)
 //TODO whatanime.ga??
+//TODO remindme??
 //TODO chocolate giving system??
 //TODO headpats??
 //TODO typerace??
@@ -915,7 +919,6 @@ public class KyoukoBot {
 //TODO make k!hug random not ping inactive people
 //TODO logs??
 //TODO OOC command??
-//TODO remindme??
 //TODO kumirei pictures??
 //TODO fancy embeds??
 //TODO customisable commands??
