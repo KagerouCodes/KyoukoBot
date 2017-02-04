@@ -8,14 +8,9 @@ import de.btobastian.sdcf4j.CommandExecutor;
 
 public class MessageCommand implements CommandExecutor
 {
-	@Command(aliases = {"k!message", "k!msg"}, description = "Cheesy admin-only command.", showInHelpPage = false)
+	@Command(aliases = {"k!message", "k!msg"}, description = "Cheesy admin-only command.", requiredPermissions = "admin", showInHelpPage = false)
     public void onCommand(DiscordAPI api, Message message, Server server, String args[])
     {
-		if (!message.getAuthor().getId().equals(KyoukoBot.adminID))
-		{
-			message.reply("Y-you're touching me inappropriately!");
-			return;
-		}
 		try
 		{
 			String id = message.getContent().split("\\s+", 3)[1];

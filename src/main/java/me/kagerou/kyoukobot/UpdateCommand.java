@@ -16,14 +16,9 @@ import de.btobastian.sdcf4j.CommandExecutor;
 
 public class UpdateCommand implements CommandExecutor {
 	static String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.100 Safari/537.36";
-	@Command(aliases = {"k!update"}, description = "Cheesy admin-only command.", usage = "k!update file [filename]", showInHelpPage = false) //TODO update the database is the file is people.txt
+	@Command(aliases = {"k!update"}, description = "Cheesy admin-only command.", usage = "k!update file [filename]", requiredPermissions = "admin", showInHelpPage = false) //TODO update the database is the file is people.txt
     public void onCommand(DiscordAPI api, Message message, String args[])
     {
-		if (!message.getAuthor().getId().equals(KyoukoBot.adminID))
-		{
-			message.reply("Y-you're touching me inappropriately!");
-			return;
-		}
 		if ((args.length == 0) && (message.getAttachments().isEmpty()))
 		{
 			message.reply("`Link or attach a file.`");
@@ -106,6 +101,11 @@ public class UpdateCommand implements CommandExecutor {
 					new ProcessBuilder("java", "-jar", "update.jar", "KyoukoBot.tmp", "KyoukoBot.jar").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
 				else
 					new ProcessBuilder("java", "-jar", "update.jar", "KyoukoBot.tmp", "KyoukoBot.jar", "beta").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
+				api.setGame("Updating...");
+				try {
+					Thread.sleep(1000);
+				}
+				catch (InterruptedException e) {}
 				System.exit(0);
 			}
 		}

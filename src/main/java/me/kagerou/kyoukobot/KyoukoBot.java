@@ -33,6 +33,7 @@ import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.javacord.entities.message.MessageReceiver;
 import de.btobastian.javacord.listener.message.MessageCreateListener;
 import de.btobastian.sdcf4j.CommandHandler;
+import de.btobastian.sdcf4j.Sdcf4jMessage;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 
 @Deprecated //unused
@@ -650,7 +651,7 @@ public class KyoukoBot {
 	
 	static String msToTimeString(long time) {
 		int[] divisors = {0, 24, 60, 60};
-		String[] time_units = {"day(s)", "hour(s)", "minute(s)", "second(s)"};
+		String[] time_units = {"day", "hour", "minute", "second"};
 		time /= 1000;
 		long time_divided[] = new long[4];
 		for (int i = 3; i >= 0; i--)
@@ -667,9 +668,12 @@ public class KyoukoBot {
 		String result = "";
 		for (int i = 0; i <= 3; i++)
 			if (time_divided[i] != 0)
-				result += time_divided[i] + " " + time_units[i] + " ";
+				if (time_divided[i] != 1)
+					result += time_divided[i] + " " + time_units[i] + "s ";
+				else
+					result += time_divided[i] + " " + time_units[i] + " ";
 		if (result.length() == 0)
-			result += "0 " + time_units[3];
+			result += "0 " + time_units[3] + "s";
 		else
 			result = result.substring(0, result.length() - 1);
 		return result;
@@ -719,6 +723,11 @@ public class KyoukoBot {
 				commands.add("beta");
 			new ProcessBuilder(commands).redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
 			//new ProcessBuilder("java", "-jar", "update.jar", "reboot", "KyoukoBot.jar", "beta").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
+			api.setGame("Rebooting...");
+			try {
+				Thread.sleep(1000);
+			}
+			catch (InterruptedException e) {}
 			System.exit(0);
 		}
 		catch (IOException e)
@@ -832,12 +841,14 @@ public class KyoukoBot {
         			api.registerListener(new NameChangeListener());
         			api.registerListener(new ShiyuReactionListener());
     				api.registerListener(new TatsumakiListener(TatsumakiID, WaitingRoom, timer));
-        			
+    				
         			api.setGame(Database.game);
         			api.setAutoReconnect(true);
         			KyoukoBot.connected_once = true;
         			connect_time = System.currentTimeMillis();
+        			handler.addPermission(adminID, "admin");
         			User admin = Iterables.find(api.getUsers(), (x) -> x.getId().equals(adminID), null);
+        			Sdcf4jMessage.MISSING_PERMISSIONS.setMessage("Y-you're touching me inappropriately!");
         			if (Arrays.asList(args).contains("rebooted"))
         				System.out.println("Reboot completed!");
         			if (Arrays.asList(args).contains("hello"))
@@ -903,6 +914,7 @@ public class KyoukoBot {
     }
     
 //TODO channel.type();
+//TODO k!wtf??
 //TODO track old messages during a reboot?? 
 //TODO "kill script"??
 //TODO k!recordings person (outclassed by the discord search, sigh)

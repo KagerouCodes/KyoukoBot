@@ -8,11 +8,9 @@ import de.btobastian.sdcf4j.CommandExecutor;
 public class RehashCommand implements CommandExecutor {
 	static final String dirName = "memes";
 
-	@Command(aliases = {"k!rehash"}, description = "Cheesy admin-only command.", showInHelpPage = false)
+	@Command(aliases = {"k!rehash"}, description = "Cheesy admin-only command.", requiredPermissions = "admin", showInHelpPage = false)
     public String onCommand(DiscordAPI api, Message message, String args[])
 	{
-		if (!message.getAuthor().getId().equals(KyoukoBot.adminID))
-			return "Y-you're touching me inappropriately!";
 		return KyoukoBot.memeBase.reHash();
 	}
 }

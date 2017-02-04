@@ -7,6 +7,7 @@ import de.btobastian.javacord.entities.permissions.PermissionType;
 import de.btobastian.javacord.entities.permissions.Role;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import de.btobastian.sdcf4j.Sdcf4jMessage;
 import me.kagerou.kyoukobot.MemeBase.MemeResult;
 
 public class DeleteCommand implements CommandExecutor {
@@ -21,7 +22,7 @@ public class DeleteCommand implements CommandExecutor {
 						(role.getPermissions().getState(PermissionType.ADMINISTATOR) == PermissionState.ALLOWED);
 		if (!allowed)
 		{
-			message.reply("Y-you're touching me inappropriately!");
+			message.reply(Sdcf4jMessage.MISSING_PERMISSIONS.getMessage());
 			return;
 		}
 		

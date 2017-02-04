@@ -10,11 +10,9 @@ import de.btobastian.sdcf4j.CommandExecutor;
 
 public class IntroUserCommand implements CommandExecutor {
 	final int MaxIntroLength = 200;
-	@Command(aliases = {"k!introuser"}, description = "Cheesy admin-only command.", usage = "k!introuser name@ text", showInHelpPage = false)
+	@Command(aliases = {"k!introuser"}, description = "Cheesy admin-only command.", usage = "k!introuser name@ text", requiredPermissions = "admin", showInHelpPage = false)
     public String onCommand(DiscordAPI api, Message message, String args[])
 	{
-		if (!message.getAuthor().getId().equals(KyoukoBot.adminID))
-			return "Y-you're touching me inappropriately!";
 		if (args.length == 0)
 			return "Not enough arguments!";
 		String msg = message.getContent();

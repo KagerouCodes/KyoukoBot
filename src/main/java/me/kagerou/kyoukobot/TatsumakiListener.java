@@ -166,20 +166,23 @@ public class TatsumakiListener implements MessageCreateListener {
 			System.out.println("The message has a type: " + type);
 			String name = parseTatsumakiName(content);
 			System.out.println("The message features a username: " + name);
-			TatsumakiWaiter waiter = WaitingRoom.get(new TatsumakiRequest(name, message.getChannelReceiver(), type));
+			TatsumakiRequest request = new TatsumakiRequest(name, message.getChannelReceiver(), type);
+			TatsumakiWaiter waiter = WaitingRoom.get(request);
 			if ((waiter != null) && waiter.active)
 			{
-				waiter.cancel();
+				//waiter.cancel();
 				long delay = parseTatsumakiDelay(content, type);
 				if (delay == -1) //sanity check
 				{
 					System.out.println("Failed to parse Tatsumaki's message >_<");
 					return;
 				}
+				waiter.cancel();
 				if (type == RequestType.DAILY)
 					KyoukoBot.Database.setDailyDelay(waiter.user, delay, timer); //remove the darn waiter from the room!
 				else
 					KyoukoBot.Database.setRepDelay(waiter.user, delay, timer);
+				WaitingRoom.remove(request); //hopefully, this works out
 			}
 			else
 				if (waiter == null)

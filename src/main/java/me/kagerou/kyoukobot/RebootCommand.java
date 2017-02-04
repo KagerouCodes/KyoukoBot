@@ -8,21 +8,16 @@ import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 
 public class RebootCommand implements CommandExecutor {
-	@Command(aliases = {"k!reboot"}, description = "Cheesy admin-only command.", usage = "k!reboot", showInHelpPage = false)
+	@Command(aliases = {"k!reboot"}, description = "Cheesy admin-only command.", usage = "k!reboot", requiredPermissions = "admin", showInHelpPage = false)
     public void onCommand(DiscordAPI api, Message message, String[] args)
 	{
-		if (!message.getAuthor().getId().equals(KyoukoBot.adminID))
-			message.reply("Y-you're touching me inappropriately!");
-		else
-		{
-			try {
-				message.reply("`Rebooting...`").get(3, TimeUnit.SECONDS);
-			}
-			catch (Exception e)
-			{}
-			System.out.println("Rebooting and reloading all data...");
-			KyoukoBot.reboot(true);
-			message.reply("`I'm back!`");
+		try {
+			message.reply("`Rebooting...`").get(3, TimeUnit.SECONDS);
 		}
+		catch (Exception e)
+		{}
+		System.out.println("Rebooting and reloading all data...");
+		KyoukoBot.reboot(true);
+		message.reply("`I'm back!`");
 	}
 }

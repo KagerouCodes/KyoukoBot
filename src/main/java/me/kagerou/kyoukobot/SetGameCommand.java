@@ -7,16 +7,11 @@ import de.btobastian.sdcf4j.CommandExecutor;
 
 
 public class SetGameCommand implements CommandExecutor {
-	@Command(aliases = {"k!setgame"}, description = "Cheesy admin-only command.", usage = "k!setgame game", showInHelpPage = false)
+	@Command(aliases = {"k!setgame"}, description = "Cheesy admin-only command.", usage = "k!setgame game", requiredPermissions = "admin", showInHelpPage = false)
     public void onCommand(DiscordAPI api, Message message, String[] args)
 	{
-		if (!message.getAuthor().getId().equals(KyoukoBot.adminID))
-			message.reply("Y-you're touching me inappropriately!");
-		else
-		{
-			String game = message.getContent().substring("k!setgame".length()).trim();
-			KyoukoBot.Database.setGame(game);
-			api.setGame(game);
-		}
+		String game = message.getContent().substring("k!setgame".length()).trim();
+		KyoukoBot.Database.setGame(game);
+		api.setGame(game);
 	}
 }

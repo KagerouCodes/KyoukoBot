@@ -10,14 +10,9 @@ import de.btobastian.sdcf4j.CommandExecutor;
 import me.kagerou.kyoukobot.NewDataBase.Person;
 
 public class ListAlarmsCommand implements CommandExecutor {
-	@Command(aliases = {"k!alarms", "k!list"}, description = "Lists your alarms.", showInHelpPage = false)
+	@Command(aliases = {"k!alarms", "k!list"}, description = "Lists your alarms.", requiredPermissions = "admin", showInHelpPage = false)
     public void onCommand(DiscordAPI api, Message message, Server server, String args[])
     {
-		if (!message.getAuthor().getId().equals(KyoukoBot.adminID))
-		{
-			message.reply("Y-you're touching me inappropriately!");
-			return;
-		}
 		Person person = KyoukoBot.Database.get(message.getAuthor().getId());
 		TreeMap<String, RemindTask> alarms;
 		if (person != null)

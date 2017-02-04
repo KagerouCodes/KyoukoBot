@@ -110,14 +110,9 @@ public class FetchRecCommand implements CommandExecutor {
 		}
 	}
 	
-	@Command(aliases = {"k!fetchrec"}, description = "Cheesy admin-only command.", usage = "k!fetchrec", showInHelpPage = false)
+	@Command(aliases = {"k!fetchrec"}, description = "Cheesy admin-only command.", usage = "k!fetchrec", requiredPermissions = "admin", showInHelpPage = false)
     public void onCommand(DiscordAPI api, Message message, Server server, String args[])
     {
-		if (!message.getAuthor().getId().equals(KyoukoBot.adminID))
-		{
-			message.reply("Y-you're touching me inappropriately!");
-			return;
-		}
 		Channel recordings = getChannelByName("recordings", server);
 		if (recordings == null)
 		{
