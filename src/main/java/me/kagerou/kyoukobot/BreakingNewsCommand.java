@@ -88,7 +88,7 @@ public class BreakingNewsCommand implements CommandExecutor {
 			message.reply("`Failed to load the template >_<`");
 			return;
 		}
-		
+		message.getReceiver().type();
 		String headline = "", ticker = "";
 		URL imgURL = null;
 		int offset;

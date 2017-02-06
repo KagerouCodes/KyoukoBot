@@ -12,6 +12,7 @@ public class GoogleLongCommand extends GoogleSearcher implements CommandExecutor
 
 	@Command(aliases = {"k!google"}, description = "Performs a Google search (3 results, no preview).", usage = "k!google query")
     public String onCommand(Message message) {
+		message.getReceiver().type();
 		return search(message);
 	}
 		/*if (args.length == 0)

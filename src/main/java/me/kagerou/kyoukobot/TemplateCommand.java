@@ -129,11 +129,13 @@ public class TemplateCommand implements CommandExecutor {
 	}
 	
     public void onCommand(DiscordAPI api, Message message, Server server, String[] args) { //TODO do something with https://2static2.fjcdn.com/thumbnails/comments/Yes+_12bb1d42b9794b90b53cae6196c9baed.png ??
+    	//message.getReceiver().type();
 		if (template == null)
 		{
 			message.reply("`Failed to load the template >_<`");
 			return;
 		}
+		message.getReceiver().type();
 		URL imgURL = null;
 		String original_arg = "";
 		if (args.length > 0)

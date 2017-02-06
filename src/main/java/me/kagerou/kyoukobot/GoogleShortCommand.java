@@ -12,6 +12,7 @@ public class GoogleShortCommand extends GoogleSearcher implements CommandExecuto
 	
 	@Command(aliases = {"k!ggl"}, description = "Performs a Google search (1 result, with a preview).", usage = "k!ggl query")
     public String onCommand(Message message) {
+		message.getReceiver().type();
 		return search(message);
 	}
 }

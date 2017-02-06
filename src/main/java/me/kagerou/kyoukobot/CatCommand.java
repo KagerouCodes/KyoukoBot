@@ -15,6 +15,7 @@ public class CatCommand implements CommandExecutor {
     public void onCommand(Message message) {
 		String CatURL;
 		try {
+			message.getReceiver().type();
 			CatURL = new JSONObject(IOUtils.toString(new URL("http://random.cat/meow"), Charset.forName("UTF-8"))).getString("file");
 		}
 		catch (Exception e)

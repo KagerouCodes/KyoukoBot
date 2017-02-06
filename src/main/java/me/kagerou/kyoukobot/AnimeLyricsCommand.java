@@ -66,6 +66,7 @@ public class AnimeLyricsCommand extends GoogleSearcher implements CommandExecuto
 
 	@Command(aliases = {"k!lyrics", "k!alyrics", "k!animelyrics"}, description = "Searches for lyrics at animelyrics.com, then links them on a server or prints them in DM.", usage = "k!lyrics song")
     public void onCommand(Message message, String[] args) {
+		message.getReceiver().type();
 		String query = message.getContent().substring(message.getContent().indexOf(' ') + 1).trim().toLowerCase();
 		String url = "";
 		//return search(query + " site:animelyrics.com");

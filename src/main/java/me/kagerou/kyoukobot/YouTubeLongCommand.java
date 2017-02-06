@@ -12,6 +12,7 @@ public class YouTubeLongCommand extends YouTubeSearcher implements CommandExecut
 	
 	@Command(aliases = {"k!youtube", "k!utube"}, description = "Performs a YouTube search (3 results, no preview).", usage = "k!youtube query")
     public String onCommand(Message message, String[] args) {
+		message.getReceiver().type();
 		return search(message, args);
 	}
 }

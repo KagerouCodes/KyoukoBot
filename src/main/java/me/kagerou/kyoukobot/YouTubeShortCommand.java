@@ -11,6 +11,7 @@ public class YouTubeShortCommand extends YouTubeSearcher implements CommandExecu
 	
 	@Command(aliases = {"k!yt"}, description = "Performs a YouTube search (1 result, with a preview).", usage = "k!yt query")
     public String onCommand(Message message, String[] args) {
+		message.getReceiver().type();
 		return search(message, args);
 	}
 }

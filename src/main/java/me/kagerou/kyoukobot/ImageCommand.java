@@ -36,6 +36,7 @@ public class ImageCommand implements CommandExecutor { //TODO make it stable??
     		message.reply("`Enter a query.`");
     		return;
     	}
+		message.getReceiver().type();
 		String query = message.getContent().substring(message.getContent().indexOf(' ') + 1).trim().toLowerCase();
 		String result = "";
 		boolean cached = KyoukoBot.SearchResults.containsKey(query) &&

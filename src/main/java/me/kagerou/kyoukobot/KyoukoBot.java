@@ -915,11 +915,11 @@ public class KyoukoBot {
     
 //TODO channel.type();
 //TODO k!wtf??
+//TODO remindme??
 //TODO track old messages during a reboot?? 
 //TODO "kill script"??
 //TODO k!recordings person (outclassed by the discord search, sigh)
 //TODO whatanime.ga??
-//TODO remindme??
 //TODO chocolate giving system??
 //TODO headpats??
 //TODO typerace??
