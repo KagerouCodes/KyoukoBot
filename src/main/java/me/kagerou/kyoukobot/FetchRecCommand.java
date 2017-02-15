@@ -13,8 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 
-import com.google.common.collect.Iterables;
-
 import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.Channel;
 import de.btobastian.javacord.entities.Server;
@@ -23,17 +21,13 @@ import de.btobastian.javacord.entities.message.MessageAttachment;
 import de.btobastian.javacord.entities.message.MessageHistory;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-
+//goes through the history of #recordings channel, fetches all the links posted there and a database of those as a .txt file in JSON format (owner only)
+//this takes a few minutes because i parse entire pages just to find their titles, hangs the bot for that entire time (should've just done that in a new thread)
 public class FetchRecCommand implements CommandExecutor {
 	static String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.100 Safari/537.36";
-	Channel getChannelByName(String name, Server server) {
-		if (server == null)
-			return null;
-		return Iterables.find(server.getChannels(), (x) -> x.getName().equalsIgnoreCase(name));
-	}
 	
 	Map.Entry<Integer, String> findStrings(String str, int fromIndex, String... substr)
-	{
+	{ //basically String.indexOf(int fromIndex, String... substrings), finds the first occurence of one of the substrings
 		Map.Entry<Integer, String> result = new AbstractMap.SimpleEntry<Integer, String>(-1, "");
 		for (String substring: substr)
 		{
@@ -43,8 +37,10 @@ public class FetchRecCommand implements CommandExecutor {
 		}
 		return result;
 	}
-	
-	List<String> detectLinks(String str) { //TODO learn the darn regexp
+	//detects all the links in the message and returns them in a list
+	List<String> detectLinks(String str)
+	{ // the code's pretty much copied from KyoukoBot.wrapLinks()
+	  // it finds something like (?<!<)(https?://[^\s<]+[^!:,.;<\s])|(?<=<)(https?://[^\s<>]+[^!:,.;<>\s])(?=(?:[!:,.;]*(?:<|\s|$)))(?!\S+>)|(?<=<)(https?://[^\s>]+)(?=>)
 		List<String> result = new ArrayList<String>();
 		int index = 0;
 		while (index < str.length())
@@ -55,7 +51,7 @@ public class FetchRecCommand implements CommandExecutor {
 
 			if (next_url_start != -1)
 			{
-				int next_space = findStrings(str, next_url_start, " ", "\n").getKey();//str.indexOf(' ', next_url_start); //doesn't handle newlines but those don't get into intros anyway
+				int next_space = findStrings(str, next_url_start, " ", "\n").getKey();
 				boolean less_than = ((next_url_start > 0) && (str.charAt(next_url_start - 1) == '<'));
 				if (next_space == -1)
 					next_space = str.length();
@@ -76,7 +72,9 @@ public class FetchRecCommand implements CommandExecutor {
 		return result;
 	}
 	
-	String getTitle(URL url) { //totally not stole this one from stackoverflow
+	String getTitle(URL url)
+	{ // gets the title of a web page
+	  // commented code is faster than parsing it all but it fails to work for http://youtube.com, for example
 		/*InputStream response = null;
 		Scanner scanner = null;
 	    try {
@@ -102,7 +100,7 @@ public class FetchRecCommand implements CommandExecutor {
 	    }
 	    return null;*/
 		try {
-			return Jsoup.connect(url.toString()).get().title();
+			return Jsoup.connect(url.toString()).get().title(); //find a better way to do this
 		}
 		catch (IOException e)
 		{
@@ -112,15 +110,15 @@ public class FetchRecCommand implements CommandExecutor {
 	
 	@Command(aliases = {"k!fetchrec"}, description = "Cheesy admin-only command.", usage = "k!fetchrec", requiredPermissions = "admin", showInHelpPage = false)
     public void onCommand(DiscordAPI api, Message message, Server server, String args[])
-    {
-		Channel recordings = getChannelByName("recordings", server);
+    { //fins the #recordings channel
+		Channel recordings = KyoukoBot.findChannelByName("recordings", server);
 		if (recordings == null)
 		{
 			message.reply("`#recordings channel not found.`");
 			return;
 		}
 		MessageHistory history = null;
-		try {
+		try { //fetch the history
 			history = recordings.getMessageHistory(1000000000).get(); //can't get away with a limit of 0, huh
 		}
 		catch (Exception e)
@@ -129,18 +127,18 @@ public class FetchRecCommand implements CommandExecutor {
 			message.reply("An error occured.");
 			return;
 		}
-		JSONObject historyJSON = new JSONObject();
+		JSONObject historyJSON = new JSONObject(); //resulting JSON object, keys are user id and values are arrays of {"link": link, "title": page_title}
 		for (Message msg: history.getMessagesSorted())
 		{
- 			String id = msg.getAuthor().getId(); //TODO maybe detect old message from Kyouko herself
+ 			String id = msg.getAuthor().getId(); //TODO maybe detect old messages from Kyouko herself
 			if (!historyJSON.has(id))
 				historyJSON.put(id, new JSONArray());
 			JSONArray array = historyJSON.getJSONArray(id); 
-			for (MessageAttachment att: msg.getAttachments())
+			for (MessageAttachment att: msg.getAttachments()) //if there are any attachments, include those which are of the audio type
 				if (KyoukoBot.leTika.detect(att.getFileName()).startsWith("audio"))
 					array.put(new JSONObject().put("title", att.getFileName()).put("link", att.getUrl()));
 			for (String link: detectLinks(msg.getContent()))
-			{
+			{ //for all the found links: save them if they point to an audio file or html page
 				try {
 					URL url = new URL(link);
 					String contentType = KyoukoBot.leTika.detect(url);
@@ -162,7 +160,7 @@ public class FetchRecCommand implements CommandExecutor {
 			if (array.length() == 0)
 				historyJSON.remove(id);
 		}
-		try {
+		try { //send that file
 			message.getReceiver().sendFile(IOUtils.toInputStream(historyJSON.toString(2), "UTF-8"), "recordings.txt");
 		}
 		catch (Exception e)

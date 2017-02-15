@@ -23,9 +23,12 @@ public class YouTubeSearcher {
 	
 	String search(Message message, String args[])
 	{
-		if (args.length == 0)
-    		return "`Enter a query.`";
-		String query = message.getContent().substring(message.getContent().indexOf(' ') + 1).trim().toLowerCase();
+		//if (args.length == 0)
+    		//return "`Enter a query.`";
+		//String query = message.getContent().substring(message.getContent().indexOf(' ') + 1).trim().toLowerCase();
+		String query = KyoukoBot.getArgument(message);
+		if (query.isEmpty())
+			return "`Enter a query.`";
 		String result = "";
 		try {
 			String APIquery = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=" + LinksLimit +

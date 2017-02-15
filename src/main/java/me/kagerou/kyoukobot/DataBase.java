@@ -18,7 +18,8 @@ import com.google.common.collect.Iterables;
 import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.User;
-
+//old database, not used anymore
+@Deprecated
 class DataBase
 {
 	long time;

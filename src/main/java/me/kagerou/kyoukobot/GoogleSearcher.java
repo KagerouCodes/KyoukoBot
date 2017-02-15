@@ -1,13 +1,11 @@
 package me.kagerou.kyoukobot;
 
-import java.io.File;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,13 +15,14 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import de.btobastian.javacord.entities.message.Message;
-
+//a super class for all Google non-image search commands
 public class GoogleSearcher {
 
 	static String GoogleKey;
 	static String GoogleCX;
-	static String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.100 Safari/537.36";
-	
+	//should probably put the user agent in KyoukoBot's final static fields
+	static String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.100 Safari/537.36"; 
+	//that feel when there's no pair "template" in Java
 	class SearchResult
 	{
 		String title, url;
@@ -44,18 +43,18 @@ public class GoogleSearcher {
 		this.Preview = Preview;
 		this.safe = safe;
 	}
-	
+	//safe search by default
 	GoogleSearcher(int LinksLimit, boolean Preview)
 	{
 		this(LinksLimit, Preview, true);
 	}
-	
+	//search using the Google Custom Search API (a fallback plan), return a list of SearchResult's
 	ArrayList<SearchResult> searchWithAPI(String query, String GoogleKey, String GoogleCX) throws Exception
 	{
 		String searchURL = "https://www.googleapis.com/customsearch/v1?key=" + GoogleKey + "&cx=" + GoogleCX + (safe ? "&safe=high" : "") + "&q=" + URLEncoder.encode(query, "UTF-8");
 		JSONObject json = new JSONObject(IOUtils.toString(new URL(searchURL), Charset.forName("UTF-8")));
 		ArrayList<SearchResult> result = new ArrayList<SearchResult>();
-		if (json.has("queries"))
+		if (json.has("queries")) //if none, the search wasn't performed, very likely the daily limit was reached
 		{
 			if (json.has("items"))
 			{
@@ -68,18 +67,16 @@ public class GoogleSearcher {
 		System.out.println(json.toString());
 		throw new Exception("Reached the daily limit."); //maybe there is a suitable type of exception for this situation??
 	}
-	
+	//just open the search page and parse it manually, works until Google limits you
 	ArrayList<SearchResult> searchWithoutAPI(String query) throws Exception
-	{
+	{ //i just took the code from stackoverflow
 		ArrayList<SearchResult> result = new ArrayList<SearchResult>();
 		
 		Elements links;
 		int links_included = 0;
 		String searchURL = "https://www.google.com/search?gfe_rd=cr&gws_rd=cr" + (safe ? "&safe=active" : "") + "&q=" + URLEncoder.encode(query, "UTF-8");
 		Document doc = Jsoup.connect(searchURL).userAgent("KyoukoBot").get();
-		//String html = ImageCommand.FetchURL("https://www.google.com/search?gfe_rd=cr&gws_rd=cr&safe=active&q=" + URLEncoder.encode(query, "UTF-8"));
-		FileUtils.writeStringToFile(new File("google_search.txt"), doc.toString(), Charset.forName("UTF-8"));
-		//Document doc = Jsoup.parse(html);
+		//FileUtils.writeStringToFile(new File("google_search.txt"), doc.toString(), Charset.forName("UTF-8")); //for debug purposes
 		links = doc.select(".g>.r>a");
 		//links = doc.select(".rc>.r>a");
 		
@@ -87,7 +84,6 @@ public class GoogleSearcher {
 			String title = link.text();
 			String url = link.absUrl("href"); // Google returns URLs in format "http://www.google.com/url?q=<url>&sa=U&ei=<someKey>".
 			url = URLDecoder.decode(url.substring(url.indexOf('=') + 1, url.indexOf('&')), "UTF-8");
-			//url = URLDecoder.decode(url, "UTF-8");
 
 			if (!url.startsWith("http"))
 				continue; // Ads/news/etc.
@@ -98,7 +94,7 @@ public class GoogleSearcher {
 		}
 		return result;
 	}
-	
+	//search manually, if that fails, use the API
 	ArrayList<SearchResult> searchToArray(String query)
 	{
 		try {
@@ -120,11 +116,11 @@ public class GoogleSearcher {
 				System.out.println("Failed to access Google Custom Search API.");
 			e.printStackTrace();
 		}
-		return null;
+		return null; //return null if everything fails
 	}
 
-
-	String search(String query) //TODO fix Oceanic Operetta??
+	//returns a ready-to-post string with search results
+	String search(String query) //TODO fix Oceanic Operetta?? (if the link ends with a closing bracket, Discord doesn't include the bracket in the link for some reason)
 	{
 		if (query.isEmpty())
 			return "`Enter a query.`";
@@ -144,7 +140,7 @@ public class GoogleSearcher {
 	
 	String search(Message message)
 	{
-		String query = message.getContent().substring(message.getContent().indexOf(' ') + 1).trim().toLowerCase();
-		return search(query);		
+		//String query = message.getContent().substring(message.getContent().indexOf(' ') + 1).trim().toLowerCase();
+		return search(KyoukoBot.getArgument(message));		
 	}
 }

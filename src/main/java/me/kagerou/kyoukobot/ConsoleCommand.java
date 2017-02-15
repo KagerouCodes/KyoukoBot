@@ -9,20 +9,14 @@ import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-
+//returns latest 50K symbols of console output (admin-only)
 public class ConsoleCommand implements CommandExecutor {
 	@Command(aliases = {"k!console"}, description = "Cheesy admin-only command.", usage = "k!console", requiredPermissions = "admin", showInHelpPage = false)
     public void onCommand(DiscordAPI api, Message message, String args[])
 	{
-		/*if (!KyoukoBot.manual_reconnecting)
-		{
-			message.reply("`Not tracking console output currently.`");
-			return;
-		}*/
 		try {
 			File leFile = new File("console.txt");
 			FileUtils.writeStringToFile(leFile, KyoukoBot.coc.getLastOutput(), Charset.forName("UTF-8"));
-			//message.replyFile(leFile).get();
 			message.getReceiver().sendFile(leFile).get();
 			leFile.delete();
 		}

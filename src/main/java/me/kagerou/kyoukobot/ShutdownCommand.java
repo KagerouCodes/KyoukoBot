@@ -17,7 +17,7 @@ public class ShutdownCommand implements CommandExecutor {
 		catch (Exception e)
 		{}
 		api.disconnect();
-		api.setGame("Shutting down...");
+		//api.setGame("Shutting down...");
 		try {
 			Thread.sleep(1000);
 		}

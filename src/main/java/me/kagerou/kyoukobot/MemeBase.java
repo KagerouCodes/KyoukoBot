@@ -167,7 +167,7 @@ public class MemeBase {
 		return MemeResult.DR_FAIL;
 	}
 	
-	synchronized File GetMeme()
+	synchronized File getMeme()
 	{
 		String fullDirName = FullDirName();
 		File MemesDir = new File(fullDirName);

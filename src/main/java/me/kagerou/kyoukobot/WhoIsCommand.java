@@ -50,7 +50,7 @@ public class WhoIsCommand implements CommandExecutor {
     					person = unIDedEntry.getValue();
     				}
     			}
-    			if (person != null)
+    			if ((person != null) && !person.intro.isEmpty())
     				message.reply("**" + KyoukoBot.getNickname(target, message.getReceiver()) + ":** " + person.intro);
     			else
     				message.reply("I-I don't know **" + name + "** yet.");
@@ -93,7 +93,7 @@ public class WhoIsCommand implements CommandExecutor {
         					person = unIDedEntry.getValue();
         				}
         			}
-        			if (person != null)
+        			if ((person != null) && !person.intro.isEmpty())
         				result.put(KyoukoBot.getNickname(user, message.getReceiver()), person.intro);
         		}
         	}

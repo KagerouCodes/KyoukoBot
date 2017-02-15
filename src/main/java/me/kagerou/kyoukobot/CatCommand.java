@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-
+//posts a random cat from random.cat, API for that site is very simple
 public class CatCommand implements CommandExecutor {
 	@Command(aliases = {"k!cat", "k!neko", "k!meow", "k!nya"}, description = "Posts a random cat.")
     public void onCommand(Message message) {
@@ -22,7 +22,6 @@ public class CatCommand implements CommandExecutor {
 		{
 			CatURL = KyoukoBot.OneCat;
 		}
-		//message.reply("", new EmbedBuilder().setImage(CatURL));
 		KyoukoBot.postFile(message, CatURL, "cat", "image");
     }
 }

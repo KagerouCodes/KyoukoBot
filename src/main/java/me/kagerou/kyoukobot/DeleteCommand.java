@@ -9,14 +9,17 @@ import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 import de.btobastian.sdcf4j.Sdcf4jMessage;
 import me.kagerou.kyoukobot.MemeBase.MemeResult;
-
+// deletes an attached/linked image from a "meme" collection (moderator/owner only)
+// the bot's designed to be run on just one server, one could clear the collection by inviting the bot to their own server
+// so the safe way of doing things would be a DB of images' availability on servers
 public class DeleteCommand implements CommandExecutor {
 	@Command(aliases = {"k!delete", "k!delmeme"}, description = "Deletes image(s) from the \"meme\" collection (moderator/owner only), accepts both links and attachments.", usage = "k!delete image(s)")
-    public void onCommand(Message message, String args[]) {
-		boolean allowed = false;
+    public void onCommand(Message message, String args[])
+	{
+		boolean allowed = false; //check if the user is myself or has the MANAGE_MESSAGES or ADMINISTRATOR permissions
 		if (message.getAuthor().getId().equals(KyoukoBot.adminID))
 			allowed = true;
-		if (!message.isPrivateMessage())
+		if (!message.isPrivateMessage()) //waiting for User.getPermissions(Server) or something like that to be implemented
 			for (Role role: message.getAuthor().getRoles(message.getChannelReceiver().getServer()))
 				allowed = allowed || (role.getPermissions().getState(PermissionType.MANAGE_MESSAGES) == PermissionState.ALLOWED) ||
 						(role.getPermissions().getState(PermissionType.ADMINISTATOR) == PermissionState.ALLOWED);
@@ -25,7 +28,7 @@ public class DeleteCommand implements CommandExecutor {
 			message.reply(Sdcf4jMessage.MISSING_PERMISSIONS.getMessage());
 			return;
 		}
-		
+		//check all the links and attachments
 		int deleted = 0, not_found = 0;
 		for (String arg: args)
 		{
@@ -36,7 +39,7 @@ public class DeleteCommand implements CommandExecutor {
 				not_found++;
 		}
 		for (MessageAttachment attachment: message.getAttachments())
-		{
+		{ //to be fair, i've never seen a message have 2 attachments
 			MemeResult result = KyoukoBot.memeBase.DeleteImage(attachment.getUrl());
 			if (result == MemeResult.DR_OK)
 				deleted++;

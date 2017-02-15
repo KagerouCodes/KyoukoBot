@@ -101,7 +101,7 @@ public class UpdateCommand implements CommandExecutor {
 					new ProcessBuilder("java", "-jar", "update.jar", "KyoukoBot.tmp", "KyoukoBot.jar").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
 				else
 					new ProcessBuilder("java", "-jar", "update.jar", "KyoukoBot.tmp", "KyoukoBot.jar", "beta").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
-				api.setGame("Updating...");
+				//api.setGame("Updating...");
 				try {
 					Thread.sleep(1000);
 				}

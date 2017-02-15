@@ -36,7 +36,7 @@ import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.Sdcf4jMessage;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 
-@Deprecated //unused
+@Deprecated //unused, it redirected clyp.it links to #recordings
 class ClypListener implements MessageCreateListener 
 {
 	@Override
@@ -53,7 +53,7 @@ class ClypListener implements MessageCreateListener
     }
 }
 
-class Emote
+class Emote //a class for Twitch emotes
 {
 	static String emoteDir = "emotes";
 	String name, url;
@@ -87,156 +87,61 @@ class Emote
 	}
 }
 
-class SearchResult
+class ImageSearchResult //a class for cached Google Image Search results
 {
 	long time;
 	String url;
-	SearchResult(String url, long time)
+	ImageSearchResult(String url, long time)
 	{
 		this.url = url;
 		this.time = time;
 	}
 }
 
-class ConsoleOutputTracker {
-	private boolean newStuff;
-	final static int MaxBufferSize = 50000;
-	private char[] LastOutput = new char[MaxBufferSize];
-	private PrintStream ps;
-	int first_index, buffer_size;
-
-    public ConsoleOutputTracker()
-    {
-    	newStuff = false;
-    	first_index = buffer_size = 0;
-    	ps = new PrintStream(new OutputStreamTracker(this));
-    	System.setOut(ps);
-    	System.setErr(ps);
-    }
-    
-    public void setFlag(boolean flag)
-    {
-    	newStuff = flag;
-    }
-    
-    public boolean newOutput()
-    {
-    	boolean result = newStuff;
-    	newStuff = false;
-    	return result;
-    }
-    
-    synchronized void push(char ch)
-    {
-    	LastOutput[(first_index + buffer_size) % MaxBufferSize] = ch;
-    	if (buffer_size != MaxBufferSize)
-    		buffer_size++;
-    	else
-    		first_index = (first_index + 1) % MaxBufferSize;
-    }
-    
-    synchronized void pushCodePoint(int cp)
-    {
-    	try {
-    		for (char ch: Character.toChars(cp))
-    			push(ch);
-    	}
-    	catch (IllegalArgumentException e)
-    	{
-    		//e.printStackTrace();
-    	}
-    }
-    
-    synchronized public String getLastOutput()
-    {
-    	StringBuilder sb = new StringBuilder();
-    	for (int i = 0; i < buffer_size; i++)
-    		sb.append(LastOutput[(first_index + i) % MaxBufferSize]);
-    	return sb.toString();
-    }
-    
-    synchronized public void stop()
-    {
-    	ps.close();
-    	ps = null;
-    }
-
-    class OutputStreamTracker extends OutputStream {
-    	ConsoleOutputTracker tracker;
-    	PrintStream old;
-    	PrintStream old_err;
-
-        public OutputStreamTracker(ConsoleOutputTracker cot) {
-            tracker = cot;
-            old = System.out;
-            old_err = System.err;
-        }
-
-        public void write(int b) throws IOException {
-            old.write(b);
-            tracker.setFlag(true);
-            tracker.pushCodePoint(b);
-        }
-
-        public void flush() throws IOException {
-            old.flush();
-        }
-
-        public void close() throws IOException {
-            super.close();
-            System.setOut(old);
-            System.setErr(old_err);
-        }
-    }
-}
-
-
 public class KyoukoBot {
-	static boolean EMTAlbumFound, ChitoseAlbumFound;
+	//all the databases
 	static ArrayList<String> AllEMTs, AllChitoses;
 	static MemeBase memeBase;
 	static ArrayList<SongProject> Songs, CurrentSongs;
-	static JSONObject JSONLyrics;
+	static JSONObject JSONLyrics; //this one is for storing links to lyrics for projects, they take too long to load
 	static NewDataBase Database;
 	
-	final static String version = "0.3";
-	static boolean release = true; 
+	final static String version = "0.3.1";
+	static boolean release = true;
 	
 	static String releaseToken = "", betaToken = "", token = "", adminID = "";
 	
     static DiscordAPI api;
-    final static long ReconnectTimeoutMillis = 90000; //1,5 minutes
-    final static long ReloadTimeoutMillis = 6 * 60 * 60 * 1000; //6 hours
+    final static long ReconnectTimeoutMillis = 90000; //1,5 minutes; if there was no response for this long, manual reconnection happens
+    final static long ReloadTimeoutMillis = 6 * 60 * 60 * 1000; //6 hours; the timeout for obligatory rebooting
     //final static long ReloadTimeoutMillis = 5 * 60 * 1000; //5 minutes for testing purposes
     static boolean manual_reconnecting = true;
 	static boolean connected_once = false;
-	static long connect_time = 0;
-	static long init_time = 0;
+	static long connect_time = 0; //when the bot connected to Discord and initialised all the commands
+	static long init_time = 0; //when the databases were loaded last time
 	
 	static ConsoleOutputTracker coc;
 	
-    final static String EMTs = "zf0yQ";
+    final static String EMTs = "zf0yQ"; //imgur album with Emilias
     final static String OneEMT = "http://danbooru.donmai.us/data/__emilia_re_zero_kara_hajimeru_isekai_seikatsu_drawn_by_tsukimori_usako__bd95cc37a9ec5a35aded8f25e6de5c59.png";
-    final static String Chitoses = "m3ipy";//"wI6CQ";
+    final static String Chitoses = "m3ipy"; //imgur album with Chitoses
     final static String OneChitose = "https://remyfool.files.wordpress.com/2016/10/vlcsnap-2016-10-09-13h30m37s147.png";
-    final static String OneCat = "http://i.imgur.com/JhkPph1.jpg";
-    final static String PrettyLink = "http://i.imgur.com/3zrwfZB.png";
-    final static String YuzuruLink = "http://i.imgur.com/9FulDOt.png";
-    final static String MeguminLink = "http://i.imgur.com/X1rO0A7.png";
-    final static String BreakingNewsLink = "http://i.imgur.com/28fDbUq.png";
+    final static String OneCat = "http://i.imgur.com/JhkPph1.jpg"; //one cat, just in case random.cat isn't available
+    final static String PrettyLink = "http://i.imgur.com/3zrwfZB.png";       //links
+    final static String YuzuruLink = "http://i.imgur.com/9FulDOt.png";       //to
+    final static String MeguminLink = "http://i.imgur.com/X1rO0A7.png";      //different
+    final static String BreakingNewsLink = "http://i.imgur.com/28fDbUq.png"; //templates
     final static String memeDir = "memes";
-    //final static String LeMemes = "hE33X";//"5Lt5e";
-    //final static String OneLeMeme = "http://i0.kym-cdn.com/photos/images/facebook/001/115/949/d0d.jpg"; //"how to not shitpost"
     final static String SongWiki = "https://www.reddit.com/r/anime/wiki/sings/";
     final static String LyricsDatabaseFile = "projects_lyrics.txt";
     final static String DatabaseFile = "people.txt";
     final static String SearchResultsFile = "search_results.txt";
-    final static long CacheDuration = 3 * 24 * 60 * 60 * 1000; //milliseconds in three days
-    final static String TatsumakiID = "172002275412279296"; 
-    final static int CharLimit = 1900;
+    final static long CacheDuration = 3 * 24 * 60 * 60 * 1000; //milliseconds in three days, this is how long the image search results are stored
+    final static String TatsumakiID = "172002275412279296";
+    final static int CharLimit = 1900; //not 2000 just to be safe and be able to add newlines and stuff
     static String ChangeLog;
     static MimeTypes DefaultMimeTypes = MimeTypes.getDefaultMimeTypes();
-    static Tika leTika = new Tika();
+    static Tika leTika = new Tika(); //it's too slow to load a new instance every time
     
     final static String TwitchEmotes[] = {"Kappa", "MrDestructoid", "DansGame", "SwiftRage", "PJSalt",
     		"Kreygasm", "FrankerZ", "SMOrc", "BibleThump", "PogChamp",
@@ -249,18 +154,18 @@ public class KyoukoBot {
     final static String BTTVEmotesURL = "https://api.betterttv.net/emotes";
     static ArrayList<Emote> Emotes;
     
-    static HashMap<String, SearchResult> SearchResults = new HashMap<String, SearchResult>();
+    static HashMap<String, ImageSearchResult> SearchResults = new HashMap<String, ImageSearchResult>(); //cached Google Image Search results
 	
 	static ImgurClient imgurClient;
 	
-	static Timer timer = new Timer();
+	static Timer timer = new Timer(); //timer for alarms and other stuff
 	
-	static TreeMap<TatsumakiRequest, TatsumakiWaiter> WaitingRoom = new TreeMap<TatsumakiRequest, TatsumakiWaiter>();
+	//waits for a message from Tatsumaki after a t!daily or t!rep command
+	static TreeMap<TatsumakiRequest, TatsumakiWaiter> WaitingRoom = new TreeMap<TatsumakiRequest, TatsumakiWaiter>(); 
     
-    static ArrayList<String> InitImageCollection(ImgurClient client, String album, String single_pic)
-    {
+    static ArrayList<String> InitImageCollection(ImgurClient client, String album, String single_pic) 
+    { //loads the links to pictures from an imgur album (or a single pic in case of failure)
     	ArrayList<String> links = new ArrayList<String>();
-    	boolean success = true;
     	try {
     		for (Image img: client.getAlbumDetails(album).data.images)
     			links.add(img.link);
@@ -270,18 +175,14 @@ public class KyoukoBot {
     	}
     	catch (Exception e)
     	{
-    		success = false;
-    		links.clear();
     		links.add(single_pic);
     		System.out.println("Failed to load imgur album " + album + "!");
     	}
-    	if (success)
-    		return links;
-    	return null;
+    	return links;
     }
     
     public static boolean InitSongCollection(ArrayList<SongProject> Songs, ArrayList<SongProject> CurrentSongs, String SongWiki)
-    {
+    { //loads all the song projects as well as the lyrics pastebins for them, JSONLyrics isn't passed because i'd have to clone a JSONObject
     	try {
 			JSONLyrics = new JSONObject(IOUtils.toString(new FileInputStream(LyricsDatabaseFile), Charset.forName("UTF-8"))); //should be UTF-16??
 		}
@@ -291,7 +192,7 @@ public class KyoukoBot {
 			JSONLyrics = new JSONObject();
 		}
     	Songs.clear();
-    	try {
+    	try { //parsing the project wiki page
     		Document doc = Jsoup.connect(SongWiki).userAgent("KyoukoBot").get();
     		Elements tables = doc.getElementsByTag("table");
     		for (Element el: tables.get(1).getElementsByTag("tr"))
@@ -317,7 +218,7 @@ public class KyoukoBot {
     }
 
     public static boolean InitDatabase(NewDataBase Database, String DatabaseFile)
-    {
+    { //loads the user database from a file
     	if (Database.readFromFile(DatabaseFile))
     	{
     		System.out.println("Database loaded successfully!");
@@ -330,7 +231,8 @@ public class KyoukoBot {
     	}
     }
     
-	static String InitChangeLog(String FileName) {
+	static String InitChangeLog(String FileName)
+	{ //loads the changelog from file, the latest changes are found before the first ===============
 		String result = "";
 		try {
 			result = FileUtils.readFileToString(new File(FileName), Charset.forName("UTF-8"));
@@ -346,8 +248,8 @@ public class KyoukoBot {
 		}
 	}
 	
-	public static String wrapLinks(String str) //TODO learn regexp
-	{
+	public static String wrapLinks(String str) //wraps links in messages, i'd rather use regex next time
+	{ //it would be something like (?<!<)(https?://[^\s<]+[^!:,.;<\s])|(?<=<)(https?://[^\s<>]+[^!:,.;<>\s])(?=(?:[!:,.;]*(?:<|\s|$))) then wrap each group 1/2 match
 		StringBuilder result = new StringBuilder();
 		int index = 0;
 		while (index < str.length())
@@ -405,18 +307,18 @@ public class KyoukoBot {
 		}
 		return result.toString();
 	}
-	
-	static HashMap<String, SearchResult> InitSearchResults(String FileName)
-	{
-		HashMap<String, SearchResult> result = new HashMap<String, SearchResult>();
+
+	static HashMap<String, ImageSearchResult> InitSearchResults(String FileName)
+	{ //reads cached image search results from file
+		HashMap<String, ImageSearchResult> result = new HashMap<String, ImageSearchResult>();
 		try {
 			JSONObject json = new JSONObject(IOUtils.toString(new FileInputStream(FileName), Charset.forName("UTF-16")));
 			JSONArray array = json.getJSONArray("results");
 			for (int i = 0; i < array.length(); i++)
 			{
 				JSONObject obj = array.getJSONObject(i);
-				if (obj.getLong("time") > System.currentTimeMillis() - CacheDuration) //we don't want to read outdated queries
-					result.put(obj.getString("query"), new SearchResult(obj.getString("result"), obj.getLong("time")));
+				if (obj.getLong("time") > System.currentTimeMillis() - CacheDuration) //we don't want to read outdated results
+					result.put(obj.getString("query"), new ImageSearchResult(obj.getString("result"), obj.getLong("time")));
 			}
 			System.out.println("Cached image search results loaded successfully!");
 		}
@@ -429,10 +331,10 @@ public class KyoukoBot {
 	}
 	
 	static void SaveSearchResults(String FileName)
-	{
+	{ //saves the image search results to file
 		JSONObject results_json = new JSONObject();
 		JSONArray array = new JSONArray();
-		for (Map.Entry<String, SearchResult> entry: SearchResults.entrySet())
+		for (Map.Entry<String, ImageSearchResult> entry: SearchResults.entrySet())
 			array.put(new JSONObject().put("query", entry.getKey()).put("result", entry.getValue().url).put("time", entry.getValue().time));
 		results_json.put("results", array);
 		try {
@@ -445,18 +347,18 @@ public class KyoukoBot {
 	}
 	
 	static boolean postOnlyFile(Message message, String url, String FileName)
-	{
+	{ //posts a file without checking its MIME type
 		return postOnlyFile(message, url, FileName, "");
 	}
 	
 	static boolean postOnlyFile(Message message, String url, String FileName, String type)
-	{
+	{ //posts a file if it is of a certain MIME type
 		try { //TODO learn to follow redirects??
     		URL leURL = new URL(url);
     		URLConnection leConnection = leURL.openConnection();
     		String contentType = leConnection.getContentType();
     		if (contentType == null)
-    			contentType = leTika.detect(leURL); //what an odd fix for OpieOP
+    			contentType = leTika.detect(leURL); //URLConnection.getContentType() fails sometimes, e.g. OpieOP emote
     		if (!contentType.startsWith(type))
     			return false;
     		String ext = DefaultMimeTypes.forName(contentType).getExtension();
@@ -475,19 +377,18 @@ public class KyoukoBot {
 	}
 	
 	static void postFile(Message message, String url, String FileName)
-	{
+	{ //posts a file or its URL in case of failure (doesn't check MIME type)
 		postFile(message, url, FileName, "");
 	}
 	
     static void postFile(Message message, String url, String FileName, String type)
-    {
+    { //posts a file or its URL in case of failure (checks MIME type too)
     	if (!postOnlyFile(message, url, FileName, type))
     		message.reply(url);
     }
     
     static ArrayList<Emote> InitTwitchEmotes(String[] TwitchEmotes, String GlobalEmotesURL, String BTTVEmotesURL)
-    {
-    	//HashMap<String, String> result = new HashMap<String, String>();
+    { //loads Twitch emotes using list of them and JSON URLs 
     	ArrayList<Emote> result = new ArrayList<Emote>();
     	try {
     		JSONObject globalJSON = new JSONObject(IOUtils.toString(new URL(GlobalEmotesURL), Charset.forName("UTF-8")));
@@ -496,7 +397,6 @@ public class KyoukoBot {
     		for (String name: TwitchEmotes)
     			if (global_emotes.has(name))
     				result.add(new Emote(name.toLowerCase(), template.replace("{image_id}", String.valueOf(global_emotes.getJSONObject(name).getInt("image_id")))));
-    				//result.put(name.toLowerCase(), template.replace("{image_id}", String.valueOf(global_emotes.getJSONObject(name).getInt("image_id"))));
     		System.out.println("Global Twitch emotes loaded successfully!");
     	}
     	catch (Exception e)
@@ -512,26 +412,40 @@ public class KyoukoBot {
     					result.add(new Emote(name.toLowerCase(), "https:" + BTTV_emotes.getJSONObject(index).getString("url") + '.' + BTTV_emotes.getJSONObject(index).getString("imageType")));
     					break;
     				}
-    					//result.put(name.toLowerCase(), "https:" + BTTV_emotes.getJSONObject(index).getString("url") + '.' + BTTV_emotes.getJSONObject(index).getString("imageType"));
     		System.out.println("BTTV emotes loaded successfully!");
     	}
     	catch (Exception e)
     	{
     		System.out.println("Failed to load BTTV emotes.");
     	}
-    	result.add(new Emote("goldenkappa", "http://i.imgur.com/JwmYhu7.png"));
+    	result.add(new Emote("goldenkappa", "http://i.imgur.com/JwmYhu7.png")); //yup, we even have the golden Kappa
     	return result;
     }
     
+	static Channel findChannelByName(String name, Server server)
+	{ //finds a channel with a certain name on a server
+		if (server == null)
+			return null;
+		return Iterables.find(server.getChannels(), (x) -> x.getName().equalsIgnoreCase(name), null);
+	}
+    
     public static ArrayList<User> findUsersOnServer(String arg, Server server, User author)
-    {
+    { //finds users on a server by a part of username/nickname
+    	// priority list (case insensitive):
+    	// 1. both username and nickname match the argument perfectly
+    	// 2. just the nickname matches the argument perfectly
+    	// 3. just the username matched the argument perfectly
+    	// 4. nickname starts with the argument
+    	// 5. username starts with the argument
+    	// 6. nickname contains the argument
+    	// 7. username contains the argument
     	arg = arg.toLowerCase(); //just in case i forget
 		ArrayList<User> result = new ArrayList<User>();
 		Collection<User> users;
 		if (server != null)
 			users = server.getMembers();
 		else
-		{
+		{ //it's just a DM
 			users = new ArrayList<User>();
 			if (author != null)
 				users.add(author);
@@ -572,14 +486,22 @@ public class KyoukoBot {
     }
     
 	public static User findUserOnServer(String arg, Server server, User author)
-	{
+	{ //finds a single user on a server by a part of username/nickname
+    	// priority list (case insensitive, the same as last time):
+    	// 1. both username and nickname match the argument perfectly
+    	// 2. just the nickname matches the argument perfectly
+    	// 3. just the username matched the argument perfectly
+    	// 4. nickname starts with the argument
+    	// 5. username starts with the argument
+    	// 6. nickname contains the argument
+    	// 7. username contains the argument
 		arg = arg.toLowerCase(); //just in case i forget
 		User result = null;
 		Collection<User> users;
 		if (server != null)
 			users = server.getMembers();
 		else
-		{
+		{ //it's just a DM
 			users = new ArrayList<User>();
 			if (author != null)
 				users.add(author);
@@ -639,7 +561,7 @@ public class KyoukoBot {
 	}
 	
 	static String getNickname(User user, MessageReceiver receiver)
-	{
+	{ //returns the name a user has on receiver (maybe should take Server as parameter instead)
 		if (receiver instanceof Channel)
 		{
 			String nickname = user.getNickname(((Channel) receiver).getServer());
@@ -649,7 +571,16 @@ public class KyoukoBot {
 		return user.getName();
 	}
 	
-	static String msToTimeString(long time) {
+	static String getArgument(Message message)
+	{ //returns an argument of a command called in a message
+		String[] split = message.getContent().split("\\s+", 2);
+		if (split.length < 2)
+			return "";
+		return split[1].trim().toLowerCase();
+	}
+	
+	static String msToTimeString(long time)
+	{ //converts time in milliseconds to a user-friendly string, there should be a better way to do this
 		int[] divisors = {0, 24, 60, 60};
 		String[] time_units = {"day", "hour", "minute", "second"};
 		time /= 1000;
@@ -679,7 +610,8 @@ public class KyoukoBot {
 		return result;
 	}
     
-	static void InitPhase() {
+	static void InitPhase()
+	{ //initializes all the databases
 		AllEMTs = InitImageCollection(imgurClient, EMTs, OneEMT);
         AllChitoses = InitImageCollection(imgurClient, Chitoses, OneChitose);
         
@@ -702,7 +634,7 @@ public class KyoukoBot {
 	}
 	
 	static void reboot(boolean manual)//(boolean reload)
-	{
+	{ //reboots the bot, it uses the additional jar (update.jar) to relaunch KyoukoBot because api.disconnect() is currently broken in Javacord
 		/*api.disconnect();
 		if (reload)
 			InitPhase();
@@ -710,20 +642,18 @@ public class KyoukoBot {
 		//connect_time = System.currentTimeMillis();
 		//TODO investigate this
 		try {
-			List<String> commands = new ArrayList<String>();
-			commands.add("java");
-			commands.add("-jar");
-			commands.add("update.jar");
+			List<String> args = new ArrayList<String>();
+			args.add("java");
+			args.add("-jar");
+			args.add("update.jar");
 			if (manual)
-				commands.add("manreboot");
+				args.add("manreboot");
 			else
-				commands.add("reboot");
-			commands.add("KyoukoBot.jar");
+				args.add("reboot");
+			args.add("KyoukoBot.jar");
 			if (!release)
-				commands.add("beta");
-			new ProcessBuilder(commands).redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
-			//new ProcessBuilder("java", "-jar", "update.jar", "reboot", "KyoukoBot.jar", "beta").redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
-			api.setGame("Rebooting...");
+				args.add("beta");
+			new ProcessBuilder(args).redirectOutput(Redirect.INHERIT).redirectError(Redirect.INHERIT).start();
 			try {
 				Thread.sleep(1000);
 			}
@@ -737,7 +667,9 @@ public class KyoukoBot {
 		}
 	}
     
-    public static void main(String args[]) {
+    public static void main(String args[])
+    {
+    	//load the credentials first
     	File credentials = new File("credentials.txt");
     	String imgurClientID = "", imgurClientSecret = "";
     	boolean loaded = false;
@@ -766,10 +698,10 @@ public class KyoukoBot {
     		System.out.println("Failed to read the credentials.");
     		return;
     	}
-    	if (Arrays.asList(args).contains("beta"))
+    	if (Arrays.asList(args).contains("beta")) //launching the "release" bot by default, "beta" one if there's a "beta" argument
     		release = false;
     	token = (release) ? releaseToken : betaToken;
-    	
+    	//initialising everything
     	coc = new ConsoleOutputTracker();
     	System.setProperty("http.agent", "KyoukoBot");
         api = Javacord.getApi(token, true);
@@ -781,46 +713,49 @@ public class KyoukoBot {
         			Database.adjustNames(api.getUsers()); //fix the database on startup TODO seems like an exception can happen here
         			
         			CommandHandler handler = new JavacordHandler(api);
-        			handler.registerCommand(new PingCommand());
+        			// simple picture-posting commands
         			handler.registerCommand(new ShiyuCommand());
         			handler.registerCommand(new EMTCommand());
         			handler.registerCommand(new RemCommand()); //this one is hidden
         			handler.registerCommand(new ChitoseCommand());
         			handler.registerCommand(new CatCommand());
-        			
+        			// "meme"-related commands
         			handler.registerCommand(new LeMemeCommand());
         			handler.registerCommand(new UploadCommand());
         			handler.registerCommand(new DeleteCommand());
-        			
+        			// commands filling image templates
+        			handler.registerCommand(new PrettyCommand());
+        			handler.registerCommand(new YuzuruCommand());
+        			handler.registerCommand(new MeguminCommand());
+        			handler.registerCommand(new BreakingNewsCommand(BreakingNewsLink));
+        			// a little bit of social interaction
         			handler.registerCommand(new HugCommand());
-        			handler.registerCommand(new ProjectCommand());
+        			handler.registerCommand(new ChocolateCommand()); //limited Valentine's Day event
         			handler.registerCommand(new WhoIsCommand());
         			handler.registerCommand(new IntroCommand());
+        			// project-related commands
+        			handler.registerCommand(new ProjectCommand());
         			handler.registerCommand(new WikiCommand());
         			handler.registerCommand(new SpeadsheetCommand());
-        			
+        			// different forms of Google search
         			handler.registerCommand(new ImageCommand());
         			handler.registerCommand(new GoogleShortCommand(1, true));
         			handler.registerCommand(new GoogleLongCommand(3, false));
         			handler.registerCommand(new YouTubeShortCommand(1, true));
         			handler.registerCommand(new YouTubeLongCommand(3, false));
         			handler.registerCommand(new AnimeLyricsCommand());
-        			
-        			handler.registerCommand(new PrettyCommand());
-        			handler.registerCommand(new YuzuruCommand());
-        			handler.registerCommand(new MeguminCommand());
-        			handler.registerCommand(new BreakingNewsCommand(BreakingNewsLink));
-        			
+        			// this one reminds users about Tatsumaki's daily commands (t!daily and t!rep)
         			handler.registerCommand(new DailyCommand());
-        			
+        			// service commands
+        			handler.registerCommand(new PingCommand());
         			handler.registerCommand(new InfoCommand());
         			handler.registerCommand(new HelpCommand(handler));
         			handler.registerCommand(new ChangeLogCommand());
         			handler.registerCommand(new UptimeCommand());
         			handler.registerCommand(new TokenCommand()); //a bit of an easter egg
-        			
+        			// calculator because why not
         			handler.registerCommand(new CalcCommand());
-        			
+        			//admin-only commands
         			handler.registerCommand(new IntroUserCommand());
         			//handler.registerCommand(new IntroDefaultCommand());
         			handler.registerCommand(new SetGameCommand());
@@ -835,21 +770,22 @@ public class KyoukoBot {
         			handler.registerCommand(new RemindMeCommand());
         			handler.registerCommand(new ListAlarmsCommand());
         			handler.registerCommand(new MessageCommand());
-        			
+        			// other listeners that couldn't be made into commands
         			api.registerListener(new ExtraListener(handler)); //Twitch emotes + wrong commands + easter eggs
-        			api.registerListener(new AnimemesListener());
-        			api.registerListener(new NameChangeListener());
-        			api.registerListener(new ShiyuReactionListener());
-    				api.registerListener(new TatsumakiListener(TatsumakiID, WaitingRoom, timer));
+        			api.registerListener(new AnimemesListener()); //saving "memes" from #animemes
+        			api.registerListener(new NameChangeListener()); //keeps correct usernames in the database
+        			api.registerListener(new ShiyuReactionListener()); //easter egg
+    				api.registerListener(new TatsumakiListener(TatsumakiID, WaitingRoom, timer)); //listens for t!daily/t!rep commands and Tatsumaki's response
     				
         			api.setGame(Database.game);
         			api.setAutoReconnect(true);
         			KyoukoBot.connected_once = true;
         			connect_time = System.currentTimeMillis();
+        			//finding the admin and messaging them about going online/rebooting
         			handler.addPermission(adminID, "admin");
         			User admin = Iterables.find(api.getUsers(), (x) -> x.getId().equals(adminID), null);
         			Sdcf4jMessage.MISSING_PERMISSIONS.setMessage("Y-you're touching me inappropriately!");
-        			if (Arrays.asList(args).contains("rebooted"))
+        			if (Arrays.asList(args).contains("rebooted")) //"rebooted", "updated" and "hello" arguments are passed by update.jar
         				System.out.println("Reboot completed!");
         			if (Arrays.asList(args).contains("hello"))
         				if (admin != null)
@@ -860,12 +796,11 @@ public class KyoukoBot {
         				else
         					System.out.println("Couldn't find the owner.");
         			if (Arrays.asList(args).contains("updated"))
-        			{
         				if (admin != null)
         					admin.sendMessage("`Self-update completed!`");
         				else
-        					System.out.println("Couldn't find the owner.");
-        			}
+        					if (!Arrays.asList(args).contains("hello")) //no point in printing the same line twice
+        						System.out.println("Couldn't find the owner.");
         		}
         		@Override
         		public void onFailure(Throwable t) {
@@ -873,21 +808,23 @@ public class KyoukoBot {
         			System.out.println("Failed to connect >_<");
         		}
         	};
-       api.connect(callback);
+        	
+       api.connect(callback); //actual connecting!
+       //the whole manual reconnecting business, Javacord doesn't do it perfectly
        if (manual_reconnecting)
     	   while (true)
     	   {
     		   try {
-    			   Thread.sleep(ReconnectTimeoutMillis);
+    			   Thread.sleep(ReconnectTimeoutMillis); //probably would use timers next time
     			   if (System.currentTimeMillis() - init_time > ReloadTimeoutMillis)
-    			   {
+    			   { //rebooting if databases were loaded ReloadTimeoutMillis ms ago (usually 6 hours)
     				   System.out.println("Obligatory rebooting...");
     				   //reboot(true);
     				   reboot(false);
     			   }
     			   else
     				   if (!coc.newOutput() && connected_once)
-    				   {
+    				   { //reconnect if there's no new console output
     					   System.out.println("RECONNECTING MANUALLY!");
     					   //reboot(false);
     					   api.disconnect();
@@ -895,7 +832,7 @@ public class KyoukoBot {
     				   }
     				   else
     					   if (!connected_once)
-    					   {
+    					   { //connect again if the commands are not loaded
     						   System.out.println("CONNECTING MANUALLY!");
     						   api.disconnect();
     						   api.connect(callback);
@@ -912,8 +849,9 @@ public class KyoukoBot {
     		   }
     	   }
     }
-    
-//TODO channel.type();
+
+//TODO reload image collections if they are not loaded
+//TODO discard alarms for unknown users??
 //TODO k!wtf??
 //TODO remindme??
 //TODO track old messages during a reboot?? 

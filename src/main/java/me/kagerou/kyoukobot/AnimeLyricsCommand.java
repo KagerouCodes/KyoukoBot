@@ -12,15 +12,15 @@ import org.jsoup.select.Elements;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-
+// searches for lyrics at animelyrics.com
 public class AnimeLyricsCommand extends GoogleSearcher implements CommandExecutor {
 
 	AnimeLyricsCommand() {
-		super(10, false, false);
+		super(10, false, false); // just a Google search with 10 max results and no preview
 	}
 	
 	String getTitle(String url, String title)
-	{
+	{ 
 		String result;
 		try {
 			result = Jsoup.connect(url).userAgent("KyoukoBot").get().title();
@@ -31,11 +31,7 @@ public class AnimeLyricsCommand extends GoogleSearcher implements CommandExecuto
 		}
 		return result.replaceAll("Anime Lyrics dot Com -", "").trim();
 	}
-	
-	private static int min(int a, int b) {
-		return (a < b) ? a : b;
-	}
-	
+	//String.indexOf() modified to return string's length instead of -1, needed for correct comparisons
 	private int indexOf(String string, String substr, int from_index) {
 		int result = string.indexOf(substr, from_index);
 		if (result != -1)
@@ -43,21 +39,21 @@ public class AnimeLyricsCommand extends GoogleSearcher implements CommandExecuto
 		return string.length();
 	}
 	
-	private int skipISOControl(String string, int index) {
+	private int skipISOControl(String string, int index)
+	{ // returns index of next non ISO control character in a string
 		int result;
 		for (result = index; ((result < string.length()) && (string.charAt(result) <= ' ')); result++);
 		return result;
 	}
 	
-	private int lastValidIndex(String string, int index, String substr, int charlimit) {
+	private int lastValidIndex(String string, int index, String substr, int charlimit)
+	{ // finds the largest substring in a string starting at the index and ending right before substr (or end of the string) which can fit in a Discord message,
+	  // returns its ending index (substr is supposed to consist of ISOControl characters, that's why skipISOControl skips it)
 		int new_index = index, forward_index = new_index;
-		while (forward_index < min(string.length(), index + KyoukoBot.CharLimit))
+		while (forward_index < Math.min(string.length(), index + KyoukoBot.CharLimit))
 		{
 			new_index = forward_index;
-			forward_index = skipISOControl(string, new_index);
-			//for (new_index = forward_index; (forward_index < string.length()) && Character.isISOControl(string.charAt(forward_index)); forward_index++);
-			//yes, new_index = forward_index, not the other way around
-			forward_index = indexOf(string, substr, forward_index);
+			forward_index = indexOf(string, substr, skipISOControl(string, new_index));
 		}
 		if (forward_index <= index + KyoukoBot.CharLimit)
 			new_index = forward_index;
@@ -67,16 +63,20 @@ public class AnimeLyricsCommand extends GoogleSearcher implements CommandExecuto
 	@Command(aliases = {"k!lyrics", "k!alyrics", "k!animelyrics"}, description = "Searches for lyrics at animelyrics.com, then links them on a server or prints them in DM.", usage = "k!lyrics song")
     public void onCommand(Message message, String[] args) {
 		message.getReceiver().type();
-		String query = message.getContent().substring(message.getContent().indexOf(' ') + 1).trim().toLowerCase();
+		String query = KyoukoBot.getArgument(message);
+		if (query.isEmpty())
+		{
+			message.reply("`Enter a query.`");
+			return;
+		}
 		String url = "";
-		//return search(query + " site:animelyrics.com");
 		ArrayList<SearchResult> array;
 		int link_index = 0;
 		try {
+			// search for 10 results at animelyrics.com 
 			array = searchToArray(query + " site:animelyrics.com");
 			while ((link_index < array.size()) && !array.get(link_index).url.endsWith("htm") && !array.get(link_index).url.endsWith("html"))
-				link_index++;
-			//if (array.isEmpty())
+				link_index++; //skip the results not ending in htm(l) since those don't contain lyrics of single songs
 			if (link_index == array.size())
 			{
 				message.reply("`No results found >_<`");
@@ -91,20 +91,18 @@ public class AnimeLyricsCommand extends GoogleSearcher implements CommandExecuto
 		}
 		String title = getTitle(url, array.get(link_index).title);
 		if (!message.isPrivateMessage())
-		{
+		{ //post just the link with a title if the message isn't private, no need to spam the chat
 			String result = '`' + title + "`\n" +
-		((url.endsWith(".htm") || url.endsWith(".html")) ? "`(to get the full lyrics, send this command in private chat)`\n" : "") +
-			'<' + url + '>';
+		//((url.endsWith(".htm") || url.endsWith(".html")) ? "`(to get the full lyrics, send this command in private chat)`\n" : "") + //no need for this check, right??
+			"`(to get the full lyrics, send this command in private chat)`\n" + '<' + url + '>';
 			message.reply(result);
 			return;
 		}
+		//if it's a private message, parse the lyrics and post them
 		try {
-			//FileUtils.copyURLToFile(new URL(array.get(0).url), new File("degeso.txt"));
 			String html = IOUtils.toString(new URL(url), "UTF-8"); 
 			Document doc = Jsoup.parse(html);
-			//Document doc = Jsoup.connect(array.get(0).url).get();
-			
-			//FileUtils.writeStringToFile(new File("desu.txt"), doc.html(), "UTF-8");
+			// if there are romaji and a translation, lyrics are in <td class=romaji><td class=lyrics>, otherwise they are in <td class=lyrics> 
 			Elements tds = doc.getElementsByClass("romaji"), lyrics = new Elements();
 			if (tds.isEmpty())
 				lyrics = doc.getElementsByClass("lyrics");
@@ -115,17 +113,14 @@ public class AnimeLyricsCommand extends GoogleSearcher implements CommandExecuto
 			for (Element elem: lyrics)
 			{
 				elem.getElementsByTag("dt").remove();
-				//for (Element dt: elem.getElementsByTag("dt"))
-				//		dt.remove();
 				elem.getElementsByTag("br").append("\\n");
-				//for (Element br: elem.getElementsByTag("br"))
-				//	br.appendText("\\n");
 				result += elem.text().replaceAll("\\\\n", "\n");
 			}
+			
 			if (result.isEmpty())
-			{
+			{ //JSoup is buggy and doesn't parse some spans properly, e.g. result would be empty while parsing view-source:http://www.animelyrics.com/anime/overlord/clattanoia.htm
 				//TODO file an issue at jsoup's github
-				//Indian code because JSoup's buggy
+				//searching for <span class=lyrics> like a true Indian, probably should search for the regex <span\s+class\s*=\s*(lyrics|"lyrics")> or something like that instead
 				int open_index = -1, close_index = -1;
 				do
 				{
@@ -141,34 +136,25 @@ public class AnimeLyricsCommand extends GoogleSearcher implements CommandExecuto
 						}
 				} while ((open_index != -1) && (close_index != -1));
 			}
-			if (result.isEmpty())
-				throw new NullPointerException();
-			result = '`' + title + "`\n<" + url + ">\n```xml\n" + result.trim()/* + "```"*/;
+			if (result.isEmpty()) //still failed to parse the lyrics somehow?? Just post the link.
+				throw new NullPointerException(); //pretty much goto catch (Exception e)
+			result = '`' + title + "`\n<" + url + ">\n```\n" + result.trim();
 			if (result.length() <= KyoukoBot.CharLimit)
-			{
+			{ //just post the lyrics is they fit into a single message
 				message.reply(result  + "```");
 				return;
 			}
 			int index = 0;
 			while (index != result.length())
-			{
-				//int new_index = indexOf(result, "\n\n", index), forward_index = new_index;
+			{ //breaking the message by different demiliters: two new lines, one new line, space, no breaking at all — in order of decreasing priority 
 				int new_index = lastValidIndex(result, index, "\n \n", KyoukoBot.CharLimit); //India intensifies
-				
-				/*int new_index = index, forward_index = new_index;
-				while (forward_index < min(result.length(), index + KyoukoBot.CharLimit))
-				{
-					for (new_index = forward_index; (forward_index < result.length()) && Character.isISOControl(result.charAt(forward_index)); forward_index++);
-					//yes, new_index = forward_index, not the other way around
-					forward_index = indexOf(result, "\n\n", forward_index);
-				}*/
 				if (new_index == index)
 					new_index = lastValidIndex(result, index, "\n", KyoukoBot.CharLimit);
 				if (new_index == index)
 					new_index = lastValidIndex(result, index, " ", KyoukoBot.CharLimit);
 				if (new_index == index)
-					new_index = min(index + KyoukoBot.CharLimit, result.length());
-				message.reply(((index != 0) ? "```xml\n" : "") + result.substring(index, new_index) + "```");
+					new_index = Math.min(index + KyoukoBot.CharLimit, result.length());
+				message.reply(((index != 0) ? "```\n" : "") + result.substring(index, new_index) + "```");
 				index = skipISOControl(result, new_index);
 				
 				try {

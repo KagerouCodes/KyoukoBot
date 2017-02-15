@@ -1,3 +1,16 @@
+Version 0.3.❤ [14-02-2017]
+- added a k!choco command, also known as k!valentine or k!rabu. Nothing fancy there but you can make somewan a little bit happier today~
+
+=============================================================
+
+Version 0.3.1 [??-02-2017, screw you, i'm european]
+- i will pretend to be typing while executing time-consuming commands now;
+- fixed a bug with me printing empty intros for people who have subbed for k!daily but haven't set their intros (test it!);
+- fixed a bug where i would fail to post an Emilia/Chitose if the imgur album wasn't loaded (the current solution is to post a single picture instead);
+- fixed k!ggl, k!google and k!lyrics with no argument searching for something (test it!).
+
+=============================================================
+
 Version 0.3 [03-02-2017, screw you, i'm european]
 - added a k!daily command which will remind you about Tatsumaki's daily features;
 - added a k!yuzuru command which works just like k!nice but with another template;

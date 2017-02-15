@@ -18,12 +18,12 @@ public class MoxianCommand implements CommandExecutor {
 
 	@Command(aliases = {"k!moxian"}, description = "Performs a Google image search as Moxian adviced.", usage = "k!moxian query", showInHelpPage = false)
     public void onCommand(Message message, String[] args) {
-    	if (args.length == 0)
+		String query = KyoukoBot.getArgument(message);
+    	if (query.isEmpty())
     	{
     		message.reply("`Enter a query.`");
     		return;
     	}
-    	String query = message.getContent().substring(message.getContent().indexOf(' ') + 1).trim().toLowerCase();
     	String result = "";
     	boolean cached = KyoukoBot.SearchResults.containsKey(query) &&
     		(KyoukoBot.SearchResults.get(query).time > System.currentTimeMillis() - KyoukoBot.CacheDuration); //milliseconds in a week
@@ -48,7 +48,7 @@ public class MoxianCommand implements CommandExecutor {
     			e.printStackTrace();
     			result = "";
     		}
-    		KyoukoBot.SearchResults.put(query, new SearchResult(result, System.currentTimeMillis()));
+    		KyoukoBot.SearchResults.put(query, new ImageSearchResult(result, System.currentTimeMillis()));
     		KyoukoBot.SaveSearchResults(KyoukoBot.SearchResultsFile);
     	}
     	else
