@@ -4,7 +4,7 @@ import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-
+//was used for testing Twitch emotes 
 @Deprecated
 public class TwitchCommand implements CommandExecutor {
 	@Command(aliases = {"k!twitch", "k!emote"}, description = "Posts a Twitch emote in chat.", usage = "k!twitch emote", showInHelpPage = false)
@@ -22,11 +22,6 @@ public class TwitchCommand implements CommandExecutor {
 				KyoukoBot.postFile(message, emo.url, name);
 				return;
 			}
-		/*if (KyoukoBot.Emotes.containsKey(name))
-		{
-			KyoukoBot.postFile(message, KyoukoBot.Emotes.get(name), name);
-			return;
-		}*/
 		message.reply("Emote not found >_<");
 	}
 }

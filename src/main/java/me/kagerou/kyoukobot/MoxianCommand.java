@@ -10,10 +10,10 @@ import org.json.JSONObject;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-
+//performs a Google image search using the API as Moxian suggested, currently not used because the bruteforce method works just fine so far
 @Deprecated
 public class MoxianCommand implements CommandExecutor {
-	static String GoogleKey = ""; //TODO fill this one if you're planning to use the command
+	static String GoogleKey = ""; //fill these two if you're planning to use the command
 	static String GoogleCX = "";
 
 	@Command(aliases = {"k!moxian"}, description = "Performs a Google image search as Moxian adviced.", usage = "k!moxian query", showInHelpPage = false)

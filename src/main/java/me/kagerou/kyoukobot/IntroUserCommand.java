@@ -14,10 +14,10 @@ public class IntroUserCommand implements CommandExecutor {
 	{
 		if (args.length == 0)
 			return "Not enough arguments!";
-		String msg = message.getContent().toLowerCase();
+		String msg = message.getContent();
 		if (msg.indexOf('@') == -1)
 			return "Usage: k!introuser name@ text"; //very awkward interface but it'll do; not even supporting mentions for now
-		String name = msg.substring("k!introuser".length(), msg.indexOf('@')).trim();
+		String name = msg.substring("k!introuser".length(), msg.indexOf('@')).toLowerCase().trim();
 		String intro = msg.substring(msg.indexOf('@') + 1).trim();
 		if (intro.length() > MaxIntroLength) //still cutting the intro if it's too long
 			intro = intro.substring(0, MaxIntroLength);

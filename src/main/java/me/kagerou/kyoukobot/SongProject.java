@@ -9,25 +9,22 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
+//stores info about a single project
 class SongProject
 {
+	//name — the project name to display (with ** for bold text etc.)
+	//name_text — the actual name without the tags
 	String name, name_text, progress, date, address, organisers, thread_link, video_link, lyrics_link;
-	boolean old;
+	boolean old; //whether the project is closed for submissions
+	//parses the info from a single line in the table from the wiki (https://www.reddit.com/r/anime/wiki/sings/)
+	//uses preloaded links to lyrics from jsonLyrics
 	SongProject(Element el, boolean old, JSONObject jsonLyrics)
 	{
 		Elements tds = el.getElementsByTag("td");
 		this.old = old;
-		String name_html = tds.get(1).html();
-		/*name = tds.get(1).html();
-		name = name.replaceAll("<strong>", "**");
-		name = name.replaceAll("</strong>", "**");
-		name = name.replaceAll("<b>", "**");
-		name = name.replaceAll("</b>", "**");
-		name = name.replaceAll("<i>", "*");
-		name = name.replaceAll("</i>", "*");*/
 		name_text = tds.get(1).text();
-		name_html = tds.get(1).html();
+		//replace <strong>, <b> and <i> tags with Discord formatting, ignore the other tags
+		String name_html = tds.get(1).html();
 		name_html = name_html.replaceAll("<strong>", "**");
 		name_html = name_html.replaceAll("</strong>", "**");
 		name_html = name_html.replaceAll("<b>", "**");
@@ -35,12 +32,14 @@ class SongProject
 		name_html = name_html.replaceAll("<i>", "*");
 		name_html = name_html.replaceAll("</i>", "*");
 		name = tds.get(1).html(name_html).text();
+		
 		date = tds.get(2).text();
 		thread_link = tds.get(2).getElementsByTag("a").get(0).attr("href");
 		if (old)
 		{
 			progress = tds.get(3).text();
 			video_link = "";
+			//parse the video link: links to youtube.com gets highest priority, then it's youtu.be and vimeo.com
 			for (Element links: tds.get(4).getElementsByTag("a"))
 				if (links.attr("abs:href").contains("youtube.com"))
 				{
@@ -71,13 +70,13 @@ class SongProject
 			progress = "";
 			video_link = "";
 		}
-		
+		//loads the lyrics link from jsonLyrics if possible
 		try {
 			lyrics_link = jsonLyrics.getString(name_text);
 			return;
 		}
 		catch (Exception e)
-		{
+		{ //otherwise, trying to find a link to pastebin or animelyrics at the project page 
 			lyrics_link = "";
 			try { // this is very resource-intensive, i'm getting my socket closed??
 				Document doc = Jsoup.connect(thread_link).userAgent("KyoukoBot").get();
@@ -91,10 +90,10 @@ class SongProject
 			catch (Exception exc)
 			{
 				System.out.println("Failed to access reddit thread: " + thread_link);
+				e.printStackTrace();
 				return;
-				//e.printStackTrace();
 			}
-			try {
+			try { //write the link to jsonLyrics and save them to file
 				jsonLyrics.put(name_text, lyrics_link);
 				jsonLyrics.toString();
 				FileUtils.writeStringToFile(new File(KyoukoBot.LyricsDatabaseFile), jsonLyrics.toString(), Charset.forName("UTF-8"));
@@ -106,11 +105,12 @@ class SongProject
 			}
 		}
 	}
+	//a user-friendly representation of the info
 	@Override
 	public String toString()
 	{
 		if (name.toLowerCase().contains("database") && name.toLowerCase().contains("log horizon"))
-			return "`Project:` " + name +  "\n<https://www.youtube.com/watch?v=oHg5SJYRHA0>";
+			return "`Project:` " + name +  "\n<https://www.youtube.com/watch?v=oHg5SJYRHA0>"; //easter egg for the database, that's a rickroll
 		if (old)
 			if (progress.equalsIgnoreCase("Completed"))
 				return "`Project:` " + name + "\n`Progress:` " + progress + (!lyrics_link.isEmpty() ? "\n`Lyrics:` <" + lyrics_link : "\n`Announcement:` <" + thread_link) + ">\n`Organiser(s)`: " + organisers + "\n" + video_link;

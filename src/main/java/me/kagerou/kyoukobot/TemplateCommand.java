@@ -23,9 +23,9 @@ import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.impl.ImplUser;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.CommandExecutor;
-
+//base class for commands which draw images on top of templates
 public class TemplateCommand implements CommandExecutor {
-	static class Triangle
+	static class Triangle //what, there isn't one in awt??
 	{
 		Point2D.Double A, B, C;
 		Triangle(Point2D.Double A, Point2D.Double B, Point2D.Double C)
@@ -46,13 +46,15 @@ public class TemplateCommand implements CommandExecutor {
 	
 	enum StretchOption
 	{
-		STRETCH, SCALE_MIN, SCALE_MAX;
+		STRETCH, //stretch images to fit areas perfectly
+		SCALE_MIN, //stretch images in a way which would make 16:9 ones fir the areas perfectly, then scale to fit them entirely, leave white stripes on the sides
+		SCALE_MAX; //scale images so that they would contain areas
 	}
 	
-	private BufferedImage template;
-	private int width, height;
-	private Triangle[] triangles;
-	private StretchOption stretch;
+	private BufferedImage template; //template itself
+	private int width, height; //template's width and height
+	private Triangle[] triangles; //areas to draw custom images in, point A of the triangle is the top-left corner of a resulting parallelogram, B is top-right corner, C is bottom-left
+	private StretchOption stretch; //how to stretch custom images
 	
 	TemplateCommand (String template_link, StretchOption stretch, Triangle... triangles)
 	{
@@ -69,10 +71,11 @@ public class TemplateCommand implements CommandExecutor {
 			System.out.println("Failed to load the template " + template_link + " >_<");
 		}
 	}
-	
+	//returns an affine transform which translates triangle ABC to A1B1C1, thanks stackoverflow
+	//don't ask me why parameters are not of my own Triangle type
 	public static AffineTransform TriangleToTriangle (Point2D.Double A, Point2D.Double B, Point2D.Double C,
 			Point2D.Double A1, Point2D.Double B1, Point2D.Double C1)
-	{        
+	{
 		double x11 = A.getX();
 		double x12 = A.getY();
 		double x21 = B.getX();
@@ -98,7 +101,7 @@ public class TemplateCommand implements CommandExecutor {
 		double a6 = y12-a4*x11-a5*x12;
 		return new AffineTransform(a1, a4, a2, a5, a3, a6);
 	}
-	
+	//draws an image on top of graphics in an parallelogramm area corresponding to ABC using the specified stretch option
 	void DrawOnTop(Graphics2D graphics, BufferedImage image, Point2D.Double A, Point2D.Double B, Point2D.Double C, StretchOption stretch)
 	{
 		AffineTransform transform;
@@ -107,8 +110,9 @@ public class TemplateCommand implements CommandExecutor {
 			transform = TriangleToTriangle(new Point2D.Double(), new Point2D.Double(image.getWidth(), 0.0), new Point2D.Double(0.0, image.getHeight()), A, B, C);
 		else
 		{
-			double ratio = A.distance(B) / A.distance(C);
+			double ratio = A.distance(B) / A.distance(C); //aspect ratio of the area
 			System.out.println("Ratio = " + ratio);
+			//calculate the needed transform by translating the center of the image to (0, 0) then determining coordinates of points to be translated into corners of the area
 			double x, y;
 			if (stretch == StretchOption.SCALE_MIN)
 			{
@@ -120,6 +124,7 @@ public class TemplateCommand implements CommandExecutor {
 			{
 				x = Math.min(image.getHeight() * ratio, image.getWidth()) / 2.0;
 				y = Math.min(image.getWidth() / ratio, image.getHeight()) / 2.0;
+				//cut the image to avoid the overflowing part of it to be drawn in the adjacent areas
 				img = image.getSubimage(Math.max((int) (image.getWidth() / 2.0 - x), 0), Math.max((int) (image.getHeight() / 2.0 - y), 0), Math.min((int) (2 * x), image.getWidth()), Math.min((int) (2 * y), image.getHeight()));
 			}
 			transform = TriangleToTriangle(new Point2D.Double(-x, -y), new Point2D.Double(x, -y), new Point2D.Double(-x, y), A, B, C);
@@ -129,42 +134,41 @@ public class TemplateCommand implements CommandExecutor {
 	}
 	
     public void onCommand(DiscordAPI api, Message message, Server server, String[] args) { //TODO do something with https://2static2.fjcdn.com/thumbnails/comments/Yes+_12bb1d42b9794b90b53cae6196c9baed.png ??
-    	//message.getReceiver().type();
 		if (template == null)
 		{
 			message.reply("`Failed to load the template >_<`");
 			return;
 		}
 		message.getReceiver().type();
+		//determine the image first: it could be either an avatar of a specified user/author of the message or a linked/atttached image
 		URL imgURL = null;
-		String original_arg = "";
-		if (args.length > 0)
-			original_arg = message.getContent().split(" ", 2)[1].trim();
+		String original_arg = KyoukoBot.getArgument(message, false);
 		String arg = original_arg.toLowerCase();
 		if (!message.getAttachments().isEmpty())
-			imgURL = message.getAttachments().iterator().next().getUrl();
+			imgURL = message.getAttachments().iterator().next().getUrl(); //use the attached image if there is one
 		if (imgURL == null)
-		{
+		{ //detecting usernames
 			User target = null;
 			if (arg.isEmpty())
-				target = message.getAuthor();
+				target = message.getAuthor(); //just use the author himself if there's no argument
 			if (target == null)
 				if (!message.getMentions().isEmpty())
-					target = message.getMentions().get(0);
+					target = message.getMentions().get(0); //use the first mention if there is one
 			if (target == null)
-				target = KyoukoBot.findUserOnServer(arg, server, message.getAuthor());
+				target = KyoukoBot.findUserOnServer(arg, server, message.getAuthor()); //try to find a user otherwise
 			if (target != null)
-				imgURL = getAvatarUrl(target);
+				imgURL = getAvatarUrl(target); //User#getAvatarUrl() doesn't always return up to date avatar, gotta implement it myself
 				//imgURL = target.getAvatarUrl();
 		}
-		if (imgURL == null)
+		if (imgURL == null) //if everything else, use argument as URL
 			try {
-				imgURL = new URL(original_arg);
+				imgURL = new URL(original_arg); //using the original one in case of a case-sensitive URL
 			}
 			catch (MalformedURLException e)
 			{
 				imgURL = null;
 			}
+		//loading the image
 		boolean foundImage;
 		String format = "";
 		try {
@@ -189,24 +193,16 @@ public class TemplateCommand implements CommandExecutor {
 			message.reply("`Couldn't read the image >_<`");
 			return;
 		}
-		
+		//create the graphics and fill it with white colour first
 		BufferedImage result = new BufferedImage(template.getWidth(), template.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D graphics = result.createGraphics();
 		graphics.setColor(new Color(255, 255, 255));
 		graphics.fillRect(0, 0, width, height);
-		
+		//then draw the custom image and the template on top of it
 		for (Triangle tri: triangles)
 			DrawOnTop(graphics, image, tri.A, tri.B, tri.C, stretch);
-		/*DrawOnTop(graphics, image, new Point2D.Double(121, 622), new Point2D.Double(278, 605), new Point2D.Double(169, 842));
-		DrawOnTop(graphics, image, new Point2D.Double(284, 557), new Point2D.Double(444, 567), new Point2D.Double(331, 769));
-		DrawOnTop(graphics, image, new Point2D.Double(224, 858), new Point2D.Double(494, 858), new Point2D.Double(253, 1011));
-		
-		DrawOnTop(graphics, image, new Point2D.Double(498, 561), new Point2D.Double(714, 513), new Point2D.Double(539, 731));
-		DrawOnTop(graphics, image, new Point2D.Double(730, 517), new Point2D.Double(843, 508), new Point2D.Double(772, 675));
-		DrawOnTop(graphics, image, new Point2D.Double(693, 707), new Point2D.Double(878, 681), new Point2D.Double(725, 859));
-		DrawOnTop(graphics, image, new Point2D.Double(643, 897), new Point2D.Double(815, 864), new Point2D.Double(667, 1012));*/ //new Point2D.Double(662, 992));
 		graphics.drawImage(template, 0, 0, null); //TODO maybe integration with Google Image Search??
-		
+		//sending the result
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		try {
 			ImageIO.write(result, "PNG", os);
@@ -218,7 +214,7 @@ public class TemplateCommand implements CommandExecutor {
 		 	return;
 		}
 	}
-
+    //fetch the URL manually
 	private URL getAvatarUrl(User user) {
 		try {
 			HttpURLConnection conn = (HttpURLConnection) new URL("https://discordapp.com/api/users/" + user.getId()).openConnection();

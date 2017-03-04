@@ -571,12 +571,19 @@ public class KyoukoBot {
 		return user.getName();
 	}
 	
-	static String getArgument(Message message)
+	static String getArgument(Message message, boolean toLowerCase)
 	{ //returns an argument of a command called in a message
 		String[] split = message.getContent().split("\\s+", 2);
 		if (split.length < 2)
 			return "";
-		return split[1].trim().toLowerCase();
+		if (toLowerCase)
+			return split[1].trim().toLowerCase();
+		return split[1].trim();
+	}
+	
+	static String getArgument(Message message)
+	{ //returns an argument of a command called in a message (converted to lower case)
+		return getArgument(message, true);
 	}
 	
 	static String msToTimeString(long time)
@@ -730,7 +737,7 @@ public class KyoukoBot {
         			handler.registerCommand(new BreakingNewsCommand(BreakingNewsLink));
         			// a little bit of social interaction
         			handler.registerCommand(new HugCommand());
-        			handler.registerCommand(new ChocolateCommand()); //limited Valentine's Day event
+        			//handler.registerCommand(new ChocolateCommand()); //limited Valentine's Day event
         			handler.registerCommand(new WhoIsCommand());
         			handler.registerCommand(new IntroCommand());
         			// project-related commands
@@ -850,6 +857,17 @@ public class KyoukoBot {
     	   }
     }
 
+//TODO handle altruism (t!daily dora; :atm:  |  **pandaxtc has given <@200960894627348480>  209 daily credits!**)
+//TODO downforeveryoneorjustme??
+//TODO learn to delete https://cdn.discordapp.com/attachments/245044272473047040/287006575418408970/cff1a95dbe0328f89eae7f93ac4c08fc.png or https://cdn.discordapp.com/attachments/218471304452374528/287131941852151808/cff1a95dbe0328f89eae7f93ac4c08fc.jpg >_<
+//TODO reminders when 5 minutes are left before t!daily and t!rep??
+//TODO replace k!img trypophobia with something else
+//TODO k!project Lion returns Zankoku becaquse Evangelion, lol
+//TODO "k!help command" displays help on k!help??
+//TODO give k!project a "k!projects" alias 
+//TODO increase timeout for Tatsumaki's responses in case of lags
+//TODO k!correct 
+//TODO k!marry
 //TODO reload image collections if they are not loaded
 //TODO discard alarms for unknown users??
 //TODO k!wtf??
@@ -858,7 +876,6 @@ public class KyoukoBot {
 //TODO "kill script"??
 //TODO k!recordings person (outclassed by the discord search, sigh)
 //TODO whatanime.ga??
-//TODO chocolate giving system??
 //TODO headpats??
 //TODO typerace??
 //TODO auto-selfupdate from git??

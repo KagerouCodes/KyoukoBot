@@ -6,7 +6,7 @@ import de.btobastian.javacord.entities.Channel;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-
+//used to repost messages in #recordings, was never actually used
 @Deprecated
 public class RecordCommand implements CommandExecutor {
 	@Command(aliases = {"k!record", "k!rec"}, usage = "k!rec[ord] post", description = "Reposts into #recordings channel.")

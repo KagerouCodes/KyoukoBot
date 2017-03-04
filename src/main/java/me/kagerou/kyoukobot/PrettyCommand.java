@@ -5,7 +5,7 @@ import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-
+////a template command, puts a user-submitted image (or a mentioned user's avatar) in the photos there: http://i.imgur.com/3zrwfZB.png
 public class PrettyCommand extends TemplateCommand implements CommandExecutor {
 	private final static String template_link = KyoukoBot.PrettyLink;
 	PrettyCommand()

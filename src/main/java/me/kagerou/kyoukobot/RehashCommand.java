@@ -4,7 +4,7 @@ import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-
+//renames files in the "memebase" into <MD5>.<extension for the content type>
 public class RehashCommand implements CommandExecutor {
 	static final String dirName = "memes";
 

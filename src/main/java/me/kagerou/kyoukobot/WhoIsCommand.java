@@ -15,67 +15,68 @@ import de.btobastian.javacord.entities.UserStatus;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-
+//displays introductions for a single user or all the online ones
 public class WhoIsCommand implements CommandExecutor {
 	@Command(aliases = {"k!who", "k!whois"}, description = "Introduces a user or the entire chat room.", usage = "k!who [name|everyone|all]")
     public void onCommand(DiscordAPI api, Message message, Server server, String args[])
 	{
         User target = null;
-        if (args.length == 0)
+        String name = KyoukoBot.getArgument(message);
+        if (name.isEmpty()) //grab the intro of the person using the command if there's no argument
         	target = message.getAuthor();
         else
-        	if (!message.getMentions().isEmpty())
+        	if (!message.getMentions().isEmpty()) //just grab the mention if there is one
         		target = message.getMentions().get(0);
-        String name;
         if (target != null)
         	name = target.getName();
-        else
-        	name = message.getContent().substring(message.getContent().indexOf(' ') + 1).trim();
         if (name.equalsIgnoreCase("Rem"))
-        {
+        { //an easter egg; inb4 a real user with this name shows themselves
         	message.reply("Who is Rem? :thinking:");
         	return;
         }
         if (!name.equalsIgnoreCase("everyone") && !name.equalsIgnoreCase("all"))
-        {
+        { //need to find a single user by their name
         	if (target != null)
-        	{
+        	{ //if user's already identified, show their intro
         		NewDataBase.Person person = KyoukoBot.Database.get(target.getId());
     			if (person == null)
     			{
     				Map.Entry<String, NewDataBase.Person> unIDedEntry = KyoukoBot.Database.findUnIDedEntry(target.getName());
     				if (unIDedEntry != null)
-    				{
+    				{ //if there's an unIDed entry with the needed username, use it and give it the proper ID
     					KyoukoBot.Database.changeID(unIDedEntry.getKey(), target.getId());
     					person = unIDedEntry.getValue();
     				}
     			}
-    			if ((person != null) && !person.intro.isEmpty())
+    			if ((person != null) && !person.intro.isEmpty()) //the actual output
     				message.reply("**" + KyoukoBot.getNickname(target, message.getReceiver()) + ":** " + person.intro);
     			else
     				message.reply("I-I don't know **" + name + "** yet.");
     			return;
         	}
+        	//if user not found yet, try to find them on the server
         	List<User> usersByName = KyoukoBot.findUsersOnServer(name, server, message.getAuthor());
-        	if ((target = Iterables.find(usersByName, (x) -> (KyoukoBot.Database.get(x.getId()) != null), null)) != null)
+        	target = Iterables.find(usersByName, (x) -> ((KyoukoBot.Database.get(x.getId()) != null) && !KyoukoBot.Database.get(x.getId()).intro.isEmpty()), null);
+        	if (target != null)
         	{
         		message.reply("**" + KyoukoBot.getNickname(target, message.getReceiver()) + ":** " + KyoukoBot.Database.get(target.getId()).intro);
         		return;
         	}
-        	Map.Entry<String, NewDataBase.Person> entry = KyoukoBot.Database.findPartialEntry(name);
+        	Map.Entry<String, NewDataBase.Person> entry = KyoukoBot.Database.findPartialEntryWithIntro(name); //if the user's not found on the server, search for the name in the DB TODO find an entry with an actual intro!
         	if (entry != null)
         		message.reply("**" + entry.getValue().name + ":** " + entry.getValue().intro);
         	else
         		message.reply("I-I don't know **" + name + "** yet.");
         }
         else
-        { //TODO make it introduce only more active/recent users??
+        { //introduce all the online users on the server; TODO make it introduce only more active/recent users??
+        	//resulting list of users with introductions, sorts itself by the name
         	TreeMap<String, String> result = new TreeMap<String, String> ((x, y) -> x.toLowerCase().compareTo(y.toLowerCase()));
         	Collection<User> users;
         	if (!message.isPrivateMessage())
         		users = message.getChannelReceiver().getServer().getMembers();
         	else
-        	{
+        	{ //if it's a private message, just include the author in the user list
         		users = new ArrayList<User>();
         		users.add(message.getAuthor());
         	}
@@ -85,7 +86,7 @@ public class WhoIsCommand implements CommandExecutor {
         		{
         			NewDataBase.Person person = KyoukoBot.Database.get(user.getId());
         			if (person == null)
-        			{
+        			{ //if there's no entry with the user's ID, try to find an unIDed one and fix it
         				Map.Entry<String, NewDataBase.Person> unIDedEntry = KyoukoBot.Database.findUnIDedEntry(user.getName());
         				if (unIDedEntry != null)
         				{
@@ -102,7 +103,7 @@ public class WhoIsCommand implements CommandExecutor {
         	{
         		String str = "**" + entry.getKey() + ":** " + KyoukoBot.wrapLinks(entry.getValue());
         		if (output.length() + str.length() > KyoukoBot.CharLimit)
-        		{
+        		{ //break the message into multiple ones if it's too long
         			message.reply(output);
         			output = "";
         			try {

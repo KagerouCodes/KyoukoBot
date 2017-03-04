@@ -8,7 +8,8 @@ import org.json.JSONObject;
 
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-
+//no longer used
+@Deprecated
 public class PokeAbilCommand implements CommandExecutor {
     @Command(aliases = {"k!pokeabil", "k!abil", "k!ability", "k!pokemonability"}, description = "Describes a Pokemon ability.")
     public String onCommand(String command, String[] args) {

@@ -4,7 +4,14 @@ import java.io.File;
 import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 import java.util.List;
-
+//this class is compiled into a jar separately and is needed to reboot the bot or update it
+//Usage: java -jar update.jar (tmpfile/reboot/manreboot) jarfile [beta]
+//if the first parameter is reboot, the bot is rebooted
+//if it's manreboot, the bot is rebooted and notifies the owner when it goes online
+//if it's none of the above, it should be a name of a file with the new version of the bot; update.jar will delete the old one and replace it with tmpfile,
+//launch it and notify the owner
+//jarfile is the name of a jar file with the bot
+//if the beta parameter is present, it is passed to the bot jar and it uses the beta authorisation token
 public class Update {
 
 	public static void main(String[] args) {

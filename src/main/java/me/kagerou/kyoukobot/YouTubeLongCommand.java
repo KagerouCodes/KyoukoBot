@@ -3,7 +3,7 @@ package me.kagerou.kyoukobot;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-
+//performs a YouTube search (3 results, no preview)
 public class YouTubeLongCommand extends YouTubeSearcher implements CommandExecutor {
 	
 	YouTubeLongCommand(int LinksLimit, boolean Preview) {

@@ -13,7 +13,7 @@ public class IntroCommand implements CommandExecutor
 	@Command(aliases = {"k!intro", "k!introduce"}, description = "Lets you introduce yourself.", usage = "k!intro text")
     public String onCommand(DiscordAPI api, Message message, String args[])
 	{
-		String intro = KyoukoBot.getArgument(message).replace('\n', ' '); //not allowing newlines, those are too spammy
+		String intro = KyoukoBot.getArgument(message, false).replace('\n', ' '); //not allowing newlines, those are too spammy
 		//String intro = message.getContent().substring(message.getContent().indexOf(' ') + 1).trim().replace('\n', ' ');
 		if (intro.length() > MaxIntroLength) //cut the intro if it's too long
 			intro = intro.substring(0, MaxIntroLength);

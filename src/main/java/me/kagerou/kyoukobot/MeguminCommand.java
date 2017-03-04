@@ -5,12 +5,12 @@ import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-
+//a template command, puts a user-submitted image (or a mentioned user's avatar) at the back side of this letter: http://i.imgur.com/X1rO0A7.png
 public class MeguminCommand extends TemplateCommand implements CommandExecutor {
 	private final static String template_link = KyoukoBot.MeguminLink;
 	MeguminCommand()
 	{
-		super(template_link, StretchOption.SCALE_MIN, new Triangle(102, 114, 665, -2, 201, 491)); //211, 477, 765, 371not sure if STRETCH is the way to go -> 754, 381
+		super(template_link, StretchOption.SCALE_MIN, new Triangle(102, 114, 665, -2, 201, 491));
 	}
 	
 	@Command(aliases = {"k!fetish", "k!megumin"}, description = "Arouses Megumin. Accepts attachments.", usage = "k!fetish username|image")

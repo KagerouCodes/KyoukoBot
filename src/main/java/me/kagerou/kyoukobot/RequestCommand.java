@@ -6,7 +6,8 @@ import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-
+//sends a file from the bot's directory (owner-only)
+//needed because i don't have direct access to the machine the bot's running on
 public class RequestCommand implements CommandExecutor {
 	@Command(aliases = {"k!request"}, description = "Cheesy admin-only command.", usage = "k!request filename", requiredPermissions = "admin", showInHelpPage = false)
     public void onCommand(DiscordAPI api, Message message, String args[])
@@ -16,7 +17,7 @@ public class RequestCommand implements CommandExecutor {
 			message.reply("`Specify the filename.`");
 			return;
 		}
-		String FileName = message.getContent().split(" ", 2)[1].trim();
+		String FileName = KyoukoBot.getArgument(message, false);
 		File result = new File(System.getProperty("user.dir") + '/' + FileName);
 		if (!result.exists() || result.isDirectory())
 		{

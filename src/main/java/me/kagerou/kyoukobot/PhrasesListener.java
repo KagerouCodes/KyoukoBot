@@ -5,14 +5,16 @@ import java.util.ArrayList;
 import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.javacord.listener.message.MessageCreateListener;
-
+//listens for certain phrases and responds to them, used for easter eggs
 public class PhrasesListener implements MessageCreateListener {
 	
-	enum PhraseType //can't put it inside Phrase, wut??
+	enum PhraseType //can't put it inside Reaction, wut??
 	{
-		EXACT, START, CONTAINS;
+		EXACT, //message matches the phrase exactly
+		START, //message starts with the phrase
+		CONTAINS; //message contains the phrase
 	}
-	
+	//describes a reaction to a phrase
 	class Reaction
 	{
 		String value, response;
@@ -26,7 +28,7 @@ public class PhrasesListener implements MessageCreateListener {
 	}
 	
 	private ArrayList<Reaction> reactions;
-	
+	//adds default phrases/responses to the pool
 	PhrasesListener()
 	{
 		reactions = new ArrayList<Reaction>();
@@ -37,11 +39,10 @@ public class PhrasesListener implements MessageCreateListener {
 		reactions.add(new Reaction("i cant wake up", PhraseType.EXACT, "Wake me up inside!"));
 		reactions.add(new Reaction("i cant wake up!", PhraseType.EXACT, "Wake me up inside!"));
 		
-		//reactions.add(new Reaction(":Dab:", PhraseType.START, ":Dab2:"));
-		//reactions.add(new Reaction(":Dab2:", PhraseType.START, ":Dab:"));
 		reactions.add(new Reaction("<:Dab:271137562494500864>", PhraseType.START, "<:Dab2:271137400837767168>"));
 		reactions.add(new Reaction("<:Dab2:271137400837767168>", PhraseType.START, "<:Dab:271137562494500864>"));
 	}
+	//checks if the string matches a reaction
 	public boolean matches(String str, Reaction r)
 	{
 		str = str.toLowerCase();
@@ -53,11 +54,10 @@ public class PhrasesListener implements MessageCreateListener {
 				return str.startsWith(r.value);
 			case CONTAINS:
 				return str.contains(r.value);
-			default:
-				return false; //compiler, please
 		}
+		return false; //compiler, please
 	}
-	
+	//reacts to a message using all the reactions in the pool, returns true if there was at least one appropriate reaction
 	public boolean react(DiscordAPI api, Message message)
 	{
 		String content = message.getContent();
@@ -69,12 +69,6 @@ public class PhrasesListener implements MessageCreateListener {
 				result = true;
 			}
 		return result;
-		/*if (!content.equalsIgnoreCase("wake me up") && !content.equalsIgnoreCase("wake me up!") &&
-				!content.equalsIgnoreCase("i can't wake up") && !content.equalsIgnoreCase("i can't wake up!") &&
-				!content.equalsIgnoreCase("i cant wake up") && !content.equalsIgnoreCase("i cant wake up!"))
-			return false;
-		message.reply("Wake me up inside!");
-		return true;*/
 	}
 
 	@Override

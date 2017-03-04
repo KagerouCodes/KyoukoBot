@@ -9,23 +9,20 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import de.btobastian.javacord.entities.message.Message;
-
+//base class for the YouTube search commands, uses the YouTube API
 public class YouTubeSearcher {
-	final int LinksLimit;
-	final boolean Preview;
-	static String GoogleAPIKey;
+	final int LinksLimit; //max amount of results
+	final boolean Preview; //whether the preview needs to be displayed
+	static String GoogleAPIKey; //self-explanatory
 	
 	YouTubeSearcher(int LinksLimit, boolean Preview)
 	{
 		this.LinksLimit = LinksLimit;
 		this.Preview = Preview;
 	}
-	
+	//returns results of a search as a string ready to be posted in Discord
 	String search(Message message, String args[])
 	{
-		//if (args.length == 0)
-    		//return "`Enter a query.`";
-		//String query = message.getContent().substring(message.getContent().indexOf(' ') + 1).trim().toLowerCase();
 		String query = KyoukoBot.getArgument(message);
 		if (query.isEmpty())
 			return "`Enter a query.`";
@@ -36,7 +33,7 @@ public class YouTubeSearcher {
 			JSONObject json = new JSONObject(IOUtils.toString(new URL(APIquery), Charset.forName("UTF-8")));
 			JSONArray array = json.getJSONArray("items");
 			for (int i = 0; i < array.length(); i++)
-			{
+			{ //add "<video_title>" by <channel_title> to the string for each result
 				result += "`\"" + array.getJSONObject(i).getJSONObject("snippet").getString("title") + "\" by " +
 						array.getJSONObject(i).getJSONObject("snippet").getString("channelTitle") + "`\n" + 
 						(Preview ? "" : '<') + "https://www.youtube.com/watch?v=" + array.getJSONObject(i).getJSONObject("id").getString("videoId") +

@@ -10,7 +10,7 @@ public class InfoCommand implements CommandExecutor {
 	@Command(aliases = {"k!info"}, description = "Shows some information about me.")
 	public String onCommand(Message message, Server server, String[] args)
 	{
-		String result = "`I am Kyouko, a Discord bot written by Kagerou#4570 in Java. Current version: " + KyoukoBot.version +
+		String result = "`I am Kyouko, a Discord bot written by Kagerou#4570 in Java using Javacord. Current version: " + KyoukoBot.version +
 				(KyoukoBot.release ? "" : " (beta)") + ". Type k!help to see the list of supported commands. " + 
 				"If you want to test me, consider doing so in ";
 		Channel channel; //invite the user into #bot-testing if there is such a channel
