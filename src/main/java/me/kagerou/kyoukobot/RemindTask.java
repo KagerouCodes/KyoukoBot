@@ -1,6 +1,5 @@
 package me.kagerou.kyoukobot;
 
-import java.util.Random;
 import java.util.TimerTask;
 
 import de.btobastian.javacord.DiscordAPI;

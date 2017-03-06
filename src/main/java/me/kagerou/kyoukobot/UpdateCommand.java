@@ -17,7 +17,7 @@ import de.btobastian.sdcf4j.CommandExecutor;
 //Usage: k!update link [filename] OR k!update [filename] (with an attachment)
 public class UpdateCommand implements CommandExecutor {
 	static String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.100 Safari/537.36";
-	@Command(aliases = {"k!update"}, description = "Cheesy admin-only command.", usage = "k!update file [filename]", requiredPermissions = "admin", showInHelpPage = false) //TODO update the database is the file is people.txt
+	@Command(aliases = {"k!update"}, description = "Cheesy admin-only command.", usage = "k!update file [filename]", requiredPermissions = "admin", showInHelpPage = false) //TODO update the database if the file is people.txt
     public void onCommand(DiscordAPI api, Message message, String args[])
     {
 		if ((args.length == 0) && (message.getAttachments().isEmpty()))

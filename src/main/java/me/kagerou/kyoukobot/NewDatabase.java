@@ -349,7 +349,7 @@ class NewDataBase //TODO: cloud backup??
 		if (!people.containsKey(id) || !people.get(id).alarms.containsKey(message)) //sanity check
 			return false;
 		people.get(id).alarms.remove(message);
-		task.cancel(); //TODO test this, i think without this line you'd still get one last daily reminder if you unsub from k!daily
+		task.cancel();
 		if (people.get(id).isEmpty())
 			people.remove(id);
 		SaveToFile(KyoukoBot.DatabaseFile);

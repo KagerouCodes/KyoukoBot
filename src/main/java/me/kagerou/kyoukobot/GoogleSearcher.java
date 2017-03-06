@@ -94,7 +94,23 @@ public class GoogleSearcher {
 		}
 		return result;
 	}
-	//search manually, if that fails, use the API
+	//search using StartPage, pretty similar to the previous function
+	ArrayList<SearchResult> searchWithStartPage(String query) throws Exception
+	{
+		ArrayList<SearchResult> result = new ArrayList<SearchResult>();
+		String searchURL = "https://www.startpage.com/do/asearch?language=english&ff=" + (safe ? "on" : "off") + "&q=" + URLEncoder.encode(query, "UTF-8");
+		Document doc = Jsoup.connect(searchURL).userAgent("KyoukoBot").get();
+		//FileUtils.writeStringToFile(new File("startpage_search.txt"), doc.toString(), Charset.forName("UTF-8")); //for debug purposes
+		Elements links = doc.select(".clk>a");
+		for (Element link: links)
+		{
+			result.add(new SearchResult(link.text(), link.attr("href")));
+			if (result.size() == LinksLimit)
+				break;
+		}
+		return result;
+	}
+	//search manually, if that fails, use Startpage; in case of second failure, try the API
 	ArrayList<SearchResult> searchToArray(String query)
 	{
 		try {
@@ -103,6 +119,14 @@ public class GoogleSearcher {
 		catch (Exception e)
 		{
 			System.out.println("Access denied by Google?");
+			e.printStackTrace();
+		}
+		try {
+			return searchWithStartPage(query);
+		}
+		catch (Exception e)
+		{
+			System.out.println("Failed to search using StartPage >_<");
 			e.printStackTrace();
 		}
 		try {
@@ -118,7 +142,6 @@ public class GoogleSearcher {
 		}
 		return null; //return null if everything fails
 	}
-
 	//returns a ready-to-post string with search results
 	String search(String query) //TODO fix Oceanic Operetta?? (if the link ends with a closing bracket, Discord doesn't include the bracket in the link for some reason)
 	{

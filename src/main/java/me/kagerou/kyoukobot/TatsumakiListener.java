@@ -74,7 +74,7 @@ public class TatsumakiListener implements MessageCreateListener {
 	private static String TatsumakiID; //Tatsumaki's user ID
 	TreeMap<TatsumakiRequest, TatsumakiWaiter> WaitingRoom = null; //a task is stored here when a t!daily/t!rep command was invoked but not handled yet 
 	Timer timer;
-	static final long WaiterDelay = 5000; //TODO change to 30000 or something like that (this is how long Tatsu's message is waited for)
+	static final long WaiterDelay = 30000;
 	
 	TatsumakiListener(String id, TreeMap<TatsumakiRequest, TatsumakiWaiter> WaitingRoom, Timer timer)
 	{
@@ -125,10 +125,11 @@ public class TatsumakiListener implements MessageCreateListener {
 	{
 		if (content.endsWith("you can award a reputation point!**"))
 			return -1; //could've returned 0 but that would activate a new alarm
-		if (content.endsWith("200 daily credits!**") || content.endsWith("a reputation point!**"))
+		//if (content.endsWith("200 daily credits!**") || content.endsWith("a reputation point!**"))
+		if (content.endsWith("200 daily credits!**") || content.contains(" has given <@"))
 			return 86400000; //seconds in a day
-		try { //a perfect task for regex like "in (\d+) hours, (\d+) minutes and (\d+) seconds" 
-			int timeStart = content.indexOf("in ") + 3;
+		try { //a perfect task for regex like ".+in (\d+) hours, (\d+) minutes and (\d+) seconds" 
+			int timeStart = content.lastIndexOf("in ") + 3;
 			//int timeEnd = content.length() - 3;
 			final String hoursString = " hours, ";
 			final String minutesString = " minutes and ";

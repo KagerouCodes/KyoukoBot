@@ -100,7 +100,8 @@ class ImageSearchResult //a class for cached Google Image Search results
 
 public class KyoukoBot {
 	//all the databases
-	static ArrayList<String> AllEMTs, AllChitoses;
+	//static ArrayList<String> AllEMTs, AllChitoses;
+	static ImageCollection EMTs, Chitoses;
 	static MemeBase memeBase;
 	static ArrayList<SongProject> Songs, CurrentSongs;
 	static JSONObject JSONLyrics; //this one is for storing links to lyrics for projects, they take too long to load
@@ -122,9 +123,9 @@ public class KyoukoBot {
 	
 	static ConsoleOutputTracker coc;
 	
-    final static String EMTs = "zf0yQ"; //imgur album with Emilias
+    final static String EMTAlbum = "zf0yQ"; //imgur album with Emilias
     final static String OneEMT = "http://danbooru.donmai.us/data/__emilia_re_zero_kara_hajimeru_isekai_seikatsu_drawn_by_tsukimori_usako__bd95cc37a9ec5a35aded8f25e6de5c59.png";
-    final static String Chitoses = "m3ipy"; //imgur album with Chitoses
+    final static String ChitoseAlbum = "m3ipy"; //imgur album with Chitoses
     final static String OneChitose = "https://remyfool.files.wordpress.com/2016/10/vlcsnap-2016-10-09-13h30m37s147.png";
     final static String OneCat = "http://i.imgur.com/JhkPph1.jpg"; //one cat, just in case random.cat isn't available
     final static String PrettyLink = "http://i.imgur.com/3zrwfZB.png";       //links
@@ -619,8 +620,10 @@ public class KyoukoBot {
     
 	static void InitPhase()
 	{ //initializes all the databases
-		AllEMTs = InitImageCollection(imgurClient, EMTs, OneEMT);
-        AllChitoses = InitImageCollection(imgurClient, Chitoses, OneChitose);
+		//AllEMTs = InitImageCollection(imgurClient, EMTs, OneEMT);
+        //AllChitoses = InitImageCollection(imgurClient, Chitoses, OneChitose);
+		EMTs = new ImageCollection(imgurClient, EMTAlbum, OneEMT);
+		Chitoses = new ImageCollection(imgurClient, ChitoseAlbum, OneChitose);
         
         memeBase = new MemeBase(memeDir);
         
@@ -722,9 +725,9 @@ public class KyoukoBot {
         			CommandHandler handler = new JavacordHandler(api);
         			// simple picture-posting commands
         			handler.registerCommand(new ShiyuCommand());
-        			handler.registerCommand(new EMTCommand());
+        			handler.registerCommand(new EMTCommand(EMTs, "Emilia-tan"));
         			handler.registerCommand(new RemCommand()); //this one is hidden
-        			handler.registerCommand(new ChitoseCommand());
+        			handler.registerCommand(new ChitoseCommand(Chitoses, "Chitose"));
         			handler.registerCommand(new CatCommand());
         			// "meme"-related commands
         			handler.registerCommand(new LeMemeCommand());
@@ -857,29 +860,22 @@ public class KyoukoBot {
     	   }
     }
 
-//TODO handle altruism (t!daily dora; :atm:  |  **pandaxtc has given <@200960894627348480>  209 daily credits!**)
-//TODO downforeveryoneorjustme??
-//TODO learn to delete https://cdn.discordapp.com/attachments/245044272473047040/287006575418408970/cff1a95dbe0328f89eae7f93ac4c08fc.png or https://cdn.discordapp.com/attachments/218471304452374528/287131941852151808/cff1a95dbe0328f89eae7f93ac4c08fc.jpg >_<
-//TODO reminders when 5 minutes are left before t!daily and t!rep??
-//TODO replace k!img trypophobia with something else
-//TODO k!project Lion returns Zankoku becaquse Evangelion, lol
-//TODO "k!help command" displays help on k!help??
-//TODO give k!project a "k!projects" alias 
-//TODO increase timeout for Tatsumaki's responses in case of lags
 //TODO k!correct 
 //TODO k!marry
-//TODO reload image collections if they are not loaded
+//TODO downforeveryoneorjustme??
+//TODO track old messages during a reboot??
+//TODO remindme??
+//TODO learn to delete https://cdn.discordapp.com/attachments/245044272473047040/287006575418408970/cff1a95dbe0328f89eae7f93ac4c08fc.png or https://cdn.discordapp.com/attachments/218471304452374528/287131941852151808/cff1a95dbe0328f89eae7f93ac4c08fc.jpg >_<
+//TODO reminders when 5 minutes are left before t!daily and t!rep??
 //TODO discard alarms for unknown users??
 //TODO k!wtf??
-//TODO remindme??
-//TODO track old messages during a reboot?? 
+//TODO limits??
 //TODO "kill script"??
 //TODO k!recordings person (outclassed by the discord search, sigh)
 //TODO whatanime.ga??
 //TODO headpats??
 //TODO typerace??
 //TODO auto-selfupdate from git??
-//TODO Google search using Startpage??
 //TODO assume "Kyouko" role??
 //TODO global message queue to fix stability issues??
 //TODO fix the issue of failing to handle a few posts with twitch emotes in quick succession?? (doesn't appear to happen with commands)   
@@ -891,7 +887,6 @@ public class KyoukoBot {
 //TODO customisable commands??
     
 //TODO random rolls??
-//TODO limits??
 //TODO "another daily to farm"??    
 //TODO JDA?!
 }
