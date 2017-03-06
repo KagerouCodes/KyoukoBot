@@ -1,9 +1,14 @@
-Version 0.3.1 [??-02-2017, screw you, i'm european]
+Version 0.3.1 [05-03-2017, screw you, i'm european]
 - i will pretend to be typing while executing time-consuming commands now;
-- fixed a bug with me printing empty intros for people who have subbed for k!daily but haven't set their intros (test it!);
-- fixed a bug where i would fail to post an Emilia/Chitose if the imgur album wasn't loaded (the current solution is to post a single picture instead);
-- fixed k!ggl, k!google and k!lyrics with no argument searching for something (test it!);
-- fixed k!proj current not working when there are too many active projects (7 of them already don't fit into a single message).
+- fixed a bug with me printing empty intros for people who have subbed for k!daily but haven't set their intros;
+- fixed a bug where i would fail to post an Emilia/Chitose if the imgur album wasn't loaded (it would try to reload the album or post a picture from a non-imgur site if that fails);
+- fixed k!ggl, k!google and k!lyrics with no argument searching for something;
+- fixed k!proj current not working when there are too many active projects (7 of them already don't fit into a single message);
+- added a k!projects alias to the k!proj command since a lot of people tried to call it like that;
+- made k!project search a bit smarter, it doesn't post Zankoku na Tenshi no Teeze if you search for Lion; 
+- k!daily engine should handle altruism (giving daily credits to other people) correctly (test it!);
+- k!daily engine waits for Tatsumaki's responses to commands for 30 seconds instead of 5 now (that bot lags sometimes apparently);
+- Google search commands (except for k!img) will use StartPage as backup instead of the buggy Google API (that means you can actually find lyrics for Mousou Express and Platinum Disco now).
 
 =============================================================
 
