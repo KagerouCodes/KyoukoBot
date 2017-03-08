@@ -3,19 +3,15 @@ package me.kagerou.kyoukobot;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.imageio.ImageIO;
@@ -30,55 +26,15 @@ import de.btobastian.javacord.entities.permissions.PermissionType;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 // puts your text on a breaking news template like breakyourownnews.com (but with no watermark)
-public class BreakingNewsCommand implements CommandExecutor {
-	BufferedImage template;
-	int width, height;
-	
-	static boolean installFont(String name, List<Font> FontList, GraphicsEnvironment ge, String FileName)
-	{ //installs the font from file if it's not registered already
-		if (Iterables.any(FontList, x -> (x.getName().equalsIgnoreCase(name))))
-			return false;
-		try {
-			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(System.getProperty("user.dir") + "/fonts/" + FileName)));
-		}
-		catch (Exception e)
-		{
-			System.out.println("Failed to register the font " + FileName);
-			e.printStackTrace();
-			return false;
-		}
-		System.out.println("Registered the font " + FileName + " successfully.");
-		return true;
-	}
-	
+public class BreakingNewsCommand extends TemplateLoader implements CommandExecutor
+{
 	BreakingNewsCommand (String template_link)
 	{ //read the template and install three fonts
-		try {
-			template = ImageIO.read(new URL(template_link));
-			width = template.getWidth();
-			height = template.getHeight();
-		}
-		catch (Exception e)
-		{
-			template = null;
-			System.out.println("Failed to load the pretty template >_<");
-		}
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		List<Font> FontList = Arrays.asList(ge.getAllFonts());
-		installFont("Signika-Bold", FontList, ge, "Signika-Bold.ttf");
-		installFont("Calibri Bold", FontList, ge, "CalibriB.ttf");
-		installFont("Arial Unicode MS", FontList, ge, "Arial_Unicode_MS.ttf");
-	}
-	
-	String appropriateFontName(String text)
-	{ //returns the name of a font which can display the text
-		if (new Font("Signika-Bold", Font.BOLD, 72).canDisplayUpTo(text) == -1)
-			return "Signika-Bold";
-		if (new Font("Calibri Bold", Font.BOLD, 72).canDisplayUpTo(text) == -1)
-			return "Calibri Bold";
-		return "Arial Unicode MS";
-	}
-	
+		super(template_link);
+		FontUtils.installFont("Signika-Bold", "Signika-Bold.ttf");
+		FontUtils.installFont("Calibri Bold", "CalibriB.ttf");
+		FontUtils.installFont("Arial Unicode MS", "Arial_Unicode_MS.ttf");
+	}	
 	// Usage (awkward, i know):
 	// k!news imglink        k!news headline
 	// headline         OR   ticker
@@ -160,9 +116,9 @@ public class BreakingNewsCommand implements CommandExecutor {
 		//turn on the anti-aliasing
 		graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		//figure out the appropriate fonts
-		Font smallFont = new Font(appropriateFontName(ticker), Font.BOLD, 28);
+		Font smallFont = new Font(FontUtils.appropriateFontName(ticker, "Signika-Bold", "Calibri Bold", "Arial Unicode MS"), Font.BOLD, 28);
 		System.out.println(smallFont);
-		Font bigFont = new Font(appropriateFontName(headline), Font.BOLD, 72);
+		Font bigFont = new Font(FontUtils.appropriateFontName(headline, "Signika-Bold", "Calibri Bold", "Arial Unicode MS"), Font.BOLD, 72);
 		System.out.println(bigFont);
 		//current time
 		graphics.setFont(new Font("Signika-Bold", Font.BOLD, 28));

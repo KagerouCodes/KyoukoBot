@@ -24,7 +24,7 @@ import de.btobastian.javacord.entities.impl.ImplUser;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.CommandExecutor;
 //base class for commands which draw images on top of templates
-public class TemplateCommand implements CommandExecutor {
+public class ImageOnTemplateCommand extends TemplateLoader implements CommandExecutor {
 	static class Triangle //what, there isn't one in awt??
 	{
 		Point2D.Double A, B, C;
@@ -51,25 +51,14 @@ public class TemplateCommand implements CommandExecutor {
 		SCALE_MAX; //scale images so that they would contain areas
 	}
 	
-	private BufferedImage template; //template itself
-	private int width, height; //template's width and height
 	private Triangle[] triangles; //areas to draw custom images in, point A of the triangle is the top-left corner of a resulting parallelogram, B is top-right corner, C is bottom-left
 	private StretchOption stretch; //how to stretch custom images
 	
-	TemplateCommand (String template_link, StretchOption stretch, Triangle... triangles)
+	ImageOnTemplateCommand (String template_link, StretchOption stretch, Triangle... triangles)
 	{
+		super(template_link);
 		this.triangles = triangles;
-		try {
-			template = ImageIO.read(new URL(template_link));
-			width = template.getWidth();
-			height = template.getHeight();
-			this.stretch = stretch;
-		}
-		catch (Exception e)
-		{
-			template = null;
-			System.out.println("Failed to load the template " + template_link + " >_<");
-		}
+		this.stretch = stretch;
 	}
 	//returns an affine transform which translates triangle ABC to A1B1C1, thanks stackoverflow
 	//don't ask me why parameters are not of my own Triangle type

@@ -4,9 +4,8 @@ import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 //a template command, puts a user-submitted image (or a mentioned user's avatar) at the back side of this letter: http://i.imgur.com/X1rO0A7.png
-public class MeguminCommand extends TemplateCommand implements CommandExecutor {
+public class MeguminCommand extends ImageOnTemplateCommand {
 	private final static String template_link = KyoukoBot.MeguminLink;
 	MeguminCommand()
 	{

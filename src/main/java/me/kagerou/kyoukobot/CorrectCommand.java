@@ -1,0 +1,196 @@
+package me.kagerou.kyoukobot;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+
+import de.btobastian.javacord.DiscordAPI;
+import de.btobastian.javacord.entities.Server;
+import de.btobastian.javacord.entities.message.Message;
+import de.btobastian.sdcf4j.Command;
+import de.btobastian.sdcf4j.CommandExecutor;
+
+//a command which writes text on the blackboard: http://i.imgur.com/mHZxFlV.png
+//TODO lift the text in k!correct up a bit?? 
+//TODO DK Crayon Crumble font for it??
+//TODO find a font with :weary: :ok_hand: and other emojis
+public class CorrectCommand extends TemplateLoader implements CommandExecutor
+{
+	Rectangle2D.Float bounds = new Rectangle2D.Float(72, 48, 718, 321); //the rectangle to fit the text in
+	final int MAX_LINES = 10; //max amount of lines
+	CorrectCommand(String template_link)
+	{
+		super(template_link);
+		FontUtils.installFont("AR CENA", "ARCENA.ttf");
+		FontUtils.installFont("Comic Sans MS", "comici.ttf");
+		FontUtils.installFont("Arial Unicode MS", "Arial_Unicode_MS.ttf");
+	}
+	
+	@Command(aliases = {"k!correct"}, description = "Turns your words into undeniable truth.", usage = "k!correct text")
+    public void onCommand(DiscordAPI api, Message message, Server server, String[] args)
+    {
+		message.getReceiver().type();
+		String arg = KyoukoBot.getArgument(message, false);
+		if (arg.isEmpty())
+			arg = "Anime was a mistake.";
+		//construct the list of lines since it's resizeable
+		//can't use Arrays.asList() because that's just a wrapper and won't support resizing 
+		String[] lines_array = arg.split("\\n");
+		int number_of_lines = Math.min(lines_array.length, MAX_LINES);
+		ArrayList<String> lines = new ArrayList<String>();
+		for (int index = 0; index < number_of_lines; index++)
+			lines.add(lines_array[index].trim());
+		//determine the font which can display the text
+		String FontName = FontUtils.appropriateFontName(arg, "AR CENA", "Comic Sans MS", "Arial Unicode MS");
+		//draw the template first
+		BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D graphics = result.createGraphics();
+		graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+		graphics.drawImage(template, 0, 0, null);
+		graphics.setColor(Color.WHITE);
+		//graphics.drawLine((int) bounds.getX(), (int) bounds.getMaxY(), (int) bounds.getMaxX(), (int) bounds.getMaxY());
+		FontRenderContext frc = graphics.getFontRenderContext();
+		ArrayList<Point2D.Float> TextLayout = new ArrayList<Point2D.Float>();
+		for (int i = 0; i < number_of_lines; i++)
+			TextLayout.add(null); //i wish i was coding in C++ right now
+		//determine the font size
+		int FontSize = appropriateFontSize(lines, bounds, FontName, frc, TextLayout, 84, 72, 48, 36);
+		if (FontSize == 0)
+		{ //if even 36 doesn't fit, try to fit as much text as possible 
+			FontSize = 36;
+			cutLines(lines, bounds.width, FontName, FontSize, frc, TextLayout);
+			number_of_lines = lines.size(); 
+		}
+		//the actual writing
+		Font font = new Font(FontName, Font.ITALIC, FontSize);
+		graphics.setFont(font);
+		for (int line = number_of_lines - 1; line >= 0; line--)
+		{
+			String cur_line = lines.get(line);
+			graphics.drawString(cur_line, TextLayout.get(line).x, TextLayout.get(line).y);
+		}
+		//send the image
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(result, "PNG", os);
+			message.getReceiver().sendFile(new ByteArrayInputStream(os.toByteArray()), "correct.png");
+		}
+		catch (Exception e)
+		{
+			message.reply("`An error occured >_<`");
+			return;
+		}
+    }
+	//changes the lines to fit as many of them as possible within the certain width (it is assumed the MAX_LINES amount of lines fit with the chosen size) 
+	void cutLines(ArrayList<String> lines, float width, String FontName, int FontSize, FontRenderContext frc, ArrayList<Point2D.Float> TextLayout)
+	{
+		Font font = new Font(FontName, Font.ITALIC, FontSize);
+		for (int line = 0; line < lines.size(); line++)
+		{ //going through the lines
+			int fits_index = 0, next_index = 0;
+			boolean fits = true;
+			//try to fit as many words into width as possible
+			String cur_line = lines.get(line);
+			while ((next_index < cur_line.length()) && fits)
+			{
+				next_index = cur_line.indexOf(' ', fits_index + 1);
+				if (next_index == -1)
+					next_index = cur_line.length();
+				if (font.getStringBounds(cur_line.substring(0, next_index), frc).getWidth() <= bounds.width)
+					fits_index = next_index;
+				else
+					fits = false;
+			}
+			//if not even a single word fits, just try to fit as many symbols
+			fits = true;
+			if (fits_index == 0)
+				for (next_index = 1; (next_index < cur_line.length()) && fits; next_index++)
+					if (font.getStringBounds(cur_line.substring(0, next_index), frc).getWidth() <= bounds.width)
+						fits_index = next_index;
+					else
+						fits = false;
+			//cut the current line, add the rest to the next one with a spacebar (unless we're at MAX_LINES already)
+			if (line < MAX_LINES - 1)
+			{
+				if (line != lines.size() - 1)
+					lines.set(line + 1, (cur_line.substring(fits_index) + ' ' + lines.get(line + 1)).trim());
+				else
+				{
+					String new_line = cur_line.substring(fits_index).trim();
+					if (!new_line.isEmpty())
+						lines.add(new_line);
+				}
+				lines.set(line, cur_line.substring(0, fits_index));
+			}
+			else
+				lines.set(line, cur_line.substring(0, fits_index).trim());
+		}
+		//fill in the TextLayout list
+		int number_of_lines = lines.size();
+		TextLayout.clear();
+		for (int i = 0; i < number_of_lines; i++)
+			TextLayout.add(null);
+		float baseline = 0.0F, text_height = 0.0F;
+		for (int line = number_of_lines - 1; line >= 0; line--)
+		{
+			String cur_line = lines.get(line);
+			LineMetrics metrics = font.getLineMetrics(cur_line, frc);
+			float line_width = (float) font.getStringBounds(cur_line, frc).getWidth();
+			if (line == number_of_lines - 1)
+				baseline = (float) bounds.getMaxY();
+			else
+				baseline -= text_height + metrics.getLeading();
+			text_height = metrics.getAscent();
+			TextLayout.set(line, new Point2D.Float(bounds.x + (bounds.width - line_width) / 2, baseline));
+		}
+	}
+	//determines the font size which would let writing the text in the given area
+	int appropriateFontSize(ArrayList<String> lines, Rectangle2D.Float bounds, String FontName, FontRenderContext frc, ArrayList<Point2D.Float> TextLayout, int... sizes)
+	{
+		int number_of_lines = lines.size();
+		for (int FontSize: sizes)
+		{ //going through all the given sizes in order
+			float baseline = 0.0F, text_height = 0.0F; //baseline of the current line and its ascent
+			Font font = new Font(FontName, Font.ITALIC, FontSize);
+			boolean fits = true;
+			for (int line = number_of_lines - 1; line >= 0; line--)
+			{
+				String cur_line = lines.get(line);
+				LineMetrics metrics = font.getLineMetrics(cur_line, frc);
+				float line_width = (float) font.getStringBounds(cur_line, frc).getWidth();
+				if (line_width > bounds.width)
+				{ //the line's too wide, fail
+					fits = false;
+					break;
+				}
+				if (line == number_of_lines - 1)
+					baseline = (float) bounds.getMaxY();
+				else
+					baseline -= text_height + metrics.getLeading();
+				text_height = metrics.getAscent();
+				//memorise current coordinates in TextLayout
+				TextLayout.set(line, new Point2D.Float(bounds.x + (bounds.width - line_width) / 2, baseline));
+				if (baseline - metrics.getAscent() < bounds.y)
+				{ //the text's too tall, fail
+					fits = false;
+					break;
+				}
+			}
+			if (fits) //success!
+				return FontSize;
+		}
+		return 0;
+	}
+
+}

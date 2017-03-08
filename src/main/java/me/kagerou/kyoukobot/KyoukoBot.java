@@ -107,7 +107,7 @@ public class KyoukoBot {
 	static JSONObject JSONLyrics; //this one is for storing links to lyrics for projects, they take too long to load
 	static NewDataBase Database;
 	
-	final static String version = "0.3.1";
+	final static String version = "0.3.2";
 	static boolean release = true;
 	
 	static String releaseToken = "", betaToken = "", token = "", adminID = "";
@@ -132,6 +132,7 @@ public class KyoukoBot {
     final static String YuzuruLink = "http://i.imgur.com/9FulDOt.png";       //to
     final static String MeguminLink = "http://i.imgur.com/X1rO0A7.png";      //different
     final static String BreakingNewsLink = "http://i.imgur.com/28fDbUq.png"; //templates
+    final static String CorrectLink = "http://i.imgur.com/mHZxFlV.png";
     final static String memeDir = "memes";
     final static String SongWiki = "https://www.reddit.com/r/anime/wiki/sings/";
     final static String LyricsDatabaseFile = "projects_lyrics.txt";
@@ -738,6 +739,7 @@ public class KyoukoBot {
         			handler.registerCommand(new YuzuruCommand());
         			handler.registerCommand(new MeguminCommand());
         			handler.registerCommand(new BreakingNewsCommand(BreakingNewsLink));
+        			handler.registerCommand(new CorrectCommand(CorrectLink));
         			// a little bit of social interaction
         			handler.registerCommand(new HugCommand());
         			//handler.registerCommand(new ChocolateCommand()); //limited Valentine's Day event
@@ -860,7 +862,6 @@ public class KyoukoBot {
     	   }
     }
 
-//TODO k!correct 
 //TODO k!marry
 //TODO downforeveryoneorjustme??
 //TODO track old messages during a reboot??

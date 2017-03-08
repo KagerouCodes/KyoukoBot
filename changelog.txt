@@ -1,3 +1,8 @@
+Version 0.3.2 [??-03-2017, screw you, i'm european]
+- implemented the much awaited k!correct command (fonts might be messed up for now).
+
+=============================================================
+
 Version 0.3.1 [05-03-2017, screw you, i'm european]
 - i will pretend to be typing while executing time-consuming commands now;
 - fixed a bug with me printing empty intros for people who have subbed for k!daily but haven't set their intros;
