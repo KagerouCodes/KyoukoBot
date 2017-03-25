@@ -208,6 +208,7 @@ public class KyoukoBot {
     			if (!el.getElementsByTag("td").isEmpty())
     				Songs.add(new SongProject(el, true, JSONLyrics));
     		System.out.println("Project wiki loaded successfully!");
+    		Collections.sort(CurrentSongs); //sorting current projects so that k!proj would display them in order of increasing due date
     		return true;
     	}
     	catch (Exception e)
@@ -862,6 +863,9 @@ public class KyoukoBot {
     	   }
     }
 
+//TODO try making k!intro explain the command and k!intro delete remove the intro
+//TODO announcements before projects' due dates (1 week and 1 day)
+//TODO give k!patchnotes alias to the changelog
 //TODO k!marry
 //TODO downforeveryoneorjustme??
 //TODO track old messages during a reboot??

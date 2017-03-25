@@ -2,6 +2,9 @@ package me.kagerou.kyoukobot;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
@@ -10,12 +13,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 //stores info about a single project
-class SongProject
+class SongProject implements Comparable<SongProject>
 {
 	//name — the project name to display (with ** for bold text etc.)
 	//name_text — the actual name without the tags
 	String name, name_text, progress, date, address, organisers, thread_link, video_link, lyrics_link;
 	boolean old; //whether the project is closed for submissions
+	static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH); //TODO fill this one
 	//parses the info from a single line in the table from the wiki (https://www.reddit.com/r/anime/wiki/sings/)
 	//uses preloaded links to lyrics from jsonLyrics
 	SongProject(Element el, boolean old, JSONObject jsonLyrics)
@@ -104,6 +108,28 @@ class SongProject
 				System.out.println("Failed to update the lyrics database file");
 			}
 		}
+	}
+	//converts the due date to a Date object (or returns "infinity" if the parse failed)
+	Date toDate()
+	{
+		try {
+			return dateFormat.parse(date.replaceAll("(?<=\\d)(st|nd|rd|th)", ""));
+		}
+		catch (Exception e)
+		{
+			return new Date(Long.MAX_VALUE); //"infinite" date
+		}
+	}
+	//comparing projects by them being old/new and due date
+	@Override
+	public int compareTo(SongProject proj)
+	{
+		if (old != proj.old)
+			return Boolean.compare(proj.old, old); //new projects should go before new ones
+		int comp_dates = toDate().compareTo(proj.toDate());
+		if (comp_dates != 0)
+			return comp_dates;
+		return date.compareTo(proj.date);
 	}
 	//a user-friendly representation of the info
 	@Override

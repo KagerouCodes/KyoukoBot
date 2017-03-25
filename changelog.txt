@@ -1,5 +1,6 @@
 Version 0.3.2 [??-03-2017, screw you, i'm european]
-- implemented the much awaited k!correct command (fonts might be messed up for now).
+- implemented the much awaited k!correct command (fonts might be messed up for now);
+- made k!proj sort current projects by due date.
 
 =============================================================
 
