@@ -7,7 +7,7 @@ import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 //displays the recent changes or sends the full changelog file
 public class ChangeLogCommand implements CommandExecutor {
-    @Command(aliases = {"k!changelog"}, usage = "k!changelog [full]", description = "Displays the latest changes made to me or sends the full changelog.")
+    @Command(aliases = {"k!changelog", "k!patchnotes"}, usage = "k!changelog [full]", description = "Displays the latest changes made to me or sends the full changelog.")
     public void onCommand(String command, Message message, String[] args) {
         if (KyoukoBot.ChangeLog.isEmpty())
         	message.reply("`Failed to load the changelog.`");

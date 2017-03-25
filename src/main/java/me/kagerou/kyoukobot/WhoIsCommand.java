@@ -17,7 +17,7 @@ import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 //displays introductions for a single user or all the online ones
 public class WhoIsCommand implements CommandExecutor {
-	@Command(aliases = {"k!who", "k!whois"}, description = "Introduces a user or the entire chat room.", usage = "k!who [name|everyone|all]")
+	@Command(aliases = {"k!who", "k!whois"}, description = "Lets you look up your or other user's short info which is set up with k!setintro.\nk!who all lists info of all online users on the server.", usage = "k!who [name|everyone|all]")
     public void onCommand(DiscordAPI api, Message message, Server server, String args[])
 	{
         User target = null;

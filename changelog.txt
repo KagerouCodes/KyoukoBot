@@ -1,6 +1,9 @@
 Version 0.3.2 [??-03-2017, screw you, i'm european]
 - implemented the much awaited k!correct command (fonts might be messed up for now);
-- made k!proj sort current projects by due date.
+- made k!proj sort current projects by due date;
+- renamed k!intro to k!setintro because it was "too confusing for new players"™, the new name is awkward but more descriptive at the same time;
+- added a few new EMT and Chitose pics to the collections;
+- gave k!changelog a k!patchnotes alias.
 
 =============================================================
 

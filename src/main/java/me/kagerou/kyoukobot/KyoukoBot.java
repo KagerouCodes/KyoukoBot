@@ -745,7 +745,8 @@ public class KyoukoBot {
         			handler.registerCommand(new HugCommand());
         			//handler.registerCommand(new ChocolateCommand()); //limited Valentine's Day event
         			handler.registerCommand(new WhoIsCommand());
-        			handler.registerCommand(new IntroCommand());
+        			handler.registerCommand(new SetIntroCommand());
+        			handler.registerCommand(new IntroCommand()); //a redirect to k!setintro command
         			// project-related commands
         			handler.registerCommand(new ProjectCommand());
         			handler.registerCommand(new WikiCommand());
@@ -865,7 +866,6 @@ public class KyoukoBot {
 
 //TODO try making k!intro explain the command and k!intro delete remove the intro
 //TODO announcements before projects' due dates (1 week and 1 day)
-//TODO give k!patchnotes alias to the changelog
 //TODO k!marry
 //TODO downforeveryoneorjustme??
 //TODO track old messages during a reboot??
