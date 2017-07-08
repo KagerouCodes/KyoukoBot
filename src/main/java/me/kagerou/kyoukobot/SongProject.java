@@ -135,8 +135,8 @@ class SongProject implements Comparable<SongProject>
 	@Override
 	public String toString()
 	{
-		if (name.toLowerCase().contains("database") && name.toLowerCase().contains("log horizon"))
-			return "`Project:` " + name +  "\n<https://www.youtube.com/watch?v=oHg5SJYRHA0>"; //easter egg for the database, that's a rickroll
+		//if (name.toLowerCase().contains("database") && name.toLowerCase().contains("log horizon"))
+			//return "`Project:` " + name +  "\n<https://www.youtube.com/watch?v=oHg5SJYRHA0>"; //RIP meme
 		if (old)
 			if (progress.equalsIgnoreCase("Completed"))
 				return "`Project:` " + name + "\n`Progress:` " + progress + (!lyrics_link.isEmpty() ? "\n`Lyrics:` <" + lyrics_link : "\n`Announcement:` <" + thread_link) + ">\n`Organiser(s)`: " + organisers + "\n" + video_link;

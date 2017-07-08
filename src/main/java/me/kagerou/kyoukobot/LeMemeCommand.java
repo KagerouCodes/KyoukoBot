@@ -11,6 +11,12 @@ public class LeMemeCommand implements CommandExecutor {
 	@Command(aliases = {"k!meme"}, description = "Posts a \"meme\" picture of questionable hilarity.")
     public void onCommand(Message message) {
 		message.getReceiver().type();
+		//post Shiyu.png on April Fools
+		if (KyoukoBot.isAprilFools())
+		{
+	    	KyoukoBot.postFile(message, ShiyuCommand.ShiyuFace, "shiyu");
+			return;
+		}
 		File result = KyoukoBot.memeBase.getMeme(); //all the magic happens there
 		if (result == null)
 			message.reply("`I-I'm out of memes >_< But you can always k!donate them to me!`");

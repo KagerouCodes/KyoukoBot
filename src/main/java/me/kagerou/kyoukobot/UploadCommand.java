@@ -33,7 +33,7 @@ public class UploadCommand implements CommandExecutor {
 		}
 		if (uploaded == 0)
 			if (dupes == 0)
-					message.reply("`No images provided or failed to upload any >_<`");
+					message.reply("`No images provided or failed to download any >_<`");
 				else
 					if (dupes == 1)
 						message.reply("`Thank you, i already have this image.`");
@@ -41,8 +41,8 @@ public class UploadCommand implements CommandExecutor {
 						message.reply("`Thanks, i already have these images.`");
 		else
 			if (dupes == 0)
-				message.reply("`Uploaded " + uploaded + " image(s) successfully!`");
+				message.reply("`Downloaded " + uploaded + " image(s) successfully!`");
 			else
-				message.reply("`Uploaded " + uploaded + " image(s) successfully! Found " + dupes + " duplicate(s).`");
+				message.reply("`Downloaded " + uploaded + " image(s) successfully! Found " + dupes + " duplicate(s).`");
     }
 }

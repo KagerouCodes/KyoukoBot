@@ -13,11 +13,12 @@ import me.kagerou.kyoukobot.MemeBase.MemeResult;
 // the bot's designed to be run on just one server, one could clear the collection by inviting the bot to their own server
 // so the safe way of doing things would be a DB of images' availability on servers
 public class DeleteCommand implements CommandExecutor {
+	static final String ShiyuID = "133599547850096640"; //she'd be given the permission to delete "memes"
 	@Command(aliases = {"k!delete", "k!delmeme"}, description = "Deletes image(s) from the \"meme\" collection (moderator/owner only), accepts both links and attachments.", usage = "k!delete image(s)")
     public void onCommand(Message message, String args[])
 	{
 		boolean allowed = false; //check if the user is myself or has the MANAGE_MESSAGES or ADMINISTRATOR permissions
-		if (message.getAuthor().getId().equals(KyoukoBot.adminID))
+		if (message.getAuthor().getId().equals(KyoukoBot.adminID) || message.getAuthor().getId().equals(ShiyuID))
 			allowed = true;
 		if (!message.isPrivateMessage()) //waiting for User.getPermissions(Server) or something like that to be implemented
 			for (Role role: message.getAuthor().getRoles(message.getChannelReceiver().getServer()))

@@ -73,8 +73,8 @@ class NewDataBase //TODO: cloud backup??
 		game = defaultGame;
 		people.clear();
 		JSONObject json;
-		try {
-			json = new JSONObject(IOUtils.toString(new FileInputStream(FileName), Charset.forName("UTF-8"))); //should be UTF-16??
+		try (FileInputStream fis = new FileInputStream(FileName)) {
+			json = new JSONObject(IOUtils.toString(fis, Charset.forName("UTF-8"))); //should be UTF-16??
 			if (json.has("time"))
 				time = json.getLong("time");
 			if (json.has("game"))
@@ -310,6 +310,14 @@ class NewDataBase //TODO: cloud backup??
 		registerReminder(user.getId(), user.getName(), msg, alarmTime, timer, saveToFile);
 	}
 	synchronized void registerReminder(String id, String name, String msg, long alarmTime, Timer timer, boolean saveToFile) {
+		final long tooLate = 24 * 60 * 60 * 1000; //ms in a day
+		if (alarmTime <= System.currentTimeMillis() - tooLate) //the alarm is outdated, don't bother with it
+		{
+			System.out.println("Alarm " + msg + " for the user " + name + " (" + id + ") is discarded due to being oudated.");
+			if (saveToFile)
+				SaveToFile(KyoukoBot.DatabaseFile);
+			return;
+		}
 		alarmTime = Math.max(alarmTime, System.currentTimeMillis());
 		RemindTask task = new RemindTask(id, KyoukoBot.api, msg, alarmTime, this); //creating the actual task
 		Person person; //finding or creating an entry in the database for this alarm

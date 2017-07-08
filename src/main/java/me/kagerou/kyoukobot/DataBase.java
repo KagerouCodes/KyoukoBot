@@ -57,8 +57,8 @@ class DataBase
 		game = defaultGame;
 		intros.clear();
 		JSONObject json;
-		try {
-			json = new JSONObject(IOUtils.toString(new FileInputStream(FileName), Charset.forName("UTF-8"))); //should be UTF-16??
+		try (FileInputStream fis = new FileInputStream(FileName)) {
+			json = new JSONObject(IOUtils.toString(fis, Charset.forName("UTF-8"))); //should be UTF-16??
 		}
 		catch (Exception e)
 		{

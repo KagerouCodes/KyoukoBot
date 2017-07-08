@@ -9,7 +9,8 @@ import kagerou.calculator.UnexpectedSymbolException;
 public class CalcCommand implements CommandExecutor {
 	@Command(aliases = {"k!calc"}, description = "Calculates an expression.", usage = "k!calc expr")
     public String onCommand(Message message, String[] args) {
-		String expr = message.getContent().substring(message.getContent().indexOf(' ') + 1);
+		//String expr = message.getContent().substring(message.getContent().indexOf(' ') + 1);
+		String expr = KyoukoBot.getArgument(message);
 		String result;
 		try {
 			double res = (new Calculator()).eval(expr);

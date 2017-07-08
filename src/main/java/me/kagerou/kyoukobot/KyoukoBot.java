@@ -140,6 +140,8 @@ public class KyoukoBot {
     final static String SearchResultsFile = "search_results.txt";
     final static long CacheDuration = 3 * 24 * 60 * 60 * 1000; //milliseconds in three days, this is how long the image search results are stored
     final static String TatsumakiID = "172002275412279296";
+    final static String NadekoID = "116275390695079945";//"222681293232668672";//"255367116608241685";
+    final static String BotTestingID = "218471304452374528";//"279680583578419201";
     final static int CharLimit = 1900; //not 2000 just to be safe and be able to add newlines and stuff
     static String ChangeLog;
     static MimeTypes DefaultMimeTypes = MimeTypes.getDefaultMimeTypes();
@@ -151,7 +153,8 @@ public class KyoukoBot {
     		"BrokeBack", "BabyRage", "WutFace", "deIlluminati", "HeyGuys",
     		"KappaPride", "KappaRoss", "FailFish", "NotLikeThis", "MingLee",
     		"VoHiYo", "OpieOP", "haHAA", "FeelsBirthdayMan", "FeelsBadMan",
-    		"FeelsGoodMan", "KKona", "AngelThump", "LUL", "FeelsAmazingMan"};
+    		"FeelsGoodMan", "KKona", "AngelThump", "LUL", "FeelsAmazingMan",
+    		"TehePelo", "PunOko", "KonCha"};
     final static String GlobalEmotesURL = "https://twitchemotes.com/api_cache/v2/global.json";
     final static String BTTVEmotesURL = "https://api.betterttv.net/emotes";
     static ArrayList<Emote> Emotes;
@@ -165,6 +168,8 @@ public class KyoukoBot {
 	//waits for a message from Tatsumaki after a t!daily or t!rep command
 	static TreeMap<TatsumakiRequest, TatsumakiWaiter> WaitingRoom = new TreeMap<TatsumakiRequest, TatsumakiWaiter>(); 
     
+	static NadekoTracker nadekoTracker;
+	
     static ArrayList<String> InitImageCollection(ImgurClient client, String album, String single_pic) 
     { //loads the links to pictures from an imgur album (or a single pic in case of failure)
     	ArrayList<String> links = new ArrayList<String>();
@@ -185,8 +190,8 @@ public class KyoukoBot {
     
     public static boolean InitSongCollection(ArrayList<SongProject> Songs, ArrayList<SongProject> CurrentSongs, String SongWiki)
     { //loads all the song projects as well as the lyrics pastebins for them, JSONLyrics isn't passed because i'd have to clone a JSONObject
-    	try {
-			JSONLyrics = new JSONObject(IOUtils.toString(new FileInputStream(LyricsDatabaseFile), Charset.forName("UTF-8"))); //should be UTF-16??
+    	try (FileInputStream fis = new FileInputStream(LyricsDatabaseFile)) {
+			JSONLyrics = new JSONObject(IOUtils.toString(fis, Charset.forName("UTF-8"))); //should be UTF-16??
 		}
 		catch (Exception e)
 		{
@@ -314,8 +319,8 @@ public class KyoukoBot {
 	static HashMap<String, ImageSearchResult> InitSearchResults(String FileName)
 	{ //reads cached image search results from file
 		HashMap<String, ImageSearchResult> result = new HashMap<String, ImageSearchResult>();
-		try {
-			JSONObject json = new JSONObject(IOUtils.toString(new FileInputStream(FileName), Charset.forName("UTF-16")));
+		try (FileInputStream fis = new FileInputStream(FileName)) {
+			JSONObject json = new JSONObject(IOUtils.toString(fis, Charset.forName("UTF-16")));
 			JSONArray array = json.getJSONArray("results");
 			for (int i = 0; i < array.length(); i++)
 			{
@@ -404,7 +409,7 @@ public class KyoukoBot {
     	}
     	catch (Exception e)
     	{
-    		System.out.println("Failed to load global Twitch emotes.");
+    		System.out.println("Failed to load global Twitch emotes database.");
     	}
     	try {
     		JSONArray BTTV_emotes = new JSONObject(IOUtils.toString(new URL(BTTVEmotesURL), Charset.forName("UTF-8"))).getJSONArray("emotes");
@@ -419,9 +424,22 @@ public class KyoukoBot {
     	}
     	catch (Exception e)
     	{
-    		System.out.println("Failed to load BTTV emotes.");
+    		System.out.println("Failed to load BTTV emotes database.");
     	}
     	result.add(new Emote("goldenkappa", "http://i.imgur.com/JwmYhu7.png")); //yup, we even have the golden Kappa
+    	//loading emotes from the "emotes" directory in case the online databases are down
+    	for (String name: TwitchEmotes)
+    	{
+    		if (!Iterables.any(result, (x) -> x.name.equalsIgnoreCase(name)))
+    		{
+    			Emote local_emote = new Emote(name.toLowerCase(), "");
+    			if (local_emote.toFile(false) != null)
+    			{
+    				result.add(local_emote);
+    				System.out.println("Loaded the " + name + " emote from local storage.");
+    			}
+    		}
+    	}
     	return result;
     }
     
@@ -619,11 +637,15 @@ public class KyoukoBot {
 			result = result.substring(0, result.length() - 1);
 		return result;
 	}
+	//checks the date for April Fools events
+	public static boolean isAprilFools()
+	{
+		return Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == 1 &&
+				Calendar.getInstance().get(Calendar.MONTH) == Calendar.APRIL;
+	}
     
 	static void InitPhase()
 	{ //initializes all the databases
-		//AllEMTs = InitImageCollection(imgurClient, EMTs, OneEMT);
-        //AllChitoses = InitImageCollection(imgurClient, Chitoses, OneChitose);
 		EMTs = new ImageCollection(imgurClient, EMTAlbum, OneEMT);
 		Chitoses = new ImageCollection(imgurClient, ChitoseAlbum, OneChitose);
         
@@ -784,6 +806,9 @@ public class KyoukoBot {
         			handler.registerCommand(new RemindMeCommand());
         			handler.registerCommand(new ListAlarmsCommand());
         			handler.registerCommand(new MessageCommand());
+        			handler.registerCommand(new SayCommand());
+        			handler.registerCommand(new DelFileCommand());
+        			handler.registerCommand(new MemoryCommand());
         			// other listeners that couldn't be made into commands
         			api.registerListener(new ExtraListener(handler)); //Twitch emotes + wrong commands + easter eggs
         			api.registerListener(new AnimemesListener()); //saving "memes" from #animemes
@@ -815,6 +840,8 @@ public class KyoukoBot {
         				else
         					if (!Arrays.asList(args).contains("hello")) //no point in printing the same line twice
         						System.out.println("Couldn't find the owner.");
+        			
+        			nadekoTracker = new NadekoTracker(NadekoID, BotTestingID, timer, Iterables.any(Arrays.asList(args), (x) -> (x.equalsIgnoreCase("nadeko"))));
         		}
         		@Override
         		public void onFailure(Throwable t) {
@@ -830,6 +857,9 @@ public class KyoukoBot {
     	   {
     		   try {
     			   Thread.sleep(ReconnectTimeoutMillis); //probably would use timers next time
+    			   double mem_mbs = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576.0;
+    			   mem_mbs = Math.round(mem_mbs * 1000.0) / 1000.0;
+    			   System.out.println("Current memory usage: " + mem_mbs + " MB");
     			   if (System.currentTimeMillis() - init_time > ReloadTimeoutMillis)
     			   { //rebooting if databases were loaded ReloadTimeoutMillis ms ago (usually 6 hours)
     				   System.out.println("Obligatory rebooting...");
@@ -855,7 +885,7 @@ public class KyoukoBot {
     		   catch (InterruptedException ie)
     		   {
     			   ie.printStackTrace();
-    			   System.exit(-1);
+    			   //System.exit(-1); //this shouldn't be the line that crashes Kyouko but who knows :thinking:
     		   }
     		   catch (Exception e)
     		   {
@@ -863,14 +893,27 @@ public class KyoukoBot {
     		   }
     	   }
     }
-
-//TODO try making k!intro explain the command and k!intro delete remove the intro
+    
+//TODO post k!who all in private chat if it's too big 
+//TODO enforce the "no chat in #recordings" rule
+//TODO searching projects by songmasters
+//TODO autoreboot script, lol
+//TODO formatting in k!who
+//TODO capture Twitter/YouTube links in #animemes, really??
+//TODO https://i.imgur.com/JWMThRi.png
+//TODO save the database after discarding outdated alarms somehow??
+//TODO special case the remastered version of the Imagination project, really??
+//TODO "do it for her" meme??
+//TODO reminders about Nadeko flowers?? (test it!)
+//TODO k!img fix 18 year old phone ( http://previews.123rf.com/images/vlue/vlue1002/vlue100200039/6408218-Young-18-year-old-adult-teenager-yells-into-his-wireless-phone-isolated-on-white-background--Stock-Photo.jpg )
 //TODO announcements before projects' due dates (1 week and 1 day)
 //TODO k!marry
 //TODO downforeveryoneorjustme??
 //TODO track old messages during a reboot??
 //TODO remindme??
 //TODO learn to delete https://cdn.discordapp.com/attachments/245044272473047040/287006575418408970/cff1a95dbe0328f89eae7f93ac4c08fc.png or https://cdn.discordapp.com/attachments/218471304452374528/287131941852151808/cff1a95dbe0328f89eae7f93ac4c08fc.jpg >_<
+//TODO learn to delete https://cdn.discordapp.com/attachments/218471304452374528/298517133183418369/346705a8fc0f330993d1f43a39b2f722.jpg too
+//TODO delete by filename if everything fails??
 //TODO reminders when 5 minutes are left before t!daily and t!rep??
 //TODO discard alarms for unknown users??
 //TODO k!wtf??

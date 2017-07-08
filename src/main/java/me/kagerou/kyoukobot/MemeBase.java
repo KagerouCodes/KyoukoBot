@@ -14,6 +14,7 @@ import java.util.Random;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 //handles uploading and downloading pictures from/to the dirName subdirectory
 //the filename format is <md5>.<extension for the content type>
 public class MemeBase
@@ -43,12 +44,17 @@ public class MemeBase
 		String type;
 		try {
 			leConnection = imgURL.openConnection();
-			type = leConnection.getContentType();
-			if (type == null) //getContentType() fails sometimes
+			/*type = leConnection.getContentType();
+			if (type == null) //getContentType() fails sometimes*/
 				type = KyoukoBot.leTika.detect(imgURL);
 			if (!type.startsWith("image"))
 			{ //not an image
 				System.out.println(imgURL + " does not link to an image!");
+				return MemeResult.DR_FAIL;
+			}
+			if (type.equals("image/svg+xml"))
+			{
+				System.out.println("SVG format is not supported by Discord.");
 				return MemeResult.DR_FAIL;
 			}
 			if (leConnection.getContentLength() > FileSizeLimit)
@@ -112,9 +118,13 @@ public class MemeBase
 		String type;
 		try {
 			leConnection = imgURL.openConnection();
-			type = leConnection.getContentType();
+			/*type = leConnection.getContentType();
 			if (type == null)
+			{
+				System.out.println("Needed to use Tika to identify the image type.");*/
 				type = KyoukoBot.leTika.detect(imgURL);
+			//}
+			System.out.println("Image type: " + type);
 			if (!type.startsWith("image"))
 			{
 				System.out.println(imgURL + " does not link to an image!");
@@ -141,7 +151,17 @@ public class MemeBase
 		try {
 			String hash = DigestUtils.md5Hex(leConnection.getInputStream());
 			String ext = KyoukoBot.DefaultMimeTypes.forName(type).getExtension();
+			System.out.println("Expected file name: " + hash + ext);
 			File imgFile = new File(fullDirName + hash + ext);
+			// if the file doesn't exist, search for the file with the same name
+			// this works around some weird issue of Discord changing images and nobody's going to fake md5 hashes
+			if (!imgFile.exists())
+			{
+				String FileName = FilenameUtils.getName(imgURL.toString());
+				if (FilenameUtils.getExtension(FileName).isEmpty())
+					FileName += ext;
+				imgFile = new File(fullDirName + FileName);
+			}
 			if (!imgFile.exists())
 				return MemeResult.DR_DUPE;
 			imgFile.delete();
