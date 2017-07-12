@@ -99,12 +99,19 @@ public class WhoIsCommand implements CommandExecutor {
         		}
         	}
         	String output = new String();
+        	boolean too_long = false; 
         	for (Map.Entry<String, String> entry: result.entrySet())
         	{
         		String str = "**" + entry.getKey() + ":** " + KyoukoBot.wrapLinks(entry.getValue());
         		if (output.length() + str.length() > KyoukoBot.CharLimit)
-        		{ //break the message into multiple ones if it's too long
-        			message.reply(output);
+        		{ //break the message into multiple ones if it's too long, also, send it via DM
+        			if (!too_long)
+        			{
+        				too_long = true;
+        				message.reply("`User list is too long, sending it via DM.`");
+        			}
+        			//message.reply(output);
+        			message.getAuthor().sendMessage(output);
         			output = "";
         			try {
     					Thread.sleep(500); //gotta guarantee the correct order
@@ -118,7 +125,10 @@ public class WhoIsCommand implements CommandExecutor {
         	}
         	if (output.isEmpty())
             	output = "I-I don't know anyone here...";
-        	message.reply(output);
+        	if (!too_long)
+        		message.reply(output);
+        	else
+        		message.getAuthor().sendMessage(output);
         }
 	}
 }

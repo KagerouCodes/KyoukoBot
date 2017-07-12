@@ -9,7 +9,8 @@ import com.google.common.collect.Iterables;
 
 import de.btobastian.javacord.entities.Channel;
 import de.btobastian.javacord.entities.User;
-
+//was used to watch Nadeko's status for potential flower events, those are no longer a thing but this code might've been the reason behind Kyouko crashing all the time
+@Deprecated
 public class NadekoTracker extends TimerTask
 {
 	Timer timer;

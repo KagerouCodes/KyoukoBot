@@ -140,7 +140,7 @@ public class KyoukoBot {
     final static String SearchResultsFile = "search_results.txt";
     final static long CacheDuration = 3 * 24 * 60 * 60 * 1000; //milliseconds in three days, this is how long the image search results are stored
     final static String TatsumakiID = "172002275412279296";
-    final static String NadekoID = "116275390695079945";//"222681293232668672";//"255367116608241685";
+    //final static String NadekoID = "116275390695079945";//"222681293232668672";//"255367116608241685";
     final static String BotTestingID = "218471304452374528";//"279680583578419201";
     final static int CharLimit = 1900; //not 2000 just to be safe and be able to add newlines and stuff
     static String ChangeLog;
@@ -168,7 +168,7 @@ public class KyoukoBot {
 	//waits for a message from Tatsumaki after a t!daily or t!rep command
 	static TreeMap<TatsumakiRequest, TatsumakiWaiter> WaitingRoom = new TreeMap<TatsumakiRequest, TatsumakiWaiter>(); 
     
-	static NadekoTracker nadekoTracker;
+	//static NadekoTracker nadekoTracker;
 	
     static ArrayList<String> InitImageCollection(ImgurClient client, String album, String single_pic) 
     { //loads the links to pictures from an imgur album (or a single pic in case of failure)
@@ -841,7 +841,7 @@ public class KyoukoBot {
         					if (!Arrays.asList(args).contains("hello")) //no point in printing the same line twice
         						System.out.println("Couldn't find the owner.");
         			
-        			nadekoTracker = new NadekoTracker(NadekoID, BotTestingID, timer, Iterables.any(Arrays.asList(args), (x) -> (x.equalsIgnoreCase("nadeko"))));
+        			//nadekoTracker = new NadekoTracker(NadekoID, BotTestingID, timer, Iterables.any(Arrays.asList(args), (x) -> (x.equalsIgnoreCase("nadeko"))));
         		}
         		@Override
         		public void onFailure(Throwable t) {
@@ -893,9 +893,7 @@ public class KyoukoBot {
     		   }
     	   }
     }
-    
-//TODO post k!who all in private chat if it's too big 
-//TODO enforce the "no chat in #recordings" rule
+
 //TODO searching projects by songmasters
 //TODO autoreboot script, lol
 //TODO formatting in k!who
@@ -904,16 +902,12 @@ public class KyoukoBot {
 //TODO save the database after discarding outdated alarms somehow??
 //TODO special case the remastered version of the Imagination project, really??
 //TODO "do it for her" meme??
-//TODO reminders about Nadeko flowers?? (test it!)
 //TODO k!img fix 18 year old phone ( http://previews.123rf.com/images/vlue/vlue1002/vlue100200039/6408218-Young-18-year-old-adult-teenager-yells-into-his-wireless-phone-isolated-on-white-background--Stock-Photo.jpg )
 //TODO announcements before projects' due dates (1 week and 1 day)
 //TODO k!marry
 //TODO downforeveryoneorjustme??
 //TODO track old messages during a reboot??
 //TODO remindme??
-//TODO learn to delete https://cdn.discordapp.com/attachments/245044272473047040/287006575418408970/cff1a95dbe0328f89eae7f93ac4c08fc.png or https://cdn.discordapp.com/attachments/218471304452374528/287131941852151808/cff1a95dbe0328f89eae7f93ac4c08fc.jpg >_<
-//TODO learn to delete https://cdn.discordapp.com/attachments/218471304452374528/298517133183418369/346705a8fc0f330993d1f43a39b2f722.jpg too
-//TODO delete by filename if everything fails??
 //TODO reminders when 5 minutes are left before t!daily and t!rep??
 //TODO discard alarms for unknown users??
 //TODO k!wtf??

@@ -1,4 +1,7 @@
-Version 0.3.3 [??-05-2017, screw you, i'm european]
+Version 0.3.3 [??-07-2017, screw you, i'm european]
+- stopped tracking Nadeko's status (it's not needed anymore and this feature might be the reason behind daily crashes);
+- k!who all results are now sent to the requesting person via DM if they are too long;
+- i am enforcing the "no chat in #recordings" rule now;
 - Twitch emotes are now loaded from the local storage if the online databases are down;
 - got rid of the k!proj Database easter egg, that release was worth the weight.
 
