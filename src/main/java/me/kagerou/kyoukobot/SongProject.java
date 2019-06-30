@@ -3,8 +3,11 @@ package me.kagerou.kyoukobot;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
@@ -15,13 +18,20 @@ import org.jsoup.select.Elements;
 //stores info about a single project
 class SongProject implements Comparable<SongProject>
 {
-	//name — the project name to display (with ** for bold text etc.)
-	//name_text — the actual name without the tags
+	//name ï¿½ the project name to display (with ** for bold text etc.)
+	//name_text ï¿½ the actual name without the tags
 	String name, name_text, progress, date, address, organisers, thread_link, video_link, lyrics_link;
 	boolean old; //whether the project is closed for submissions
 	static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH); //TODO fill this one
-	//parses the info from a single line in the table from the wiki (https://www.reddit.com/r/anime/wiki/sings/)
-	//uses preloaded links to lyrics from jsonLyrics
+	static final Map<String, String> easterEggs;
+	static {
+		HashMap<String, String> tmpEasterEggs = new HashMap<String, String>();
+		tmpEasterEggs.put("**chase**", "<https://www.youtube.com/watch?v=5mtZ2UnQTFw>");
+		
+		easterEggs = Collections.unmodifiableMap(tmpEasterEggs);
+	}
+	// parses the info from a single line in the table from the wiki (https://www.reddit.com/r/anime/wiki/sings/)
+	// uses preloaded links to lyrics from jsonLyrics
 	SongProject(Element el, boolean old, JSONObject jsonLyrics)
 	{
 		Elements tds = el.getElementsByTag("td");
@@ -135,8 +145,12 @@ class SongProject implements Comparable<SongProject>
 	@Override
 	public String toString()
 	{
-		//if (name.toLowerCase().contains("database") && name.toLowerCase().contains("log horizon"))
-			//return "`Project:` " + name +  "\n<https://www.youtube.com/watch?v=oHg5SJYRHA0>"; //RIP meme
+		for (Map.Entry<String, String> easterEgg: easterEggs.entrySet()) {
+			if (name.toLowerCase().contains(easterEgg.getKey()) && !progress.equalsIgnoreCase("Completed")) {
+				return "`Project:` " + name +  "\n" + easterEgg.getValue();
+			}
+		}
+		
 		if (old)
 			if (progress.equalsIgnoreCase("Completed"))
 				return "`Project:` " + name + "\n`Progress:` " + progress + (!lyrics_link.isEmpty() ? "\n`Lyrics:` <" + lyrics_link : "\n`Announcement:` <" + thread_link) + ">\n`Organiser(s)`: " + organisers + "\n" + video_link;

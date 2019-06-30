@@ -16,12 +16,14 @@ public class CatCommand implements CommandExecutor {
 		String CatURL;
 		try {
 			message.getReceiver().type();
-			CatURL = new JSONObject(IOUtils.toString(new URL("http://random.cat/meow"), Charset.forName("UTF-8"))).getString("file");
+			CatURL = new JSONObject(IOUtils.toString(new URL("http://aws.random.cat/meow"), Charset.forName("UTF-8"))).getString("file");
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 			CatURL = KyoukoBot.OneCat;
 		}
-		KyoukoBot.postFile(message, CatURL, "cat", "image");
+		// KyoukoBot.postFile(message, CatURL, "cat", "image");
+		message.reply(CatURL);
     }
 }

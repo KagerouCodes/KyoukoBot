@@ -1,9 +1,25 @@
-Version 0.3.3 [??-07-2017, screw you, i'm european]
-- stopped tracking Nadeko's status (it's not needed anymore and this feature might be the reason behind daily crashes);
-- k!who all results are now sent to the requesting person via DM if they are too long;
+Version 0.3.4 [??-??-2018, screw you, i'm european]
+- fixed the Twitch emotes not working (Twitch disabled their old API for emotes);
+- implemented your favourite monkaS and POGGERS emotes;
+- partially fixed k!cat (but it posts an URL now);
+- added a k!dog command (aka k!doggo, k!woof or k!wan) for you dog lovers (but the API is as unstable as the cat one);
+- fixed k!img.
+
+=============================================================
+
+Version 0.3.3 [25-01-2018, screw you, i'm european]
+- added a new command k!projby which filters projects by songmaster's name (Tora's request);
+- k!who all results are now sent to the requesting person via DM if they are too long, k!projby does the same thing;
+- i update #project-list on launch now (needs testing);
 - i am enforcing the "no chat in #recordings" rule now;
+- fixed getting mad at people for pinning stuff in #recordings;
+- fixed random tables in /r/anime side panel interfering with parsing the wiki;
+- got rid of the k!proj Database easter egg, that release was worth the weight;
+- added easter eggs for Chase and KNSM instead;
 - Twitch emotes are now loaded from the local storage if the online databases are down;
-- got rid of the k!proj Database easter egg, that release was worth the weight.
+- stopped tracking Nadeko's status;
+- removed the k!spreadsheet command because there's no spreadsheet anymore;
+- gave Panda admin rights.
 
 =============================================================
 

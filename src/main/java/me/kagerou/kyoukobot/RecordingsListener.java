@@ -39,6 +39,11 @@ public class RecordingsListener implements MessageCreateListener
 		if ((message.getContent().indexOf("http://") != -1) || (message.getContent().indexOf("https://") != -1))
 			return false;
 		
+		// pins are parsed by Javacord as empty messages
+		if (message.getContent().isEmpty() && message.getAttachments().isEmpty()) {
+			return false;
+		}
+		
 		System.out.println("A message without a link/attachment has been detected in #recordings.");
 		boolean can_manage = Iterables.any(api.getYourself().getRoles(message.getChannelReceiver().getServer()), (role) -> role.getPermissions().getState(PermissionType.MANAGE_MESSAGES) == PermissionState.ALLOWED);
 		if (can_manage)

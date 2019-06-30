@@ -18,12 +18,12 @@ public class DeleteCommand implements CommandExecutor {
     public void onCommand(Message message, String args[])
 	{
 		boolean allowed = false; //check if the user is myself or has the MANAGE_MESSAGES or ADMINISTRATOR permissions
-		if (message.getAuthor().getId().equals(KyoukoBot.adminID) || message.getAuthor().getId().equals(ShiyuID))
+		if (KyoukoBot.adminIDs.contains(message.getAuthor().getId()) || message.getAuthor().getId().equals(ShiyuID))
 			allowed = true;
 		if (!message.isPrivateMessage()) //waiting for User.getPermissions(Server) or something like that to be implemented
 			for (Role role: message.getAuthor().getRoles(message.getChannelReceiver().getServer()))
 				allowed = allowed || (role.getPermissions().getState(PermissionType.MANAGE_MESSAGES) == PermissionState.ALLOWED) ||
-						(role.getPermissions().getState(PermissionType.ADMINISTATOR) == PermissionState.ALLOWED);
+						(role.getPermissions().getState(PermissionType.ADMINISTRATOR) == PermissionState.ALLOWED);
 		if (!allowed)
 		{
 			message.reply(Sdcf4jMessage.MISSING_PERMISSIONS.getMessage());

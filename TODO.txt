@@ -1,0 +1,47 @@
+TODO:
+
+- KETE;
+- k!TODO;
+- fix k!google and k!lyrics;
+- rename credentials.txt to config.txt and use JSONs there;
+- make a script to separate only files necessary for running the bot;
+- serious golden kappa business??;
+- k!protect (Shiyu's request);
+- remindme??;
+- whatanime.ga??;
+- logs??;
+   
+- voting??;
+- k!seen (ignored message template??);
+- grab the links to goo.gl submission forms from the wiki;
+- formatting in k!who;
+- autoreboot script, lol;
+- capture Twitter/YouTube links in #animemes, really??;
+- https://i.imgur.com/JWMThRi.png;
+- save the database after discarding outdated alarms somehow??;
+- special case the remastered version of the Imagination project, really??;
+- "do it for her" meme??;
+- k!img fix 18 year old phone ( http://previews.123rf.com/images/vlue/vlue1002/vlue100200039/6408218-Young-18-year-old-adult-teenager-yells-into-his-wireless-phone-isolated-on-white-background--Stock-Photo.jpg );
+ announcements before projects' due dates (1 week and 1 day);
+ - k!marry;
+- downforeveryoneorjustme??;
+- track old messages during a reboot??;
+- reminders when 5 minutes are left before t!daily and t!rep??;
+- discard alarms for unknown users??;
+- k!wtf??;
+- limits??;
+- "kill script"??;
+- headpats??;
+- typerace??;
+- auto-selfupdate from git??;
+- assume "Kyouko" role??;
+- global message queue to fix stability issues??;
+- fix the issue of failing to handle a few posts with twitch emotes in quick succession?? (doesn't appear to happen with commands);   
+- k!hug random but only for active people??;
+- OOC command??;
+- kumirei pictures??;
+- fancy embeds??;
+- customisable commands??;
+    
+- "another daily to farm"??; 
+- JDA?!

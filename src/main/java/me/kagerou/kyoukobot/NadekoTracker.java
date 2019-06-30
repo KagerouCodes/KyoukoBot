@@ -78,7 +78,7 @@ public class NadekoTracker extends TimerTask
 				String msg = "**Type " + match.group(1) + " to get Nadeko flowers!**";
 				
 				if (admin == null)
-					admin = Iterables.find(KyoukoBot.api.getUsers(), (x) -> x.getId().equals(KyoukoBot.adminID), null);
+					admin = Iterables.find(KyoukoBot.api.getUsers(), (x) -> x.getId().equals(KyoukoBot.ownerID), null);
 				if (admin != null)
 					admin.sendMessage(msg);
 				else

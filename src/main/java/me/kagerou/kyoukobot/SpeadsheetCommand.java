@@ -3,6 +3,7 @@ package me.kagerou.kyoukobot;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 //links the song suggestion spreadsheet
+@Deprecated
 public class SpeadsheetCommand implements CommandExecutor {
 	@Command(aliases = {"k!spreadsheet", "k!suggestions"}, description = "Links the song suggestion spreadsheet (give me a shorter name for this one).")
     public String onCommand(String command, String[] args) {

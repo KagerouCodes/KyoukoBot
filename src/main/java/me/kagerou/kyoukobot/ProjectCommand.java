@@ -1,5 +1,7 @@
 package me.kagerou.kyoukobot;
 
+import java.util.ArrayList;
+
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
@@ -49,6 +51,37 @@ public class ProjectCommand implements CommandExecutor
 		return new MatchResult(result, first_match);
 	}
 	
+	static ArrayList<String> ProjectDescriptions(ArrayList<SongProject> projects, String empty_answer, String header) {
+		ArrayList<String> result = new ArrayList<String>();
+		
+		if (projects.isEmpty())
+		{
+			result.add(empty_answer);
+			return result;
+		}
+		
+		String text = header;
+		for (SongProject proj: projects)
+		{ //assemble the result string while breaking it in parts if it's too long for a single message
+			String next = proj.toString();
+			if (text.length() + next.length() > KyoukoBot.CharLimit)
+			{
+				result.add(KyoukoBot.wrapLinks(text.trim()));
+				// result.add(text.trim());
+				text = "";
+			}
+			text += next + "\n\n";
+		}
+		// result.add(text.trim());
+		result.add(KyoukoBot.wrapLinks(text.trim()));
+		
+		return result;
+	}
+	
+	static ArrayList<String> CurrentProjectDescriptions() {
+		return ProjectDescriptions(KyoukoBot.CurrentSongs, "`There are no currently active projects!`", "`Current projects:`\n\n");
+	}
+	
 	@Command(aliases = {"k!proj", "k!project", "k!projects", "k!song"}, usage = "k!proj [name|current]", description = "Searches for an /r/anime sings project or all current ones (with the word \"current\" or no arguments at all).")
     public void onCommand(Message message, String args[])
 	{
@@ -63,30 +96,9 @@ public class ProjectCommand implements CommandExecutor
 			arg = "current";
 		if (arg.equals("current"))
 		{ //displaying all current projects
-			if (KyoukoBot.CurrentSongs.isEmpty())
-			{
-				message.reply("`There are no currently active projects!`");
-				return;
-			}
-			String result = "`Current projects:`\n\n";
-			for (SongProject proj: KyoukoBot.CurrentSongs)
-			{ //assemble the result string while breaking it in parts if it's too long for a single message
-				String next = proj.toString();
-				if (result.length() + next.length() > KyoukoBot.CharLimit)
-				{
-					message.reply(result);
-        			try {
-    					Thread.sleep(500); //gotta guarantee the correct order
-    				}
-    				catch (InterruptedException e)
-    				{
-    					e.printStackTrace();
-    				}
-					result = "";
-				}
-				result += next + "\n\n";
-			}
-			message.reply(result);
+			ArrayList<String> ProjectDescriptions = CurrentProjectDescriptions();
+			KyoukoBot.PostMultipleMessages(ProjectDescriptions, message.getReceiver());
+			
 			return;
 		}
 		//searching for just one project
@@ -107,11 +119,6 @@ public class ProjectCommand implements CommandExecutor
 			message.reply(result.toString());
 			return;
 		}
-			/*if (proj.name_text.toLowerCase().contains(arg))
-			{
-				message.reply(proj.toString());
-				return;
-			}*/
 		message.reply("`Project not found >_<`");
     }
 }

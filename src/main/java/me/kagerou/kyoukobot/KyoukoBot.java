@@ -7,6 +7,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.concurrent.Future;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -30,6 +31,7 @@ import de.btobastian.javacord.entities.Channel;
 import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.message.Message;
+import de.btobastian.javacord.entities.message.MessageHistory;
 import de.btobastian.javacord.entities.message.MessageReceiver;
 import de.btobastian.javacord.listener.message.MessageCreateListener;
 import de.btobastian.sdcf4j.CommandHandler;
@@ -100,63 +102,80 @@ class ImageSearchResult //a class for cached Google Image Search results
 
 public class KyoukoBot {
 	//all the databases
-	//static ArrayList<String> AllEMTs, AllChitoses;
 	static ImageCollection EMTs, Chitoses;
 	static MemeBase memeBase;
 	static ArrayList<SongProject> Songs, CurrentSongs;
 	static JSONObject JSONLyrics; //this one is for storing links to lyrics for projects, they take too long to load
 	static NewDataBase Database;
 	
-	final static String version = "0.3.2";
+	final static String version = "0.3.3";
 	static boolean release = true;
 	
-	static String releaseToken = "", betaToken = "", token = "", adminID = "";
+	static String releaseToken = "", betaToken = "", token = "", ownerID = "";
+	static ArrayList<String> adminIDs;
 	
     static DiscordAPI api;
-    final static long ReconnectTimeoutMillis = 90000; //1,5 minutes; if there was no response for this long, manual reconnection happens
-    final static long ReloadTimeoutMillis = 6 * 60 * 60 * 1000; //6 hours; the timeout for obligatory rebooting
-    //final static long ReloadTimeoutMillis = 5 * 60 * 1000; //5 minutes for testing purposes
+    // 1,5 minutes; if there was no response for this long, manual reconnection happens
+    final static long ReconnectTimeoutMillis = 90000; 
+    // 6 hours; the timeout for obligatory rebooting
+    final static long ReloadTimeoutMillis = 6 * 60 * 60 * 1000;
+    // 5 minutes for testing purposes
+    // final static long ReloadTimeoutMillis = 5 * 60 * 1000; 
     static boolean manual_reconnecting = true;
 	static boolean connected_once = false;
-	static long connect_time = 0; //when the bot connected to Discord and initialised all the commands
-	static long init_time = 0; //when the databases were loaded last time
+	// when the bot connected to Discord and initialised all the commands
+	static long connect_time = 0;
+	// when the databases were loaded last time
+	static long init_time = 0; 
 	
 	static ConsoleOutputTracker coc;
 	
-    final static String EMTAlbum = "zf0yQ"; //imgur album with Emilias
+	// imgur album with Emilias
+    final static String EMTAlbum = "zf0yQ";
     final static String OneEMT = "http://danbooru.donmai.us/data/__emilia_re_zero_kara_hajimeru_isekai_seikatsu_drawn_by_tsukimori_usako__bd95cc37a9ec5a35aded8f25e6de5c59.png";
-    final static String ChitoseAlbum = "m3ipy"; //imgur album with Chitoses
+    // imgur album with Chitoses
+    final static String ChitoseAlbum = "m3ipy";
     final static String OneChitose = "https://remyfool.files.wordpress.com/2016/10/vlcsnap-2016-10-09-13h30m37s147.png";
-    final static String OneCat = "http://i.imgur.com/JhkPph1.jpg"; //one cat, just in case random.cat isn't available
-    final static String PrettyLink = "http://i.imgur.com/3zrwfZB.png";       //links
-    final static String YuzuruLink = "http://i.imgur.com/9FulDOt.png";       //to
-    final static String MeguminLink = "http://i.imgur.com/X1rO0A7.png";      //different
-    final static String BreakingNewsLink = "http://i.imgur.com/28fDbUq.png"; //templates
+    // one cat, just in case random.cat isn't available
+    final static String OneCat = "http://i.imgur.com/JhkPph1.jpg";
+    final static String OneDog = "https://i.imgur.com/G5j2WOH.jpg";
+    // links to different templates
+    final static String PrettyLink = "http://i.imgur.com/3zrwfZB.png";       
+    final static String YuzuruLink = "http://i.imgur.com/9FulDOt.png";
+    final static String MeguminLink = "http://i.imgur.com/X1rO0A7.png";
+    final static String BreakingNewsLink = "http://i.imgur.com/28fDbUq.png";
     final static String CorrectLink = "http://i.imgur.com/mHZxFlV.png";
     final static String memeDir = "memes";
     final static String SongWiki = "https://www.reddit.com/r/anime/wiki/sings/";
     final static String LyricsDatabaseFile = "projects_lyrics.txt";
     final static String DatabaseFile = "people.txt";
     final static String SearchResultsFile = "search_results.txt";
-    final static long CacheDuration = 3 * 24 * 60 * 60 * 1000; //milliseconds in three days, this is how long the image search results are stored
+    // milliseconds in three days, this is how long the image search resutmpEasterEggs.put("**kimi no shiranai monogatari**", "<https://www.youtube.com/watch?v=2znDt8DVm7s&t=2m39s>");lts are stored
+    final static long CacheDuration = 3 * 24 * 60 * 60 * 1000;
     final static String TatsumakiID = "172002275412279296";
     //final static String NadekoID = "116275390695079945";//"222681293232668672";//"255367116608241685";
     final static String BotTestingID = "218471304452374528";//"279680583578419201";
-    final static int CharLimit = 1900; //not 2000 just to be safe and be able to add newlines and stuff
+    // not 2000 just to be safe and be able to add newlines and stuff
+    final static int CharLimit = 1900;
     static String ChangeLog;
     static MimeTypes DefaultMimeTypes = MimeTypes.getDefaultMimeTypes();
-    static Tika leTika = new Tika(); //it's too slow to load a new instance every time
+    // it's too slow to load a new instance every time
+    static Tika leTika = new Tika();
     
     final static String TwitchEmotes[] = {"Kappa", "MrDestructoid", "DansGame", "SwiftRage", "PJSalt",
     		"Kreygasm", "FrankerZ", "SMOrc", "BibleThump", "PogChamp",
     		"4Head", "ResidentSleeper", "Kippa", "Keepo", "EleGiggle",
-    		"BrokeBack", "BabyRage", "WutFace", "deIlluminati", "HeyGuys",
+    		"BrokeBack", "BabyRage", "WutFace", "TheIlluminati", "HeyGuys",
     		"KappaPride", "KappaRoss", "FailFish", "NotLikeThis", "MingLee",
     		"VoHiYo", "OpieOP", "haHAA", "FeelsBirthdayMan", "FeelsBadMan",
     		"FeelsGoodMan", "KKona", "AngelThump", "LUL", "FeelsAmazingMan",
     		"TehePelo", "PunOko", "KonCha"};
-    final static String GlobalEmotesURL = "https://twitchemotes.com/api_cache/v2/global.json";
+    final static String GlobalEmotesURL = "https://twitchemotes.com/api_cache/v3/global.json";
+    final static String GlobalEmoteTemplateURL = "https://static-cdn.jtvnw.net/emoticons/v1/{image_id}/1.0";
     final static String BTTVEmotesURL = "https://api.betterttv.net/emotes";
+    final static String CustomEmotes[][] = {{"goldenkappa", "http://i.imgur.com/JwmYhu7.png"},
+    		{"monkaS", "https://static-cdn.jtvnw.net/emoticons/v1/849397/1.0"},
+    		{"POGGERS", "https://cdn.betterttv.net/emote/58ae8407ff7b7276f8e594f2/1x"}};
     static ArrayList<Emote> Emotes;
     
     static HashMap<String, ImageSearchResult> SearchResults = new HashMap<String, ImageSearchResult>(); //cached Google Image Search results
@@ -202,14 +221,15 @@ public class KyoukoBot {
     	try { //parsing the project wiki page
     		Document doc = Jsoup.connect(SongWiki).userAgent("KyoukoBot").get();
     		Elements tables = doc.getElementsByTag("table");
-    		for (Element el: tables.get(1).getElementsByTag("tr"))
+    		tables.removeIf((x) -> !x.text().contains("Title/Series"));
+    		for (Element el: tables.get(0).getElementsByTag("tr"))
     			if (!el.getElementsByTag("td").isEmpty())
     			{
     				SongProject project = new SongProject(el, false, JSONLyrics); 
     				Songs.add(project);
     				CurrentSongs.add(project);
     			}
-    		for (Element el: tables.get(2).getElementsByTag("tr"))
+    		for (Element el: tables.get(1).getElementsByTag("tr"))
     			if (!el.getElementsByTag("td").isEmpty())
     				Songs.add(new SongProject(el, true, JSONLyrics));
     		System.out.println("Project wiki loaded successfully!");
@@ -224,8 +244,60 @@ public class KyoukoBot {
     		return false;
     	}
     }
+    
+    static void CheckProjectList(String channel_name) {
+    	ArrayList<String> ProjectList = ProjectCommand.CurrentProjectDescriptions();
+    	for (Channel channel: api.getChannels()) {
+    		if (channel.getName().equals(channel_name)) {
+    			Future<MessageHistory> history = channel.getMessageHistory(100);
+    			try {
+    				List<Message> own_messages = history.get().getMessagesSorted();
+    				own_messages.removeIf((Message msg) -> msg.getAuthor().getId() != api.getYourself().getId());
+    				
+    				ArrayList<String> PostedProjectList = new ArrayList<String>();
+    				for (Message own_message : own_messages) {
+    					PostedProjectList.add(own_message.getContent());
+    				}
+    				if (PostedProjectList.equals(ProjectList)) {
+    					System.out.println("Project list is up to date, no changes needed.");
+    				} else {
+   						System.out.println("Project list is not up to date, updating...");
+   						for (Message own_message : own_messages) {
+   							try {
+   								own_message.delete().get();
+   							} catch (Exception e) {
+   		    					System.out.println("Failed to delete a message of my own.");
+   		    					e.printStackTrace();
+   							}
+   						}
+   						
+   						PostMultipleMessages(ProjectList, channel);
+   					}
+   				} catch (Exception e) {
+   					System.out.println("Failed to check history of the " + channel_name + " channel.");
+   					e.printStackTrace();
+   				}
+   			}
+   		}
+    }
 
-    public static boolean InitDatabase(NewDataBase Database, String DatabaseFile)
+    static void PostMultipleMessages(ArrayList<String> MessageTexts, MessageReceiver receiver) {
+    	for (int index = 0; index + 1 < MessageTexts.size(); ++index) {
+    		receiver.sendMessage(MessageTexts.get(index));
+    	    try {
+    			Thread.sleep(500); //gotta guarantee the correct order
+    		}
+    		catch (InterruptedException e)
+    		{
+    			e.printStackTrace();
+    		}
+    	}
+    	if (!MessageTexts.isEmpty()) {
+    		receiver.sendMessage(MessageTexts.get(MessageTexts.size() - 1));
+    	}
+	}
+
+	public static boolean InitDatabase(NewDataBase Database, String DatabaseFile)
     { //loads the user database from a file
     	if (Database.readFromFile(DatabaseFile))
     	{
@@ -285,9 +357,13 @@ public class KyoukoBot {
 			{
 				boolean less_than = ((next_url_start > 0) && (str.charAt(next_url_start - 1) == '<')), greater_than = false;
 				//result.append(str.substring(index, next_url_start));
-				int next_space = str.indexOf(' ', next_url_start); //doesn't handle newlines but those don't get into intros anyway
-				if (next_space == -1)
-					next_space = str.length();
+				// int next_space = str.indexOf(' ', next_url_start); //doesn't handle newlines but those don't get into intros anyway
+				int next_space = next_url_start;
+				while (next_space != str.length() && !Character.isWhitespace(str.charAt(next_space))) {
+					++next_space;
+				}
+				//if (next_space == -1)
+				//	next_space = str.length();
 				while ("!:,.;".indexOf(str.charAt(next_space - 1)) != -1)
 					next_space--;
 				if (less_than)
@@ -389,22 +465,24 @@ public class KyoukoBot {
 		postFile(message, url, FileName, "");
 	}
 	
+	// posts a file or its URL in case of failure (checks MIME type too)
     static void postFile(Message message, String url, String FileName, String type)
-    { //posts a file or its URL in case of failure (checks MIME type too)
+    {
     	if (!postOnlyFile(message, url, FileName, type))
     		message.reply(url);
     }
     
-    static ArrayList<Emote> InitTwitchEmotes(String[] TwitchEmotes, String GlobalEmotesURL, String BTTVEmotesURL)
-    { //loads Twitch emotes using list of them and JSON URLs 
+    // loads Twitch emotes using list of them and JSON URLs 
+    static ArrayList<Emote> InitTwitchEmotes(String[] TwitchEmotes, String[][] CustomEmotes,
+    										 String GlobalEmotesURL, String BTTVEmotesURL) { 
     	ArrayList<Emote> result = new ArrayList<Emote>();
     	try {
-    		JSONObject globalJSON = new JSONObject(IOUtils.toString(new URL(GlobalEmotesURL), Charset.forName("UTF-8")));
-    		String template = globalJSON.getJSONObject("template").getString("small");
-    		JSONObject global_emotes = globalJSON.getJSONObject("emotes");
+    		JSONObject global_emotes = new JSONObject(IOUtils.toString(new URL(GlobalEmotesURL),
+    				Charset.forName("UTF-8")));
     		for (String name: TwitchEmotes)
     			if (global_emotes.has(name))
-    				result.add(new Emote(name.toLowerCase(), template.replace("{image_id}", String.valueOf(global_emotes.getJSONObject(name).getInt("image_id")))));
+    				result.add(new Emote(name.toLowerCase(), GlobalEmoteTemplateURL.replace("{image_id}",
+    						String.valueOf(global_emotes.getJSONObject(name).getInt("id")))));
     		System.out.println("Global Twitch emotes loaded successfully!");
     	}
     	catch (Exception e)
@@ -426,8 +504,11 @@ public class KyoukoBot {
     	{
     		System.out.println("Failed to load BTTV emotes database.");
     	}
-    	result.add(new Emote("goldenkappa", "http://i.imgur.com/JwmYhu7.png")); //yup, we even have the golden Kappa
-    	//loading emotes from the "emotes" directory in case the online databases are down
+    	for (String custom_emote[]: CustomEmotes) {
+    		result.add(new Emote(custom_emote[0].toLowerCase(), custom_emote[1]));
+    	}
+    	
+    	// loading emotes from the "emotes" directory in case the online databases are down
     	for (String name: TwitchEmotes)
     	{
     		if (!Iterables.any(result, (x) -> x.name.equalsIgnoreCase(name)))
@@ -643,6 +724,12 @@ public class KyoukoBot {
 		return Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == 1 &&
 				Calendar.getInstance().get(Calendar.MONTH) == Calendar.APRIL;
 	}
+	//checks the date for Valentine's events
+	public static boolean isValentines()
+	{
+		return Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == 14 &&
+				Calendar.getInstance().get(Calendar.MONTH) == Calendar.FEBRUARY;
+	}
     
 	static void InitPhase()
 	{ //initializes all the databases
@@ -660,7 +747,7 @@ public class KyoukoBot {
         
         ChangeLog = InitChangeLog("changelog.txt");
         
-        Emotes = InitTwitchEmotes(TwitchEmotes, GlobalEmotesURL, BTTVEmotesURL);
+        Emotes = InitTwitchEmotes(TwitchEmotes, CustomEmotes, GlobalEmotesURL, BTTVEmotesURL);
         
         SearchResults = InitSearchResults(SearchResultsFile);
         
@@ -713,7 +800,10 @@ public class KyoukoBot {
     			String[] creds = FileUtils.readLines(credentials, Charset.forName("UTF-8")).toArray(new String[0]);
     			releaseToken = creds[0];
     			betaToken = creds[1];
-    			adminID = creds[2];
+    			adminIDs = new ArrayList<String>(Arrays.asList(creds[2].split("\\s+")));
+    			if (!adminIDs.isEmpty()) {
+    				ownerID = adminIDs.get(0);
+    			}
     			imgurClientID = creds[3];
     			imgurClientSecret = creds[4];
     			YouTubeSearcher.GoogleAPIKey = GoogleSearcher.GoogleKey = creds[5];
@@ -745,6 +835,9 @@ public class KyoukoBot {
         		@Override
         		public void onSuccess(DiscordAPI api) {
         			Database.adjustNames(api.getUsers()); //fix the database on startup TODO seems like an exception can happen here
+        			if (!Songs.isEmpty()) {
+        				CheckProjectList("project-list");
+        			}
         			
         			CommandHandler handler = new JavacordHandler(api);
         			// simple picture-posting commands
@@ -753,6 +846,7 @@ public class KyoukoBot {
         			handler.registerCommand(new RemCommand()); //this one is hidden
         			handler.registerCommand(new ChitoseCommand(Chitoses, "Chitose"));
         			handler.registerCommand(new CatCommand());
+        			handler.registerCommand(new DogCommand());
         			// "meme"-related commands
         			handler.registerCommand(new LeMemeCommand());
         			handler.registerCommand(new UploadCommand());
@@ -765,14 +859,17 @@ public class KyoukoBot {
         			handler.registerCommand(new CorrectCommand(CorrectLink));
         			// a little bit of social interaction
         			handler.registerCommand(new HugCommand());
-        			//handler.registerCommand(new ChocolateCommand()); //limited Valentine's Day event
+        			if (isValentines()) {
+        				handler.registerCommand(new ChocolateCommand()); //limited Valentine's Day event
+        			}
         			handler.registerCommand(new WhoIsCommand());
         			handler.registerCommand(new SetIntroCommand());
         			handler.registerCommand(new IntroCommand()); //a redirect to k!setintro command
         			// project-related commands
         			handler.registerCommand(new ProjectCommand());
+        			handler.registerCommand(new ProjectByCommand());
         			handler.registerCommand(new WikiCommand());
-        			handler.registerCommand(new SpeadsheetCommand());
+        			// handler.registerCommand(new SpeadsheetCommand());
         			// different forms of Google search
         			handler.registerCommand(new ImageCommand());
         			handler.registerCommand(new GoogleShortCommand(1, true));
@@ -821,22 +918,24 @@ public class KyoukoBot {
         			KyoukoBot.connected_once = true;
         			connect_time = System.currentTimeMillis();
         			//finding the admin and messaging them about going online/rebooting
-        			handler.addPermission(adminID, "admin");
-        			User admin = Iterables.find(api.getUsers(), (x) -> x.getId().equals(adminID), null);
+        			for (String adminID: adminIDs) {
+        				handler.addPermission(adminID, "admin");
+        			}
+        			User owner = Iterables.find(api.getUsers(), (x) -> x.getId().equals(ownerID), null);
         			Sdcf4jMessage.MISSING_PERMISSIONS.setMessage("Y-you're touching me inappropriately!");
         			if (Arrays.asList(args).contains("rebooted")) //"rebooted", "updated" and "hello" arguments are passed by update.jar
         				System.out.println("Reboot completed!");
         			if (Arrays.asList(args).contains("hello"))
-        				if (admin != null)
+        				if (owner != null)
         					if (Arrays.asList(args).contains("rebooted"))
-        						admin.sendMessage("`Manual reboot completed!`");
+        						owner.sendMessage("`Manual reboot completed!`");
         					else
-        						admin.sendMessage("`I'm online!`");
+        						owner.sendMessage("`I'm online!`");
         				else
         					System.out.println("Couldn't find the owner.");
         			if (Arrays.asList(args).contains("updated"))
-        				if (admin != null)
-        					admin.sendMessage("`Self-update completed!`");
+        				if (owner != null)
+        					owner.sendMessage("`Self-update completed!`");
         				else
         					if (!Arrays.asList(args).contains("hello")) //no point in printing the same line twice
         						System.out.println("Couldn't find the owner.");
@@ -851,15 +950,15 @@ public class KyoukoBot {
         	};
         	
        api.connect(callback); //actual connecting!
-       //the whole manual reconnecting business, Javacord doesn't do it perfectly
+       // the whole manual reconnecting business, Javacord doesn't do it perfectly
        if (manual_reconnecting)
     	   while (true)
     	   {
     		   try {
     			   Thread.sleep(ReconnectTimeoutMillis); //probably would use timers next time
-    			   double mem_mbs = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576.0;
+    			   /*double mem_mbs = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576.0;
     			   mem_mbs = Math.round(mem_mbs * 1000.0) / 1000.0;
-    			   System.out.println("Current memory usage: " + mem_mbs + " MB");
+    			   System.out.println("Current memory usage: " + mem_mbs + " MB");*/
     			   if (System.currentTimeMillis() - init_time > ReloadTimeoutMillis)
     			   { //rebooting if databases were loaded ReloadTimeoutMillis ms ago (usually 6 hours)
     				   System.out.println("Obligatory rebooting...");
@@ -893,42 +992,4 @@ public class KyoukoBot {
     		   }
     	   }
     }
-
-//TODO searching projects by songmasters
-//TODO autoreboot script, lol
-//TODO formatting in k!who
-//TODO capture Twitter/YouTube links in #animemes, really??
-//TODO https://i.imgur.com/JWMThRi.png
-//TODO save the database after discarding outdated alarms somehow??
-//TODO special case the remastered version of the Imagination project, really??
-//TODO "do it for her" meme??
-//TODO k!img fix 18 year old phone ( http://previews.123rf.com/images/vlue/vlue1002/vlue100200039/6408218-Young-18-year-old-adult-teenager-yells-into-his-wireless-phone-isolated-on-white-background--Stock-Photo.jpg )
-//TODO announcements before projects' due dates (1 week and 1 day)
-//TODO k!marry
-//TODO downforeveryoneorjustme??
-//TODO track old messages during a reboot??
-//TODO remindme??
-//TODO reminders when 5 minutes are left before t!daily and t!rep??
-//TODO discard alarms for unknown users??
-//TODO k!wtf??
-//TODO limits??
-//TODO "kill script"??
-//TODO k!recordings person (outclassed by the discord search, sigh)
-//TODO whatanime.ga??
-//TODO headpats??
-//TODO typerace??
-//TODO auto-selfupdate from git??
-//TODO assume "Kyouko" role??
-//TODO global message queue to fix stability issues??
-//TODO fix the issue of failing to handle a few posts with twitch emotes in quick succession?? (doesn't appear to happen with commands)   
-//TODO make k!hug random not ping inactive people
-//TODO logs??
-//TODO OOC command??
-//TODO kumirei pictures??
-//TODO fancy embeds??
-//TODO customisable commands??
-    
-//TODO random rolls??
-//TODO "another daily to farm"??    
-//TODO JDA?!
 }

@@ -30,6 +30,7 @@ public class ImageCommand implements CommandExecutor
 	    return IOUtils.toString(httpCon.getInputStream(), "UTF-8");
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Command(aliases = {"k!img", "k!image"}, description = "Performs a Google image search.", usage = "k!img query")
     public void onCommand(Message message, String[] args) {
 		String query = KyoukoBot.getArgument(message);
@@ -53,6 +54,7 @@ public class ImageCommand implements CommandExecutor
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 			message.reply("`Failed to perform a search >_<`");
 			return;
 		}

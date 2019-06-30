@@ -29,7 +29,7 @@ public class AnimemesListener implements MessageCreateListener {
 	
 	@Override
 	public void onMessageCreate(DiscordAPI api, Message message) {
-		if (message.isPrivateMessage() || message.getAuthor().isBot() || !message.getChannelReceiver().getName().equals("animemes"))
+		if (message.isPrivateMessage() || message.getAuthor().isBot() || !message.getChannelReceiver().getName().endsWith("emes"))
 			return;
 		if (message.getContent().toLowerCase().startsWith("k!"))
 			return;
