@@ -98,6 +98,9 @@ public class GoogleSearcher {
 		String searchURL = "https://www.startpage.com/do/asearch?language=english&ff=" + (safe ? "on" : "off") + "&q=" + URLEncoder.encode(query, "UTF-8");
 		Document doc = Jsoup.connect(searchURL).userAgent(userAgent).get();
 		Elements links = doc.select(".search-item__title>a");
+		if (links.isEmpty()) {
+			links = doc.select("a.w-gl__result-url");
+		}
 		for (Element link: links)
 		{
 			result.add(new SearchResult(link.text(), link.attr("href")));
