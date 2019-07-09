@@ -1,7 +1,6 @@
 package me.kagerou.kyoukobot;
 
 import java.net.URL;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public class GoogleSearcher {
 	static String GoogleKey;
 	static String GoogleCX;
 	//should probably put the user agent in KyoukoBot's final static fields
-	static String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.100 Safari/537.36"; 
+	static String userAgent = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0"; 
 	//that feel when there's no pair "template" in Java
 	class SearchResult
 	{
@@ -75,18 +74,16 @@ public class GoogleSearcher {
 		Elements links;
 		int links_included = 0;
 		String searchURL = "https://www.google.com/search?gfe_rd=cr&gws_rd=cr" + (safe ? "&safe=active" : "") + "&q=" + URLEncoder.encode(query, "UTF-8");
-		Document doc = Jsoup.connect(searchURL).userAgent("KyoukoBot").get();
-		//FileUtils.writeStringToFile(new File("google_search.txt"), doc.toString(), Charset.forName("UTF-8")); //for debug purposes
-		links = doc.select(".g>.r>a");
-		//links = doc.select(".rc>.r>a");
+		Document doc = Jsoup.connect(searchURL).userAgent(userAgent).get();
+		links = doc.select(".rc>.r>a");
 		
 		for (Element link : links) {
-			String title = link.text();
+			Element titleElement = link.selectFirst("h3");
+			if (titleElement == null) {
+				continue;
+			}
+			String title = titleElement.text();
 			String url = link.absUrl("href"); // Google returns URLs in format "http://www.google.com/url?q=<url>&sa=U&ei=<someKey>".
-			url = URLDecoder.decode(url.substring(url.indexOf('=') + 1, url.indexOf('&')), "UTF-8");
-
-			if (!url.startsWith("http"))
-				continue; // Ads/news/etc.
 				
 			result.add(new SearchResult(title, url));
 
@@ -99,9 +96,8 @@ public class GoogleSearcher {
 	{
 		ArrayList<SearchResult> result = new ArrayList<SearchResult>();
 		String searchURL = "https://www.startpage.com/do/asearch?language=english&ff=" + (safe ? "on" : "off") + "&q=" + URLEncoder.encode(query, "UTF-8");
-		Document doc = Jsoup.connect(searchURL).userAgent("KyoukoBot").get();
-		//FileUtils.writeStringToFile(new File("startpage_search.txt"), doc.toString(), Charset.forName("UTF-8")); //for debug purposes
-		Elements links = doc.select(".clk>a");
+		Document doc = Jsoup.connect(searchURL).userAgent(userAgent).get();
+		Elements links = doc.select(".search-item__title>a");
 		for (Element link: links)
 		{
 			result.add(new SearchResult(link.text(), link.attr("href")));
@@ -140,10 +136,10 @@ public class GoogleSearcher {
 				System.out.println("Failed to access Google Custom Search API.");
 			e.printStackTrace();
 		}
-		return null; //return null if everything fails
+		return null; // return null if everything fails
 	}
 	//returns a ready-to-post string with search results
-	String search(String query) //TODO fix Oceanic Operetta?? (if the link ends with a closing bracket, Discord doesn't include the bracket in the link for some reason)
+	String search(String query)
 	{
 		if (query.isEmpty())
 			return "`Enter a query.`";

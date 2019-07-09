@@ -11,6 +11,7 @@ import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 //performs a Google image search, returns the first result, caches results in a file for CacheDuration ms (3 days) 
+@SuppressWarnings("deprecation")
 public class ImageCommand implements CommandExecutor
 {
 	//static String userAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36";
@@ -30,7 +31,6 @@ public class ImageCommand implements CommandExecutor
 	    return IOUtils.toString(httpCon.getInputStream(), "UTF-8");
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Command(aliases = {"k!img", "k!image"}, description = "Performs a Google image search.", usage = "k!img query")
     public void onCommand(Message message, String[] args) {
 		String query = KyoukoBot.getArgument(message);
