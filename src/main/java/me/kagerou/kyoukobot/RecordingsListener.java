@@ -12,6 +12,7 @@ import de.btobastian.javacord.entities.permissions.PermissionState;
 import de.btobastian.javacord.entities.permissions.PermissionType;
 import de.btobastian.javacord.listener.message.MessageCreateListener;
 
+// makes sure that only posts with links or audio files attached get into #recordings
 public class RecordingsListener implements MessageCreateListener
 {
 	private String recordingsID;

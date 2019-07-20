@@ -20,18 +20,33 @@ public class YouTubeSearcher {
 		this.LinksLimit = LinksLimit;
 		this.Preview = Preview;
 	}
-	//returns results of a search as a string ready to be posted in Discord
+	
+	// TODOKETE make this even less crutchy
+	JSONArray doSearch(String query) throws Exception
+	{
+		if (query.isEmpty()) {
+			return new JSONArray();
+		}
+		String APIquery = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=" + LinksLimit +
+				"&q=" + URLEncoder.encode(query, "UTF-8") + "&key=" + GoogleAPIKey;
+		JSONObject json = new JSONObject(IOUtils.toString(new URL(APIquery), Charset.forName("UTF-8")));
+		JSONArray array = json.getJSONArray("items");
+		return array;
+	}
+	
+	// returns results of a search as a string ready to be posted in Discord
 	String search(Message message, String args[])
 	{
 		String query = KyoukoBot.getArgument(message);
-		if (query.isEmpty())
+		if (query.isEmpty()) {
 			return "`Enter a query.`";
-		String result = "";
+		}
 		try {
-			String APIquery = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=" + LinksLimit +
-					"&q=" + URLEncoder.encode(query, "UTF-8") + "&key=" + GoogleAPIKey;
-			JSONObject json = new JSONObject(IOUtils.toString(new URL(APIquery), Charset.forName("UTF-8")));
-			JSONArray array = json.getJSONArray("items");
+			JSONArray array = doSearch(query);
+			if (array.length() == 0) {
+				return "`No results found >_<`";
+			}
+			String result = "";
 			for (int i = 0; i < array.length(); i++)
 			{ //add "<video_title>" by <channel_title> to the string for each result
 				result += "`\"" + array.getJSONObject(i).getJSONObject("snippet").getString("title") + "\" by " +
@@ -39,13 +54,9 @@ public class YouTubeSearcher {
 						(Preview ? "" : '<') + "https://www.youtube.com/watch?v=" + array.getJSONObject(i).getJSONObject("id").getString("videoId") +
 						(Preview ? "" : '>') + "\n\n";
 			}
-			if (result.isEmpty())
-				result = "`No results found >_<`";
-		}
-		catch (Exception e)
-		{
+			return result;
+		} catch (Exception e) {
 			return "`Failed to perform a search >_<`";
 		}
-		return result;
 	}
 }

@@ -39,7 +39,7 @@ public class PhrasesListener implements MessageCreateListener {
 		reactions.add(new Reaction("i cant wake up", PhraseType.EXACT, "Wake me up inside!"));
 		reactions.add(new Reaction("i cant wake up!", PhraseType.EXACT, "Wake me up inside!"));
 		reactions.add(new Reaction("katyusha", PhraseType.EXACT, "https://www.youtube.com/watch?v=d4H70U26HxM"));
-		reactions.add(new Reaction("êàòþøà", PhraseType.EXACT, "https://www.youtube.com/watch?v=d4H70U26HxM"));
+		reactions.add(new Reaction("ÐºÐ°Ñ‚ÑŽÑˆÐ°", PhraseType.EXACT, "https://www.youtube.com/watch?v=d4H70U26HxM"));
 		
 		reactions.add(new Reaction("<:Dab:271137562494500864>", PhraseType.START, "<:Dab2:271137400837767168>"));
 		reactions.add(new Reaction("<:Dab2:271137400837767168>", PhraseType.START, "<:Dab:271137562494500864>"));
