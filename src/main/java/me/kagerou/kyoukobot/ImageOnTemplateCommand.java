@@ -20,7 +20,6 @@ import org.json.JSONObject;
 import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.User;
-import de.btobastian.javacord.entities.impl.ImplUser;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.CommandExecutor;
 //base class for commands which draw images on top of templates
@@ -206,15 +205,22 @@ public class ImageOnTemplateCommand extends TemplateLoader implements CommandExe
     //fetch the URL manually
 	private URL getAvatarUrl(User user) {
 		try {
+			// TODOKETE one of the reason to finally upgrade your dependencies
 			HttpURLConnection conn = (HttpURLConnection) new URL("https://discordapp.com/api/users/" + user.getId()).openConnection();
 			conn.setRequestProperty("Authorization", "Bot " + KyoukoBot.token);
 			conn.setRequestProperty("Content-Type", "application/json");
 			JSONObject userJSON = new JSONObject(IOUtils.toString(conn.getInputStream(), "UTF-8"));
-			ImplUser real_user = (ImplUser) user;
-			real_user.setAvatarId(userJSON.getString("avatar"));
+			String avatarId = userJSON.getString("avatar");
+			StringBuilder url = new StringBuilder("https://cdn.discordapp.com/");
+			url.append("avatars/")
+				.append(user.getId()).append('/').append(avatarId)
+				.append(avatarId.startsWith("a_") ? ".gif" : ".png");
+			return new URL(url.toString());
 		}
 		catch (Exception e)
-		{e.printStackTrace();}
-		return user.getAvatarUrl();
+		{
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
