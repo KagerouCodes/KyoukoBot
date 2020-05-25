@@ -13,6 +13,7 @@ import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 // searches for lyrics at animelyrics.com
+// TODOKETE search for Touhou and Vocaloid lyrics too!
 public class AnimeLyricsCommand extends GoogleSearcher implements CommandExecutor {
 
 	AnimeLyricsCommand() {
@@ -146,7 +147,7 @@ public class AnimeLyricsCommand extends GoogleSearcher implements CommandExecuto
 			}
 			int index = 0;
 			while (index != result.length())
-			{ //breaking the message by different demiliters: two new lines, one new line, space, no breaking at all — in order of decreasing priority 
+			{ //breaking the message by different demiliters: two new lines, one new line, space, no breaking at all ï¿½ in order of decreasing priority 
 				int new_index = lastValidIndex(result, index, "\n \n", KyoukoBot.CharLimit); //India intensifies
 				if (new_index == index)
 					new_index = lastValidIndex(result, index, "\n", KyoukoBot.CharLimit);
