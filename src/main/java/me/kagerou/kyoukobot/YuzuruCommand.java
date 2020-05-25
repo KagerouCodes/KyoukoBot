@@ -4,7 +4,7 @@ import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
-//a template command, puts a user-submitted image (or a mentioned user's avatar) on the piece of paper there: http://i.imgur.com/9FulDOt.png
+//a template command, puts a user-submitted image (or a mentioned user's avatar) on the piece of paper there: https://i.imgur.com/9FulDOt.png
 public class YuzuruCommand extends ImageOnTemplateCommand {
 	private final static String template_link = KyoukoBot.YuzuruLink;
 	YuzuruCommand()

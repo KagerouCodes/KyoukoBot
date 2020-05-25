@@ -17,7 +17,7 @@ public class ImageCommand implements CommandExecutor
 	static String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.100 Safari/537.36"; //put this one in KyoukoBot's parameters??
 	
 	static String FetchURL(String sURL) throws Exception
-	{ //fetches the contents of an URL; i can't just use IOUtils.toString(URL, Charset) because without the user agent i won't get the Javascript code
+	{ //fetches the contents of an URL; might just want to use IOUtils.toString(URL, Charset)
 	    URL url = new URL(sURL);
 	    HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
 	    httpCon.addRequestProperty("User-Agent", userAgent);

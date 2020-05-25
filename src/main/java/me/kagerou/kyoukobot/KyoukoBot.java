@@ -114,19 +114,19 @@ public class KyoukoBot {
 	
 	// imgur album with Emilias
     final static String EMTAlbum = "zf0yQ";
-    final static String OneEMT = "http://danbooru.donmai.us/data/__emilia_re_zero_kara_hajimeru_isekai_seikatsu_drawn_by_tsukimori_usako__bd95cc37a9ec5a35aded8f25e6de5c59.png";
+    final static String OneEMT = "https://danbooru.donmai.us/data/__emilia_re_zero_kara_hajimeru_isekai_seikatsu_drawn_by_tsukimori_usako__bd95cc37a9ec5a35aded8f25e6de5c59.png";
     // imgur album with Chitoses
     final static String ChitoseAlbum = "m3ipy";
     final static String OneChitose = "https://remyfool.files.wordpress.com/2016/10/vlcsnap-2016-10-09-13h30m37s147.png";
     // one cat, just in case random.cat isn't available
-    final static String OneCat = "http://i.imgur.com/JhkPph1.jpg";
+    final static String OneCat = "https://i.imgur.com/JhkPph1.jpg";
     final static String OneDog = "https://i.imgur.com/G5j2WOH.jpg";
     // links to different templates
-    final static String PrettyLink = "http://i.imgur.com/3zrwfZB.png";       
-    final static String YuzuruLink = "http://i.imgur.com/9FulDOt.png";
-    final static String MeguminLink = "http://i.imgur.com/X1rO0A7.png";
-    final static String BreakingNewsLink = "http://i.imgur.com/28fDbUq.png";
-    final static String CorrectLink = "http://i.imgur.com/mHZxFlV.png";
+    final static String PrettyLink = "https://i.imgur.com/3zrwfZB.png";       
+    final static String YuzuruLink = "https://i.imgur.com/9FulDOt.png";
+    final static String MeguminLink = "https://i.imgur.com/X1rO0A7.png";
+    final static String BreakingNewsLink = "https://i.imgur.com/28fDbUq.png";
+    final static String CorrectLink = "https://i.imgur.com/mHZxFlV.png";
     final static String memeDir = "memes";
     final static String SongWiki = "https://www.reddit.com/r/anime/wiki/sings/";
     final static String LyricsDatabaseFile = "projects_lyrics.txt";
@@ -155,7 +155,7 @@ public class KyoukoBot {
     final static String GlobalEmotesURL = "https://twitchemotes.com/api_cache/v3/global.json";
     final static String GlobalEmoteTemplateURL = "https://static-cdn.jtvnw.net/emoticons/v1/{image_id}/1.0";
     final static String BTTVEmotesURL = "https://api.betterttv.net/emotes";
-    final static String CustomEmotes[][] = {{"goldenkappa", "http://i.imgur.com/JwmYhu7.png"},
+    final static String CustomEmotes[][] = {{"goldenkappa", "https://i.imgur.com/JwmYhu7.png"},
     		{"monkaS", "https://static-cdn.jtvnw.net/emoticons/v1/849397/1.0"},
     		{"POGGERS", "https://cdn.betterttv.net/emote/58ae8407ff7b7276f8e594f2/1x"}};
     static ArrayList<Emote> Emotes;

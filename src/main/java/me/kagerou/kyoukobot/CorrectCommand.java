@@ -21,7 +21,7 @@ import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 
-//a command which writes text on the blackboard: http://i.imgur.com/mHZxFlV.png
+//a command which writes text on the blackboard: https://i.imgur.com/mHZxFlV.png
 //TODO lift the text in k!correct up a bit?? 
 //TODO DK Crayon Crumble font for it??
 //TODO find a font with :weary: :ok_hand: and other emojis
