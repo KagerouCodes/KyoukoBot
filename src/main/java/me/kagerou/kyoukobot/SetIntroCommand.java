@@ -21,7 +21,7 @@ public class SetIntroCommand implements CommandExecutor
 		//set the intro in the database, track the name just in case
 		KyoukoBot.Database.setNameAndIntro(message.getAuthor().getId(), message.getAuthor().getName(), intro);
 		//erase the database entry with no ID if there is one which matches the username
-		Map.Entry<String, NewDataBase.Person> unIDedMatch;
+		Map.Entry<String, DataBase.Person> unIDedMatch;
 		if ((unIDedMatch = KyoukoBot.Database.findUnIDedEntry(message.getAuthor().getName())) != null)
 			KyoukoBot.Database.removeEntry(unIDedMatch.getKey());
 		if (intro.isEmpty())

@@ -21,7 +21,7 @@ import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.entities.User;
 //maintains the database which stores the introductions and alarms for users and is saved to the people.txt file 
 //TODO save the database every X minutes instead of doing it all the time??
-class NewDataBase //TODO: cloud backup??
+class DataBase //TODO: cloud backup??
 { //the class with all the needed information about users (except for their ids)
 	class Person
 	{
@@ -50,7 +50,7 @@ class NewDataBase //TODO: cloud backup??
 	TreeMap<String, Person> people; //user-related data
 	final static String dailyAlarmMessage = " :alarm_clock: **Time to farm daily credits!**";
 	final static String repAlarmMessage = " :alarm_clock: **Time to give a daily reputation point!**";
-	NewDataBase()
+	DataBase()
 	{
 		time = 0;
 		game = defaultGame;
@@ -274,18 +274,6 @@ class NewDataBase //TODO: cloud backup??
 					changeID(unIDedEntry.getKey(), unIDedUser.getId());	//otherwise, give the entry a proper ID
 		}
 	}
-	/*boolean setIntro(String id, String intro)
-	{
-		if (!people.containsKey(id))
-			return false;
-		time = System.currentTimeMillis();
-		if (intro.isEmpty())
-			people.remove(id);
-		else
-			people.get(id).intro = intro;
-		SaveToFile(KyoukoBot.DatabaseFile);
-		return true;
-	}*/
 	//sets username and intro for an entry with a specified id, creates the entry if it doesn't exist
 	synchronized void setNameAndIntro(String id, String name, String intro)
 	{

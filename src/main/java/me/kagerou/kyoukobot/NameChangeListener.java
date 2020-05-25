@@ -9,8 +9,8 @@ import de.btobastian.javacord.listener.user.UserChangeNameListener;
 public class NameChangeListener implements UserChangeNameListener {
 	@Override
 	public void onUserChangeName(DiscordAPI api, User user, String old_name) {
-		NewDataBase.Person IDedPerson = KyoukoBot.Database.get(user.getId());
-		Map.Entry<String, NewDataBase.Person> unIDedEntry = KyoukoBot.Database.findUnIDedEntry(user.getName());
+		DataBase.Person IDedPerson = KyoukoBot.Database.get(user.getId());
+		Map.Entry<String, DataBase.Person> unIDedEntry = KyoukoBot.Database.findUnIDedEntry(user.getName());
 		if (IDedPerson != null)
 		{
 			KyoukoBot.Database.setName(user.getId(), user.getName());

@@ -8,9 +8,9 @@ public class RemindTask extends TimerTask
 {
 	private String id, message;
 	private DiscordAPI api;
-	private NewDataBase database;
+	private DataBase database;
 	private long time;
-	RemindTask(String id, DiscordAPI api, String message, long time, NewDataBase database)
+	RemindTask(String id, DiscordAPI api, String message, long time, DataBase database)
 	{
 		this.id = id;
 		this.api = api;

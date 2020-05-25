@@ -33,27 +33,9 @@ import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.javacord.entities.message.MessageHistory;
 import de.btobastian.javacord.entities.message.MessageReceiver;
-import de.btobastian.javacord.listener.message.MessageCreateListener;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.Sdcf4jMessage;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
-
-@Deprecated //unused, it redirected clyp.it links to #recordings
-class ClypListener implements MessageCreateListener 
-{
-	@Override
-	public void onMessageCreate(DiscordAPI api, Message message) {
-        if (message.getContent().contains("https://clyp.it") && !message.getChannelReceiver().getName().equals("recordings") && !message.getAuthor().isBot() && !message.isPrivateMessage())
-        {
-        	Collection<Channel> col = message.getChannelReceiver().getServer().getChannels();
-        	for (Channel ch: col)
-        	{
-        		if (ch.getName().equals("recordings"))
-        			ch.sendMessage("[from " + message.getAuthor().getMentionTag() + "] " + message.getContent());
-        	}
-        }
-    }
-}
 
 class Emote //a class for Twitch emotes
 {
@@ -106,7 +88,7 @@ public class KyoukoBot {
 	static MemeBase memeBase;
 	static ArrayList<SongProject> Songs, CurrentSongs;
 	static JSONObject JSONLyrics; //this one is for storing links to lyrics for projects, they take too long to load
-	static NewDataBase Database;
+	static DataBase Database;
 	
 	final static String version = "0.3.3";
 	static boolean release = true;
@@ -297,7 +279,7 @@ public class KyoukoBot {
     	}
 	}
 
-	public static boolean InitDatabase(NewDataBase Database, String DatabaseFile)
+	public static boolean InitDatabase(DataBase Database, String DatabaseFile)
     { //loads the user database from a file
     	if (Database.readFromFile(DatabaseFile))
     	{
@@ -742,7 +724,7 @@ public class KyoukoBot {
         CurrentSongs = new ArrayList<SongProject>();
         InitSongCollection(Songs, CurrentSongs, SongWiki);
         
-        Database = new NewDataBase();
+        Database = new DataBase();
         InitDatabase(Database, DatabaseFile);
         
         ChangeLog = InitChangeLog("changelog.txt");

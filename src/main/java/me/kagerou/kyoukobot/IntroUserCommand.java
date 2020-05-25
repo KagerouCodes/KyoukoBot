@@ -22,7 +22,7 @@ public class IntroUserCommand implements CommandExecutor {
 		if (intro.length() > MaxIntroLength) //still cutting the intro if it's too long
 			intro = intro.substring(0, MaxIntroLength);
 		//KyoukoBot.Database.set(name, intro);
-		Map.Entry<String, NewDataBase.Person> entry;
+		Map.Entry<String, DataBase.Person> entry;
 		if ((entry = KyoukoBot.Database.findIDedEntry(name)) != null) //if there is an entry with the featured name, change it (IDed one takes the priority)
 			KyoukoBot.Database.setNameAndIntro(entry.getKey(), entry.getValue().name, intro);
 		else

@@ -38,10 +38,10 @@ public class WhoIsCommand implements CommandExecutor {
         { //need to find a single user by their name
         	if (target != null)
         	{ //if user's already identified, show their intro
-        		NewDataBase.Person person = KyoukoBot.Database.get(target.getId());
+        		DataBase.Person person = KyoukoBot.Database.get(target.getId());
     			if (person == null)
     			{
-    				Map.Entry<String, NewDataBase.Person> unIDedEntry = KyoukoBot.Database.findUnIDedEntry(target.getName());
+    				Map.Entry<String, DataBase.Person> unIDedEntry = KyoukoBot.Database.findUnIDedEntry(target.getName());
     				if (unIDedEntry != null)
     				{ //if there's an unIDed entry with the needed username, use it and give it the proper ID
     					KyoukoBot.Database.changeID(unIDedEntry.getKey(), target.getId());
@@ -62,7 +62,7 @@ public class WhoIsCommand implements CommandExecutor {
         		message.reply("**" + KyoukoBot.getNickname(target, message.getReceiver()) + ":** " + KyoukoBot.Database.get(target.getId()).intro);
         		return;
         	}
-        	Map.Entry<String, NewDataBase.Person> entry = KyoukoBot.Database.findPartialEntryWithIntro(name); //if the user's not found on the server, search for the name in the DB TODO find an entry with an actual intro!
+        	Map.Entry<String, DataBase.Person> entry = KyoukoBot.Database.findPartialEntryWithIntro(name); //if the user's not found on the server, search for the name in the DB TODO find an entry with an actual intro!
         	if (entry != null)
         		message.reply("**" + entry.getValue().name + ":** " + entry.getValue().intro);
         	else
@@ -84,10 +84,10 @@ public class WhoIsCommand implements CommandExecutor {
         	{
         		if (!user.isBot() && (user.getStatus() != UserStatus.OFFLINE))
         		{
-        			NewDataBase.Person person = KyoukoBot.Database.get(user.getId());
+        			DataBase.Person person = KyoukoBot.Database.get(user.getId());
         			if (person == null)
         			{ //if there's no entry with the user's ID, try to find an unIDed one and fix it
-        				Map.Entry<String, NewDataBase.Person> unIDedEntry = KyoukoBot.Database.findUnIDedEntry(user.getName());
+        				Map.Entry<String, DataBase.Person> unIDedEntry = KyoukoBot.Database.findUnIDedEntry(user.getName());
         				if (unIDedEntry != null)
         				{
         					KyoukoBot.Database.changeID(unIDedEntry.getKey(), user.getId());
