@@ -8,9 +8,9 @@ import de.btobastian.sdcf4j.CommandExecutor;
 //makes the bot say what you want, admin-only
 public class SayCommand implements CommandExecutor
 {
-	@Command(aliases = {"k!say"}, description = "Cheesy admin-only command.", requiredPermissions = "admin", showInHelpPage = false)
+    @Command(aliases = {"k!say"}, description = "Cheesy admin-only command.", requiredPermissions = "admin", showInHelpPage = false)
     public void onCommand(DiscordAPI api, Message message, Server server, String args[])
     {
-		message.reply(KyoukoBot.getArgument(message, false));
+        message.reply(KyoukoBot.getArgument(message, false));
     }
 }

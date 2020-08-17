@@ -8,20 +8,20 @@ import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 //turns the bot off (owner-only)
 public class ShutdownCommand implements CommandExecutor {
-	@Command(aliases = {"k!shutdown"}, description = "Cheesy admin-only command.", usage = "k!shutdown", requiredPermissions = "admin", showInHelpPage = false)
+    @Command(aliases = {"k!shutdown"}, description = "Cheesy admin-only command.", usage = "k!shutdown", requiredPermissions = "admin", showInHelpPage = false)
     public void onCommand(DiscordAPI api, Message message, String[] args)
-	{
-		try {
-			message.reply("`Shutting down...`").get(3, TimeUnit.SECONDS);
-		}
-		catch (Exception e)
-		{}
-		api.disconnect();
-		//api.setGame("Shutting down...");
-		try {
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {}
-		System.exit(0);
-	}
+    {
+        try {
+            message.reply("`Shutting down...`").get(3, TimeUnit.SECONDS);
+        }
+        catch (Exception e)
+        {}
+        api.disconnect();
+        //api.setGame("Shutting down...");
+        try {
+            Thread.sleep(1000);
+        }
+        catch (InterruptedException e) {}
+        System.exit(0);
+    }
 }

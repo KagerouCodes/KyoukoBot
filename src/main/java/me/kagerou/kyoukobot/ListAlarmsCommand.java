@@ -10,22 +10,22 @@ import de.btobastian.sdcf4j.CommandExecutor;
 import main.java.me.kagerou.kyoukobot.DataBase.Person;
 //lists user's active alarms (owner-only so far)
 public class ListAlarmsCommand implements CommandExecutor {
-	@Command(aliases = {"k!alarms", "k!list"}, description = "Lists your alarms.", requiredPermissions = "admin", showInHelpPage = false)
+    @Command(aliases = {"k!alarms", "k!list"}, description = "Lists your alarms.", requiredPermissions = "admin", showInHelpPage = false)
     public void onCommand(DiscordAPI api, Message message, Server server, String args[])
     {
-		Person person = KyoukoBot.Database.get(message.getAuthor().getId());
-		TreeMap<String, RemindTask> alarms;
-		if (person != null)
-			alarms = person.alarms;
-		else
-			alarms = new TreeMap<String, RemindTask>();
-		StringBuilder result = new StringBuilder();
-		for (String msg: alarms.keySet()) //the format is: <message> in <time>
-			result.append("\n`").append(msg).append('`').append(" in ").append(KyoukoBot.msToTimeString(KyoukoBot.Database.getTimeLeft(message.getAuthor().getId(), msg)));
-		if (result.length() == 0)
-			result.append("`You have no alarms set up.`");
-		else
-			result.insert(0, "**Your alarms:**\n");
-		message.reply(result.toString());
+        Person person = KyoukoBot.Database.get(message.getAuthor().getId());
+        TreeMap<String, RemindTask> alarms;
+        if (person != null)
+            alarms = person.alarms;
+        else
+            alarms = new TreeMap<String, RemindTask>();
+        StringBuilder result = new StringBuilder();
+        for (String msg: alarms.keySet()) //the format is: <message> in <time>
+            result.append("\n`").append(msg).append('`').append(" in ").append(KyoukoBot.msToTimeString(KyoukoBot.Database.getTimeLeft(message.getAuthor().getId(), msg)));
+        if (result.length() == 0)
+            result.append("`You have no alarms set up.`");
+        else
+            result.insert(0, "**Your alarms:**\n");
+        message.reply(result.toString());
     }
 }
