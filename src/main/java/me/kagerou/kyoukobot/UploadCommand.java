@@ -1,10 +1,10 @@
-package me.kagerou.kyoukobot;
+package main.java.me.kagerou.kyoukobot;
 
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.javacord.entities.message.MessageAttachment;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-import me.kagerou.kyoukobot.MemeBase.MemeResult;
+import main.java.me.kagerou.kyoukobot.MemeBase.MemeResult;
 //lets users upload image(s) to the "meme" folder (up to 8 MB), accepts attachments/links
 public class UploadCommand implements CommandExecutor {	
 	@Command(aliases = {"k!upload", "k!donate"}, description = "Uploads image(s) to the \"meme\" collection, accepts attachments too.\nYou don't need to use the command in #animemes. Images over 8 MB are not accepted.", usage = "k!upload image(s)")

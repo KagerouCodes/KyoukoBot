@@ -1,4 +1,4 @@
-package me.kagerou.kyoukobot;
+package main.java.me.kagerou.kyoukobot;
 
 import java.io.*;
 import java.lang.ProcessBuilder.Redirect;
@@ -37,7 +37,8 @@ import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.Sdcf4jMessage;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 
-class Emote //a class for Twitch emotes
+// a class for Twitch emotes
+class Emote
 {
 	static String emoteDir = "emotes";
 	String name, url;
@@ -71,7 +72,8 @@ class Emote //a class for Twitch emotes
 	}
 }
 
-class ImageSearchResult //a class for cached Google Image Search results
+// a class for cached Google Image Search results
+class ImageSearchResult
 {
 	long time;
 	String url;
@@ -83,11 +85,15 @@ class ImageSearchResult //a class for cached Google Image Search results
 }
 
 public class KyoukoBot {
-	//all the databases
+	// TODOKETE defeat the statics??
+	// TODOKETE styleguide??
+
+	// all the databases
 	static ImageCollection EMTs, Chitoses;
 	static MemeBase memeBase;
 	static ArrayList<SongProject> Songs, CurrentSongs;
-	static JSONObject JSONLyrics; //this one is for storing links to lyrics for projects, they take too long to load
+	// this one is for storing links to lyrics for projects, they take too long to load
+	static JSONObject JSONLyrics;
 	static DataBase Database;
 	
 	final static String version = "0.3.3";
@@ -111,7 +117,14 @@ public class KyoukoBot {
 	static long init_time = 0; 
 	
 	static ConsoleOutputTracker coc;
-	
+
+	// secrets for other APIs
+	static String imgurClientID;
+	static String imgurClientSecret;
+
+	static String googleKey;
+	static String googleCX;
+
 	// imgur album with Emilias
     final static String EMTAlbum = "zf0yQ";
     final static String OneEMT = "https://danbooru.donmai.us/data/__emilia_re_zero_kara_hajimeru_isekai_seikatsu_drawn_by_tsukimori_usako__bd95cc37a9ec5a35aded8f25e6de5c59.png";
@@ -132,10 +145,9 @@ public class KyoukoBot {
     final static String LyricsDatabaseFile = "projects_lyrics.txt";
     final static String DatabaseFile = "people.txt";
     final static String SearchResultsFile = "search_results.txt";
-    // milliseconds in three days, this is how long the image search resutmpEasterEggs.put("**kimi no shiranai monogatari**", "<https://www.youtube.com/watch?v=2znDt8DVm7s&t=2m39s>");lts are stored
+    // milliseconds in three days, this is how long the image search results are stored
     final static long CacheDuration = 3 * 24 * 60 * 60 * 1000;
     final static String TatsumakiID = "172002275412279296";
-    //final static String NadekoID = "116275390695079945";//"222681293232668672";//"255367116608241685";
     final static String BotTestingID = "218471304452374528";//"279680583578419201";
     // not 2000 just to be safe and be able to add newlines and stuff
     final static int CharLimit = 1900;
@@ -163,16 +175,53 @@ public class KyoukoBot {
     static HashMap<String, ImageSearchResult> SearchResults = new HashMap<String, ImageSearchResult>(); //cached Google Image Search results
 	
 	static ImgurClient imgurClient;
+	static GoogleSearcher googleSearcher;
 	
 	static Timer timer = new Timer(); //timer for alarms and other stuff
 	
 	//waits for a message from Tatsumaki after a t!daily or t!rep command
 	static TreeMap<TatsumakiRequest, TatsumakiWaiter> WaitingRoom = new TreeMap<TatsumakiRequest, TatsumakiWaiter>(); 
     
-	//static NadekoTracker nadekoTracker;
-	
-    static ArrayList<String> InitImageCollection(ImgurClient client, String album, String single_pic) 
-    { //loads the links to pictures from an imgur album (or a single pic in case of failure)
+	static boolean loadConfig(String configPath)
+	{
+		JSONObject Config;
+		try (FileInputStream fis = new FileInputStream(configPath)) {
+			Config = new JSONObject(IOUtils.toString(fis, Charset.forName("UTF-8")));
+			releaseToken = Config.getString("release_token");
+			betaToken = Config.getString("beta_token");
+			ownerID = Config.getString("owner_id");
+
+			JSONArray adminIDsJSON = Config.optJSONArray("admin_ids");
+			adminIDs = new ArrayList<String>();
+			adminIDs.add(ownerID);
+			if (adminIDsJSON != null) {
+				for (int i = 0; i < adminIDsJSON.length(); ++i) {
+					adminIDs.add(adminIDsJSON.getString(i));
+				}
+			}
+
+			JSONObject imgurApiJSON = Config.optJSONObject("imgur_api");
+			if (imgurApiJSON != null) {
+				imgurClientID = imgurApiJSON.optString("client_id");
+				imgurClientSecret = imgurApiJSON.optString("client_secret");
+			}
+
+			JSONObject googleApiJSON = Config.optJSONObject("google_api");
+			if (googleApiJSON != null) {
+				googleKey = imgurApiJSON.optString("key");
+				googleCX = imgurApiJSON.optString("cx");
+			}
+
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	static ArrayList<String> InitImageCollection(ImgurClient client, String album, String single_pic)
+	{
+		// loads the links to pictures from an imgur album (or a single pic in case of failure)
     	ArrayList<String> links = new ArrayList<String>();
     	try {
     		for (Image img: client.getAlbumDetails(album).data.images)
@@ -188,11 +237,13 @@ public class KyoukoBot {
     	}
     	return links;
     }
-    
+
     public static boolean InitSongCollection(ArrayList<SongProject> Songs, ArrayList<SongProject> CurrentSongs, String SongWiki)
-    { //loads all the song projects as well as the lyrics pastebins for them, JSONLyrics isn't passed because i'd have to clone a JSONObject
+    {
+        // loads all the song projects as well as the lyrics pastebins for them,
+        // JSONLyrics isn't passed because i'd have to clone a JSONObject
     	try (FileInputStream fis = new FileInputStream(LyricsDatabaseFile)) {
-			JSONLyrics = new JSONObject(IOUtils.toString(fis, Charset.forName("UTF-8"))); //should be UTF-16??
+			JSONLyrics = new JSONObject(IOUtils.toString(fis, Charset.forName("UTF-8")));
 		}
 		catch (Exception e)
 		{
@@ -200,22 +251,27 @@ public class KyoukoBot {
 			JSONLyrics = new JSONObject();
 		}
     	Songs.clear();
-    	try { //parsing the project wiki page
+    	try {
+    	    // parsing the project wiki page
     		Document doc = Jsoup.connect(SongWiki).userAgent("KyoukoBot").get();
     		Elements tables = doc.getElementsByTag("table");
     		tables.removeIf((x) -> !x.text().contains("Title/Series"));
-    		for (Element el: tables.get(0).getElementsByTag("tr"))
+    		for (Element el: tables.get(0).getElementsByTag("tr")) {
     			if (!el.getElementsByTag("td").isEmpty())
     			{
     				SongProject project = new SongProject(el, false, JSONLyrics); 
     				Songs.add(project);
     				CurrentSongs.add(project);
     			}
-    		for (Element el: tables.get(1).getElementsByTag("tr"))
-    			if (!el.getElementsByTag("td").isEmpty())
+    		}
+    		for (Element el: tables.get(1).getElementsByTag("tr")) {
+    			if (!el.getElementsByTag("td").isEmpty()) {
     				Songs.add(new SongProject(el, true, JSONLyrics));
+    			}
+    		}
     		System.out.println("Project wiki loaded successfully!");
-    		Collections.sort(CurrentSongs); //sorting current projects so that k!proj would display them in order of increasing due date
+    		// sorting current projects so that k!proj would display them in order of increasing due date
+    		Collections.sort(CurrentSongs);
     		return true;
     	}
     	catch (Exception e)
@@ -227,7 +283,8 @@ public class KyoukoBot {
     	}
     }
     
-    static void CheckProjectList(String channel_name) {
+    static void CheckProjectList(String channel_name)
+    {
     	ArrayList<String> ProjectList = ProjectCommand.CurrentProjectDescriptions();
     	for (Channel channel: api.getChannels()) {
     		if (channel.getName().equals(channel_name)) {
@@ -263,11 +320,14 @@ public class KyoukoBot {
    		}
     }
 
-    static void PostMultipleMessages(ArrayList<String> MessageTexts, MessageReceiver receiver) {
+    static void PostMultipleMessages(ArrayList<String> MessageTexts, MessageReceiver receiver)
+    {
     	for (int index = 0; index + 1 < MessageTexts.size(); ++index) {
     		receiver.sendMessage(MessageTexts.get(index));
     	    try {
-    			Thread.sleep(500); //gotta guarantee the correct order
+    	    	// gotta guarantee the correct order
+    	    	// TODOKETE wtf, you are given a future!
+    			Thread.sleep(500);
     		}
     		catch (InterruptedException e)
     		{
@@ -570,7 +630,7 @@ public class KyoukoBot {
     }
     
 	public static User findUserOnServer(String arg, Server server, User author)
-	{ //finds a single user on a server by a part of username/nickname
+	{ // finds a single user on a server by a part of username/nickname
     	// priority list (case insensitive, the same as last time):
     	// 1. both username and nickname match the argument perfectly
     	// 2. just the nickname matches the argument perfectly
@@ -700,12 +760,14 @@ public class KyoukoBot {
 			result = result.substring(0, result.length() - 1);
 		return result;
 	}
+	
 	//checks the date for April Fools events
 	public static boolean isAprilFools()
 	{
 		return Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == 1 &&
 				Calendar.getInstance().get(Calendar.MONTH) == Calendar.APRIL;
 	}
+	
 	//checks the date for Valentine's events
 	public static boolean isValentines()
 	{
@@ -714,7 +776,15 @@ public class KyoukoBot {
 	}
     
 	static void InitPhase()
-	{ //initializes all the databases
+	{
+		// initializes all the databases
+		if (imgurClientID != null && imgurClientSecret != null) {
+			imgurClient = new ImgurClient(imgurClientID, imgurClientSecret);
+		}
+		if (googleKey != null && googleCX != null) {
+			googleSearcher = new GoogleSearcher(googleKey, googleCX);
+		}
+		
 		EMTs = new ImageCollection(imgurClient, EMTAlbum, OneEMT);
 		Chitoses = new ImageCollection(imgurClient, ChitoseAlbum, OneChitose);
         
@@ -772,49 +842,24 @@ public class KyoukoBot {
     
     public static void main(String args[])
     {
-    	//load the credentials first
-    	File credentials = new File("credentials.txt");
-    	String imgurClientID = "", imgurClientSecret = "";
-    	boolean loaded = false;
-    	if (credentials.exists())
+    	if (!loadConfig("config.cfg"))
     	{
-    		try {
-    			String[] creds = FileUtils.readLines(credentials, Charset.forName("UTF-8")).toArray(new String[0]);
-    			releaseToken = creds[0];
-    			betaToken = creds[1];
-    			adminIDs = new ArrayList<String>(Arrays.asList(creds[2].split("\\s+")));
-    			if (!adminIDs.isEmpty()) {
-    				ownerID = adminIDs.get(0);
-    			}
-    			imgurClientID = creds[3];
-    			imgurClientSecret = creds[4];
-    			YouTubeSearcher.GoogleAPIKey = GoogleSearcher.GoogleKey = creds[5];
-    			GoogleSearcher.GoogleCX = creds[6];
-    			loaded = true;
-    		}
-    		catch (Exception e)
-    		{
-    			loaded = false;
-    			e.printStackTrace();
-    			return;
-    		}
-    	}
-    	if (!loaded)
-    	{
-    		System.out.println("Failed to read the credentials.");
+    		System.out.println("Failed to load the config.");
     		return;
     	}
-    	if (Arrays.asList(args).contains("beta")) //launching the "release" bot by default, "beta" one if there's a "beta" argument
+    	// TODOKETE
+    	if (Arrays.asList(args).contains("beta")) {
+    		// launching the "release" bot by default, "beta" one if there's a "beta" argument
     		release = false;
+    	}
+    	
     	token = (release) ? releaseToken : betaToken;
-    	//initialising everything
+    	// initialising everything
     	coc = new ConsoleOutputTracker();
     	System.setProperty("http.agent", "KyoukoBot");
         api = Javacord.getApi(token, true);
-        imgurClient = new ImgurClient(imgurClientID, imgurClientSecret);
         InitPhase();
         FutureCallback<DiscordAPI> callback = new FutureCallback<DiscordAPI>() {
-        		@Override
         		public void onSuccess(DiscordAPI api) {
         			Database.adjustNames(api.getUsers()); //fix the database on startup TODO seems like an exception can happen here
         			if (!Songs.isEmpty()) {
@@ -825,7 +870,7 @@ public class KyoukoBot {
         			// simple picture-posting commands
         			handler.registerCommand(new ShiyuCommand());
         			handler.registerCommand(new EMTCommand(EMTs, "Emilia-tan"));
-        			handler.registerCommand(new RemCommand()); //this one is hidden
+        			handler.registerCommand(new RemCommand()); // this one is hidden
         			handler.registerCommand(new ChitoseCommand(Chitoses, "Chitose"));
         			handler.registerCommand(new CatCommand());
         			handler.registerCommand(new DogCommand());
@@ -853,12 +898,13 @@ public class KyoukoBot {
         			handler.registerCommand(new WikiCommand());
         			// handler.registerCommand(new SpeadsheetCommand());
         			// different forms of Google search
-        			handler.registerCommand(new ImageCommand());
-        			handler.registerCommand(new GoogleShortCommand(1, true));
-        			handler.registerCommand(new GoogleLongCommand(3, false));
+        			// TODOKETE new constructors??
+        			handler.registerCommand(new ImageCommand(googleSearcher));
+        			handler.registerCommand(new GoogleShortCommand(googleSearcher, 1));
+        			handler.registerCommand(new GoogleLongCommand(googleSearcher, 3));
         			handler.registerCommand(new YouTubeShortCommand(1, true));
         			handler.registerCommand(new YouTubeLongCommand(3, false));
-        			handler.registerCommand(new AnimeLyricsCommand());
+        			handler.registerCommand(new AnimeLyricsCommand(googleSearcher));
         			// this one reminds users about Tatsumaki's daily commands (t!daily and t!rep)
         			handler.registerCommand(new DailyCommand());
         			// service commands
@@ -921,8 +967,6 @@ public class KyoukoBot {
         				else
         					if (!Arrays.asList(args).contains("hello")) //no point in printing the same line twice
         						System.out.println("Couldn't find the owner.");
-        			
-        			//nadekoTracker = new NadekoTracker(NadekoID, BotTestingID, timer, Iterables.any(Arrays.asList(args), (x) -> (x.equalsIgnoreCase("nadeko"))));
         		}
         		@Override
         		public void onFailure(Throwable t) {

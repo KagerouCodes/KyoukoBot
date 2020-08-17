@@ -1,4 +1,4 @@
-package me.kagerou.kyoukobot;
+package main.java.me.kagerou.kyoukobot;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -14,10 +14,13 @@ import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 // searches for lyrics at animelyrics.com
 // TODOKETE search for Touhou and Vocaloid lyrics too!
-public class AnimeLyricsCommand extends GoogleSearcher implements CommandExecutor {
+public class AnimeLyricsCommand implements CommandExecutor {
+	final static int LinksLimit = 10;
 
-	AnimeLyricsCommand() {
-		super(10, false, false); // just a Google search with 10 max results and no preview
+	GoogleSearcher googleSearcher;
+
+	AnimeLyricsCommand(GoogleSearcher googleSearcher) {
+		this.googleSearcher = googleSearcher;
 	}
 	
 	String getTitle(String url, String title)
@@ -32,7 +35,7 @@ public class AnimeLyricsCommand extends GoogleSearcher implements CommandExecuto
 		}
 		return result.replaceAll("Anime Lyrics dot Com -", "").trim();
 	}
-	//String.indexOf() modified to return string's length instead of -1, needed for correct comparisons
+	// String.indexOf() modified to return string's length instead of -1, needed for correct comparisons
 	private int indexOf(String string, String substr, int from_index) {
 		int result = string.indexOf(substr, from_index);
 		if (result != -1)
@@ -64,6 +67,12 @@ public class AnimeLyricsCommand extends GoogleSearcher implements CommandExecuto
 	@Command(aliases = {"k!lyrics", "k!alyrics", "k!animelyrics"}, description = "Searches for lyrics at animelyrics.com, then links them on a server or prints them in DM.", usage = "k!lyrics song")
     public void onCommand(Message message, String[] args) {
 		message.getReceiver().type();
+		if (googleSearcher == null) {
+			// TODOKETE this stuff needs to be a helper
+			message.reply("`Google API secrets are missing >_<`");
+			return;
+		}
+
 		String query = KyoukoBot.getArgument(message);
 		if (query.isEmpty())
 		{
@@ -71,11 +80,11 @@ public class AnimeLyricsCommand extends GoogleSearcher implements CommandExecuto
 			return;
 		}
 		String url = "";
-		ArrayList<SearchResult> array;
+		ArrayList<GoogleSearcher.SearchResult> array;
 		int link_index = 0;
 		try {
 			// search for 10 results at animelyrics.com 
-			array = searchToArray(query + " site:animelyrics.com");
+			array = googleSearcher.search(query + " site:animelyrics.com", LinksLimit, true);
 			while ((link_index < array.size()) && !array.get(link_index).url.endsWith("htm") && !array.get(link_index).url.endsWith("html"))
 				link_index++; //skip the results not ending in htm(l) since those don't contain lyrics of single songs
 			if (link_index == array.size())

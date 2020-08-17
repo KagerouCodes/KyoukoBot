@@ -1,4 +1,4 @@
-package me.kagerou.kyoukobot;
+package main.java.me.kagerou.kyoukobot;
 
 import java.lang.reflect.Method;
 
@@ -7,7 +7,7 @@ import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.javacord.entities.message.MessageAttachment;
 import de.btobastian.javacord.listener.message.MessageCreateListener;
 import de.btobastian.sdcf4j.Command;
-import me.kagerou.kyoukobot.MemeBase.MemeResult;
+import main.java.me.kagerou.kyoukobot.MemeBase.MemeResult;
 
 public class AnimemesListener implements MessageCreateListener {
 	String[] uploadPrefixes = {}; //is this even needed??
@@ -27,7 +27,6 @@ public class AnimemesListener implements MessageCreateListener {
 		}
 	}
 	
-	@Override
 	public void onMessageCreate(DiscordAPI api, Message message) {
 		if (message.isPrivateMessage() || message.getAuthor().isBot() || !message.getChannelReceiver().getName().endsWith("emes"))
 			return;

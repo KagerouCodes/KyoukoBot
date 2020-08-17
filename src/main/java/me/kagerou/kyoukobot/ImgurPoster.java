@@ -1,4 +1,4 @@
-package me.kagerou.kyoukobot;
+package main.java.me.kagerou.kyoukobot;
 
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.CommandExecutor;

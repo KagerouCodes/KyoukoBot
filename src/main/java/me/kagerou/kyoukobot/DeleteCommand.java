@@ -1,4 +1,4 @@
-package me.kagerou.kyoukobot;
+package main.java.me.kagerou.kyoukobot;
 
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.javacord.entities.message.MessageAttachment;
@@ -8,7 +8,7 @@ import de.btobastian.javacord.entities.permissions.Role;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 import de.btobastian.sdcf4j.Sdcf4jMessage;
-import me.kagerou.kyoukobot.MemeBase.MemeResult;
+import main.java.me.kagerou.kyoukobot.MemeBase.MemeResult;
 // deletes an attached/linked image from a "meme" collection (moderator/owner only)
 // the bot's designed to be run on just one server, one could clear the collection by inviting the bot to their own server
 // so the safe way of doing things would be a DB of images' availability on servers

@@ -1,4 +1,4 @@
-package me.kagerou.kyoukobot;
+package main.java.me.kagerou.kyoukobot;
 
 import java.net.URL;
 import java.net.URLEncoder;
@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import de.btobastian.javacord.entities.message.Message;
 //base class for the YouTube search commands, uses the YouTube API
+// TODOKETE separate this!
 public class YouTubeSearcher {
 	final int LinksLimit; //max amount of results
 	final boolean Preview; //whether the preview needs to be displayed

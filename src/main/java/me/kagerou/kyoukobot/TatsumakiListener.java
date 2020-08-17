@@ -1,4 +1,4 @@
-package me.kagerou.kyoukobot;
+package main.java.me.kagerou.kyoukobot;
 
 import java.util.TreeMap;
 import java.util.Timer;
@@ -11,7 +11,7 @@ import de.btobastian.javacord.entities.UserStatus;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.javacord.entities.message.MessageReceiver;
 import de.btobastian.javacord.listener.message.MessageCreateListener;
-import me.kagerou.kyoukobot.TatsumakiRequest.RequestType;
+import main.java.me.kagerou.kyoukobot.TatsumakiRequest.RequestType;
 //the class is used to index requests for Tatsumaki's responses by the username, Discord channel and their type (t!rep or t!daily) 
 class TatsumakiRequest implements Comparable<TatsumakiRequest>
 {

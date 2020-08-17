@@ -1,4 +1,4 @@
-package me.kagerou.kyoukobot;
+package main.java.me.kagerou.kyoukobot;
 
 import java.util.TreeMap;
 
@@ -7,7 +7,7 @@ import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-import me.kagerou.kyoukobot.DataBase.Person;
+import main.java.me.kagerou.kyoukobot.DataBase.Person;
 //lists user's active alarms (owner-only so far)
 public class ListAlarmsCommand implements CommandExecutor {
 	@Command(aliases = {"k!alarms", "k!list"}, description = "Lists your alarms.", requiredPermissions = "admin", showInHelpPage = false)

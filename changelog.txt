@@ -1,10 +1,12 @@
-Version 0.3.4 [??-??-2019, screw you, i'm european]
+Version 0.3.4 [??-??-2020, screw you, i'm european]
 - fixed the Twitch emotes not working (Twitch disabled their old API for emotes);
 - implemented your favourite monkaS and POGGERS emotes;
 - partially fixed k!cat (but it posts an URL now);
 - added a k!dog command (aka k!doggo, k!woof or k!wan) for you dog lovers (but the API is as unstable as the cat one);
 - fixed k!img;
-- fixed k!google, k!ggl and k!lyrics as well.
+- fixed k!google, k!ggl and k!lyrics as well;
+- fixed Google search commands again;
+- renamed the config file and changed its format to JSON.
 
 =============================================================
 
